@@ -1,0 +1,1039 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<script>try{localStorage.setItem('dss-theme','light')}catch(e){}</script>
+  <script>
+    /* Before anything is drawn: the saved theme (so the loader has the right colors) and the loader on. */
+    (function () {
+      try {
+        var t = localStorage.getItem("dss-theme");
+        if (t === "dark" || t === "light" || t === "colorblind") document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+      document.documentElement.classList.add("is-loading");
+    })();
+  </script>
+  <meta charset="utf-8"/>
+  <title>DSS UI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+  <link rel="icon" href="../../static/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="../../static/favicon.ico">
+  <link rel="apple-touch-icon" href="../../static/favicon.ico">
+
+  <style>
+    /* ====== Theme ====== */
+    :root {
+      /* Brand palette */
+      --amber:  #FFB100;
+      --blue:   #1C9FFF;
+      --magenta:#FF3ED2;
+      --teal:   #0CC4BA;
+
+      --gap: 1rem;
+      --logo-h: 88px;
+      --logo-smile-h: 40px;
+      --logo-nvision-h: 40px;
+      --radius: 12px;
+    }
+
+    /* ====== Dark theme ====== */
+    :root[data-theme="dark"] {
+      --bg:         #0B0F14;
+      --surface:    #11151C;
+      --surface-2:  #151B24;
+      --border:     #314461;
+      --muted:      #98A4B3;
+      --text:       #E6EDF5;
+
+      --primary:    var(--blue);
+      --primary-600:#1789DC;
+      --focus:      var(--teal);
+    }
+
+    /* ====== Light theme ====== */
+    :root[data-theme="light"] {
+      --bg:         #F4F5F7;
+      --surface:    #FFFFFF;
+      --surface-2:  #F0F2F5;
+      --border:     #D0D5DD;
+      --muted:      #667085;
+      --text:       #1F2933;
+
+      --primary:    #1C9FFF;
+      --primary-600:#1789DC;
+      --focus:      #0CC4BA;
+    }
+
+    :root[data-theme="colorblind"] {
+      --bg:         #FFFFFF;
+      --surface:    #FFFFFF;
+      --surface-2:  #F4F6F8;
+      --border:     #94A3B8;  /* slate-300-ish for clear delineation */
+      --muted:      #475569;  /* slate-600-ish: readable but not dominant */
+      --text:       #0F172A;  /* very dark slate for max contrast */
+
+      /* Okabe–Ito accents (safe for most CVD types) */
+      --primary:     #0072B2; /* blue */
+      --primary-600: #005A8E; /* darker blue for hover/active */
+      --focus:       #009E73; /* green/teal focus ring */
+    }
+        
+
+    /* Base */
+    html, body { background: var(--bg); color: var(--text); }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin: 2rem;
+      line-height: 1.5;
+    }
+    .container { display: grid; gap: var(--gap); max-width: 1920px; margin: 0 auto; }
+
+    /* Header */
+    .header-actions {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; flex-wrap: wrap;
+      padding-bottom: .5rem; border-bottom: 1px solid var(--border);
+    }
+    header h1 { margin: 0 0 .25rem 0; font-weight: 650; letter-spacing: .2px; }
+    header .small { margin: 0; color: var(--muted); font-size: .95rem; }
+
+    /* Logos */
+    .logos { display: flex; align-items: center; gap: .75rem; }
+    .logos img { height: var(--logo-h); width: auto; object-fit: contain; display: block; filter: none; }
+    .logos img.logo-smile { height: var(--logo-smile-h); }
+    .logos img.logo-nvision { height: var(--logo-nvision-h);}
+    
+    /* Cards / layout */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      box-shadow: 0 6px 18px rgba(0,0,0,.08);
+    }
+    .row { margin: .6rem 0; }
+
+    /* Links & Buttons */
+    a.button, button {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .55rem .8rem;
+      border-radius: .6rem;
+      border: 1px solid var(--primary);
+      background: transparent;
+      color: var(--text);
+      text-decoration: none;
+      cursor: pointer;
+      transition: background .15s ease, border-color .15s ease, box-shadow .15s ease;
+    }
+    a.button:hover, button:hover { background: rgba(28,159,255,.08); border-color: var(--primary-600); }
+    a.button:focus-visible, button:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(12,196,186,.35);
+      border-color: var(--focus);
+    }
+    .danger { color: var(--magenta); border-color: var(--magenta); }
+    .danger:hover { background: rgba(255,62,210,.08); }
+
+    /* Form controls */
+    input, select, label { font-size: 1rem; }
+    input[type="number"] { width: 6rem; }
+    input, select {
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: .5rem;
+      padding: .5rem .6rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    input::placeholder { color: #7C8898; }
+    input:focus, select:focus {
+      outline: none; border-color: var(--focus);
+      box-shadow: 0 0 0 3px rgba(12,196,186,.25);
+    }
+
+    fieldset {
+      border: 1px dashed var(--border);
+      border-radius: .5rem;
+      padding: .5rem .75rem;
+    }
+    legend { padding: 0 .25rem; color: var(--muted); }
+
+    /* Grid helpers */
+    .flex { display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; }
+
+    /* >>> Two-column cards (responsive) <<< */
+    .grid-2 {
+      display: grid;
+      gap: var(--gap);
+      grid-template-columns: repeat(3, minmax(280px, 1fr));
+      grid-auto-flow: row;                /* fill by columns */
+      align-items: stretch;
+    }
+
+    /* On smaller screens, stack to a single column */
+    @media (max-width: 1024px) {
+      .grid-2 {
+        grid-auto-flow: row;       /* normal flow */
+        grid-template-rows: none;  /* reset */
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Plot container */
+    .result {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: .6rem;
+      padding: .75rem;
+      overflow: visible;
+    }
+    .accent-bar {
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--teal), var(--amber));
+      border-radius: 3px;
+      opacity: .5;
+    }
+
+    .theme-toggle {
+      border: 1px solid transparent;
+      border-radius: .6rem;
+      padding: .45rem .75rem;
+      cursor: pointer;
+      font-size: .9rem;
+      display: inline-flex;
+      gap: .35rem;
+      align-items: center;
+      transition: background .15s ease, color .15s ease, border-color .15s ease;
+    }
+
+    /* page is light → button dark */
+    .theme-toggle.for-light {
+      background: #0B0F14;
+      color: #E6EDF5;
+      border-color: rgba(0,0,0,.25);
+    }
+    .theme-toggle.for-light:hover {
+      background: #151B24;
+    }
+
+    /* page is dark → button light */
+    .theme-toggle.for-dark {
+      background: #F4F5F7;
+      color: #1F2933;
+      border-color: rgba(255,255,255,.12);
+    }
+    .theme-toggle.for-dark:hover {
+      background: #ffffff;
+    }
+
+    /* ====== Info / warning buttons (templates/help_buttons.html) ====== */
+    .page-head, .card-head {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+    }
+    .page-head > :first-child, .card-head > :first-child { min-width: 0; }
+    .card-head h2 { margin: 0; }
+    .help-row { display: flex; justify-content: flex-end; margin: 1rem 0 .4rem; }
+    .help-buttons { display: flex; gap: .7rem; flex-shrink: 0; }
+    .help { position: relative; }
+
+    .help-btn {
+      --size: 52px;
+      position: relative; width: var(--size); height: var(--size); padding: 0;
+      border-radius: 50%; border: 0; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      font: 800 calc(var(--size) * .5)/1 Georgia, "Times New Roman", serif;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, .28), 0 2px 4px rgba(0, 0, 0, .18),
+                  inset 0 1px 0 rgba(255, 255, 255, .35);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .help-buttons--md .help-btn { --size: 42px; }
+    .help-btn:hover { transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, .32), 0 3px 6px rgba(0, 0, 0, .2), inset 0 1px 0 rgba(255, 255, 255, .35); }
+    .help-btn:active { transform: translateY(0); }
+    .help-btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+    .help-btn[aria-expanded="true"] { transform: translateY(0); box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 25%, transparent),
+                                       0 6px 16px rgba(0, 0, 0, .28); }
+    /* :hover listed too: the global "button:hover" rule above would otherwise repaint them */
+    .help-btn--info, .help-btn--info:hover { color: #fff; font-style: italic; background: linear-gradient(145deg, #6366f1, #4338ca); }
+    .help-btn--warn, .help-btn--warn:hover { color: #3b2400; font-family: inherit; background: linear-gradient(145deg, #ffc940, #f59e0b); }
+    .help-btn--print, .help-btn--print:hover { color: #fff; background: linear-gradient(145deg, #64748b, #334155); }
+    .help-btn__badge {
+      position: absolute; top: -4px; right: -4px; min-width: 20px; height: 20px; padding: 0 5px;
+      border-radius: 10px; background: #dc2626; color: #fff; border: 2px solid var(--surface);
+      font: 700 .72rem/16px system-ui, sans-serif;
+    }
+    /* "!" pulses until opened once, so warnings are noticed without a banner */
+    .help-btn--attention::after {
+      content: ""; position: absolute; inset: 0; border-radius: 50%;
+      box-shadow: 0 0 0 0 rgba(245, 158, 11, .6); animation: help-pulse 2s ease-out infinite;
+    }
+    @keyframes help-pulse { to { box-shadow: 0 0 0 14px rgba(245, 158, 11, 0); } }
+    @media (prefers-reduced-motion: reduce) { .help-btn--attention::after { animation: none; } }
+
+    .help-pop {
+      position: absolute; z-index: 50; top: calc(100% + 12px); right: 0;
+      width: min(460px, 90vw); max-height: 65vh; overflow: auto;
+      background: var(--surface); color: var(--text);
+      border: 1px solid var(--border); border-radius: 14px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, .35), 0 6px 16px rgba(0, 0, 0, .2);
+      padding: .9rem 1.05rem 1rem; text-align: left;
+      font-size: .9rem; line-height: 1.5; font-style: normal; font-weight: 400;
+    }
+    .help-pop.help-pop--left { right: auto; left: 0; }
+    .help-pop--info { border-top: 5px solid #4f46e5; }
+    .help-pop--warn { border-top: 5px solid #f59e0b; }
+    .help-pop__title { font-weight: 700; margin-bottom: .45rem; }
+    .help-pop__body { white-space: normal; }
+    .help-pop .alert {
+      display: flex; gap: .55rem; align-items: flex-start; margin: 0 0 .5rem; padding: .55rem .7rem;
+      border-radius: 10px; background: color-mix(in srgb, #f59e0b 13%, var(--surface));
+      border: 1px solid color-mix(in srgb, #f59e0b 40%, var(--border));
+    }
+    .help-pop .alert:last-child { margin-bottom: 0; }
+    .help-pop .alert__icon { flex-shrink: 0; }
+    @supports not (color: color-mix(in srgb, red, blue)) {
+      .help-pop .alert { background: var(--surface-2); border: 1px solid var(--border); }
+    }
+
+    /* ====== In-dashboard pickers (mood, variable, module, reference group) ======
+       Big, accent-colored and labelled, so the "what am I looking at" choice is
+       impossible to miss. Markup:
+         <form class="picker"><span class="picker__label">Mood shown</span>
+           <select class="picker__select">...</select></form>
+       .picker__chips holds checkbox chips (multi-choice, e.g. reference groups). */
+    .picker {
+      display: inline-flex; align-items: center; flex-wrap: wrap; gap: .6rem .9rem; margin: 0;
+      padding: .55rem .8rem .55rem 1rem; border-radius: 14px;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 22%, var(--surface)),
+                                          color-mix(in srgb, var(--primary) 8%, var(--surface)));
+      border: 2px solid var(--primary);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, .22), 0 0 0 4px color-mix(in srgb, var(--primary) 14%, transparent);
+    }
+    .picker__label {
+      font-size: .78rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--text);
+      display: inline-flex; align-items: center; gap: .4rem;
+    }
+    .picker__label::before { content: "▾"; display: inline-grid; place-items: center; width: 1.4rem; height: 1.4rem;
+      border-radius: 50%; background: var(--primary); color: #fff; font-size: .8rem; }
+    select.picker__select {
+      width: auto; min-width: 14rem; margin: 0; padding: .5rem 2.2rem .5rem .8rem;
+      font-size: 1.05rem; font-weight: 700; color: var(--text); background-color: var(--surface);
+      border: 2px solid var(--primary); border-radius: 10px; cursor: pointer;
+    }
+    select.picker__select:hover { box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 30%, transparent); }
+    .picker__chips { display: inline-flex; flex-wrap: wrap; gap: .4rem; }
+    .picker__chip { display: inline-flex; align-items: center; gap: .35rem; margin: 0; padding: .3rem .7rem;
+      border: 2px solid var(--primary); border-radius: 999px; background: var(--surface); cursor: pointer;
+      font-weight: 600; font-size: .9rem; }
+    .picker__chip input { margin: 0; width: auto; accent-color: var(--primary); }
+    .picker__chip:has(input:checked) { background: var(--primary); color: #fff; }
+    .picker__hint { flex-basis: 100%; font-size: .78rem; color: var(--muted); }
+    @supports not (color: color-mix(in srgb, red, blue)) { .picker { background: var(--surface-2); } }
+
+    /* ====== Print / save as PDF (print button in templates/help_buttons.html) ======
+       The PDF page is designed at dashboard size: 1400 x 990 px, the
+       proportions of A4 landscape (the printer / PDF viewer scales it to
+       the paper). Before printing, the print button lays the page out at a
+       fixed desktop width (html.printing) and redraws the charts to fit,
+       so the PDF looks like the dashboard on a large screen, charts stay
+       vector-sharp and cards are never split across pages. Colors are kept
+       exactly as on screen; page chrome and controls are hidden. */
+    .print-only { display: none; }
+    html.printing .container { width: 1360px; max-width: none; }
+    @page { size: 1400px 990px; margin: 0; }
+    @media print {
+      html, body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: var(--bg); }
+      header, .help-buttons, .toolbar, .theme-toggle, nav, .no-print,
+      form, a.button, .help-pop { display: none !important; }
+      .print-only { display: block; }
+      body { margin: 0; padding: 20px; }   /* page margin inside the page, so it keeps the page color */
+      /* .container is a grid on screen; Chrome won't keep grid items whole across
+         pages, so in print it is a plain stack and each block keeps its own spacing */
+      .container { display: block; width: 1360px; max-width: none; }
+      .container > * { margin-bottom: var(--gap); }
+      .card, .kpi, .donut, .style-box, .section-banner, tr, .result,
+      [class$="-grid"], [class*="-grid "] { break-inside: avoid; page-break-inside: avoid; }
+      .section-banner, .card-head, .page-head { break-after: avoid; page-break-after: avoid; }
+      /* wide tables wrap instead of widening the page (Chrome would shrink every page to fit them) */
+      .table-wrap { overflow: visible !important; }
+      table th, table td { white-space: normal !important; }
+    }
+
+    /* ---------- Participant role badges (role_badges.html) ----------
+       Static (no looping animation): a 3-bar data meter for the amount of
+       data, a sparkle for the demo participant. Colors follow the theme. */
+    .rb { display: inline-flex; align-items: center; gap: .35rem; height: 1.45rem; padding: 0 .6rem;
+          border-radius: 999px; font-size: .74rem; font-weight: 600; letter-spacing: .01em; line-height: 1;
+          white-space: nowrap; vertical-align: middle; cursor: help;
+          border: 1px solid var(--border); color: var(--muted); background: var(--surface-2); }
+    .rb-meter { width: .8rem; height: .8rem; flex: 0 0 auto; }
+    .rb-meter rect { fill: currentColor; opacity: .25; }
+    .rb-meter rect.on { opacity: 1; }
+    .rb--adequate { color: var(--text);
+                    border-color: color-mix(in srgb, var(--ld-2, #0CC4BA) 45%, var(--border));
+                    background: color-mix(in srgb, var(--ld-2, #0CC4BA) 9%, var(--surface-2)); }
+    .rb--adequate .rb-meter { color: var(--ld-2, #0CC4BA); }
+    .rb--limited { border-style: dashed; font-weight: 500; opacity: .85; background: transparent; }
+    /* Demo: one pill in two halves -- a gradient "Demo" half, then the data half. */
+    .rb--demo { padding: 0; gap: 0; overflow: hidden; color: var(--text); border: 1px solid transparent;
+                background: linear-gradient(var(--surface-2), var(--surface-2)) padding-box,
+                            linear-gradient(90deg, var(--ld-1, #1C9FFF), var(--ld-2, #0CC4BA), var(--ld-3, #A729FF)) border-box; }
+    .rb__demo { display: inline-flex; align-items: center; gap: .3rem; height: 100%; padding: 0 .55rem 0 .5rem;
+                color: #fff; font-weight: 700;
+                background: linear-gradient(110deg, var(--ld-1, #1C9FFF), var(--ld-2, #0CC4BA)); }
+    .rb__data { display: inline-flex; align-items: center; gap: .35rem; padding: 0 .6rem 0 .5rem; }
+    .rb__data .rb-meter { color: var(--ld-2, #0CC4BA); }
+    .rb-spark { width: .7rem; height: .7rem; fill: currentColor; transition: transform .4s ease; }
+    .rb--demo:hover .rb-spark, a:hover .rb-spark { transform: rotate(45deg) scale(1.15); }
+    @media (prefers-reduced-motion: reduce) { .rb-spark { transition: none; } }
+    /* the demo participant's card / button */
+    .is-demo { border-color: color-mix(in srgb, var(--ld-2, #0CC4BA) 70%, var(--border)) !important;
+               box-shadow: 0 0 0 1px color-mix(in srgb, var(--ld-2, #0CC4BA) 35%, transparent),
+                           0 6px 18px -10px color-mix(in srgb, var(--ld-1, #1C9FFF) 70%, transparent); }
+    /* ---------- Method badges of the Analytics cards: ML / Statistical model ---------- */
+    .method-badge { display: inline-flex; align-items: center; padding: .08rem .45rem; border-radius: .35rem;
+                    font-size: .68rem; font-weight: 700; letter-spacing: .04em; line-height: 1.4; white-space: nowrap;
+                    vertical-align: middle; cursor: help; }
+    .method-badge--ml { background: color-mix(in srgb, var(--ld-3, #A729FF) 18%, transparent);
+                        color: var(--ld-3, #A729FF); border: 1px solid color-mix(in srgb, var(--ld-3, #A729FF) 55%, transparent); }
+    .method-badge--stats { background: color-mix(in srgb, var(--ld-1, #1C9FFF) 15%, transparent);
+                           color: var(--ld-1, #1C9FFF); border: 1px solid color-mix(in srgb, var(--ld-1, #1C9FFF) 50%, transparent); }
+    .card.is-locked > :not(.ml-blocked):not(h2):not(.info-center) { opacity: .5; }
+    .role-legend { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; align-items: center; font-size: .85rem;
+                   margin: .75rem 0 .25rem; }
+    .ml-blocked { border: 1px dashed var(--border); border-radius: .5rem; padding: .55rem .75rem; font-size: .85rem;
+                  color: var(--muted); margin-bottom: .75rem; }
+    button[disabled] { opacity: .45; cursor: not-allowed; }
+
+    /* ---------- Page loader ----------
+       Shown while the server prepares the next page (from the click on a
+       dashboard button or link) and while a page draws its figures; hidden
+       when the page has finished loading. Colors follow the theme. */
+    :root[data-theme="dark"]       { --ld-1: #1C9FFF; --ld-2: #0CC4BA; --ld-3: #FF3ED2; --ld-veil: rgba(11, 15, 20, .82); }
+    :root[data-theme="light"]      { --ld-1: #1C9FFF; --ld-2: #0CC4BA; --ld-3: #A729FF; --ld-veil: rgba(244, 245, 247, .85); }
+    :root[data-theme="colorblind"] { --ld-1: #0072B2; --ld-2: #009E73; --ld-3: #E69F00; --ld-veil: rgba(255, 255, 255, .88); }
+    .page-loader {
+      position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center;
+      background: var(--ld-veil); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+      opacity: 0; visibility: hidden; transition: opacity .25s ease, visibility 0s linear .25s;
+    }
+    html.is-loading .page-loader { opacity: 1; visibility: visible; transition: opacity .2s ease; }
+    .page-loader__box { display: grid; justify-items: center; gap: 1.1rem; text-align: center; color: var(--text); }
+    .page-loader__orb { position: relative; width: 92px; height: 92px; }
+    .page-loader__ring {
+      position: absolute; inset: 0; border-radius: 50%;
+      background: conic-gradient(from 0deg, transparent 0 15%, var(--ld-1) 40%, var(--ld-2) 70%, var(--ld-3) 100%);
+      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 6px));
+              mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 6px));
+      animation: ld-spin 1.1s linear infinite;
+    }
+    .page-loader__ring--inner { inset: 18px; animation-duration: 1.7s; animation-direction: reverse; opacity: .75; }
+    .page-loader__dot {
+      position: absolute; inset: 38px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, var(--ld-2), var(--ld-1));
+      animation: ld-pulse 1.4s ease-in-out infinite;
+    }
+    .page-loader__bars { display: flex; gap: 5px; align-items: flex-end; height: 22px; }
+    .page-loader__bars span { width: 6px; border-radius: 3px; background: var(--ld-1); animation: ld-bar 1s ease-in-out infinite; }
+    .page-loader__bars span:nth-child(2) { background: var(--ld-2); animation-delay: .12s; }
+    .page-loader__bars span:nth-child(3) { background: var(--ld-3); animation-delay: .24s; }
+    .page-loader__bars span:nth-child(4) { background: var(--ld-2); animation-delay: .36s; }
+    .page-loader__bars span:nth-child(5) { background: var(--ld-1); animation-delay: .48s; }
+    .page-loader__title { font-weight: 700; font-size: 1.05rem; }
+    .page-loader__hint { font-size: .85rem; color: var(--muted); min-height: 1.2em; max-width: 28rem; }
+    @keyframes ld-spin { to { transform: rotate(360deg); } }
+    @keyframes ld-pulse { 0%, 100% { transform: scale(.75); opacity: .7; } 50% { transform: scale(1); opacity: 1; } }
+    @keyframes ld-bar { 0%, 100% { height: 5px; } 50% { height: 22px; } }
+    @media (prefers-reduced-motion: reduce) {
+      .page-loader__ring, .page-loader__ring--inner, .page-loader__dot, .page-loader__bars span { animation-duration: 3s; }
+    }
+    @media print { .page-loader { display: none !important; } }
+  </style>
+
+  
+
+<script src="../../static/plotly.min.js" charset="utf-8"></script>
+<style>
+  .container > *, .ov-grid > * { min-width: 0; }
+  .toolbar { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; margin-top: .75rem; }
+
+  .section-banner {
+    display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; justify-content: space-between;
+    padding: .6rem 1rem; border-radius: .6rem;
+    background: var(--surface-2); border: 1px solid var(--border); border-left: 6px solid var(--primary);
+  }
+  .section-banner h2 { margin: 0; }
+  .section-banner .small { color: var(--muted); }
+
+  .kpi-grid { display: grid; gap: .75rem; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
+  .kpi { background: var(--surface-2); border: 1px solid var(--border); border-top: 3px solid var(--primary);
+         border-radius: .5rem; padding: .6rem .8rem; }
+  .kpi__label { font-size: .85rem; color: var(--muted); }
+  .kpi__value { font-size: 1.6rem; font-weight: 700; margin: .15rem 0; }
+  .kpi__note { font-size: .78rem; color: var(--muted); }
+
+  .ov-grid { display: grid; gap: var(--gap); grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  @media screen and (max-width: 1100px) { .ov-grid { grid-template-columns: minmax(0, 1fr); } }
+
+  .plot-empty { display: flex; align-items: center; justify-content: center; min-height: 200px;
+                color: var(--muted); font-size: .9rem; text-align: center; }
+
+  .table-wrap { overflow-x: auto; }
+  table.game { width: 100%; border-collapse: collapse; font-size: .85rem; }
+  table.game th, table.game td { padding: .45rem .55rem; border-bottom: 1px solid var(--border);
+                                 text-align: right; white-space: nowrap; }
+  table.game th:first-child, table.game td:first-child { text-align: left; font-weight: 700; }
+  table.game th { color: var(--muted); font-weight: 600; background: var(--surface-2); }
+  table.game tr:last-child td { border-top: 2px solid var(--border); }
+  .table-note { font-size: .78rem; color: var(--muted); margin-top: .5rem; }
+</style>
+
+
+<style id="demo-style">
+  .demo-banner { position: sticky; top: 0; z-index: 9999; display: flex; flex-wrap: wrap; gap: .4rem 1rem;
+    align-items: center; justify-content: center; padding: .45rem 1rem; font: 600 .9rem/1.3 system-ui, sans-serif;
+    background: #b45309; color: #fff; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
+  :root[data-theme="colorblind"] .demo-banner { background: #E69F00; color: #111; }
+  .demo-banner a { color: inherit; text-decoration: underline; font-weight: 500; }
+  .demo-off, .demo-off:hover { opacity: .55; cursor: not-allowed !important; filter: grayscale(.4); }
+</style>
+</head>
+
+<body>
+<div class="demo-banner" role="note"><span>Demo - synthetic data, not real participants</span><a href="../index.html">Choose another demo participant</a></div>
+  <div class="page-loader" id="pageLoader" role="status" aria-live="polite">
+    <div class="page-loader__box">
+      <div class="page-loader__orb" aria-hidden="true">
+        <div class="page-loader__ring"></div>
+        <div class="page-loader__ring page-loader__ring--inner"></div>
+        <div class="page-loader__dot"></div>
+      </div>
+      <div class="page-loader__bars" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="page-loader__title" id="pageLoaderTitle">Loading…</div>
+      <div class="page-loader__hint" id="pageLoaderHint"></div>
+    </div>
+  </div>
+  <div class="container">
+    <header>
+      <div class="header-actions">
+        <div>
+          <h1>DSS Prototype</h1>
+          <p class="small">Inspect SMILE cohort by interacting with the first DSS prototype. Data are synthetic.</p>
+          
+          <nav class="row">
+            <button type="button" class="danger demo-off" disabled title="Not available in the demo">Logout</button>
+          </nav>
+          
+        </div>
+
+        <div class="flex">
+          <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            ☀️ Light
+          </button>
+          <div class="logos">
+            <img class="logo-smile" src="../../static/smile.png" alt="SMILE Project logo" />
+            <img src="../../static/EU_emblem.jpg" alt="European Union emblem" />
+          </div>
+        </div>
+      </div>
+    </header>
+
+    
+<div class="card">
+  <div class="page-head">
+    <div>
+      <h2>Cohort Overview</h2>
+      <div class="small">Selected participant: Sofia Demo (Spain)</div>
+      <div class="toolbar">
+        <a class="button" href="home.html">← Back to dashboard</a>
+      </div>
+    </div>
+    
+<div class="help-buttons help-buttons--lg">
+  <div class="help">
+    <button type="button" class="help-btn help-btn--info" data-help-toggle
+            aria-label="Show the explanation" aria-expanded="false" aria-controls="help-page-info">
+      <span aria-hidden="true">i</span>
+    </button>
+    <div class="help-pop help-pop--info" id="help-page-info" role="dialog" aria-label="Explanation" hidden>
+      <div class="help-pop__title">ⓘ About this view</div>
+      <div class="help-pop__body">Who is in the cohort and how it is doing.<br><br>THE COHORT: pick a variable (an ESM mood item, mood valence, sleep quality or an emotional wellbeing factor) with the selector above the tiles; the map of Europe, the tree map and the distribution all show that variable.<br><br>MOOD SCALE: every mood is on a -3 to +3 valence scale (answers 1-7): -3 = negative valence, +3 = positive valence. Negative moods (anxious, irritated, sad, insecure, lonely, stressed) are reversed, so higher is always better: -3 on "anxious" means very anxious, +3 not anxious at all.<br><br>THE GAME: completion and points module by module, over the participants who started the game.<br><br>The selected participant is highlighted in the distribution and their country is outlined on the map.<br></div>
+    </div>
+  </div>
+  <div class="help">
+    <button type="button" class="help-btn help-btn--print" data-print-page
+            aria-label="Print the dashboard or save it as PDF" title="Print / save as PDF">
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="46%" height="46%" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+  </div>
+</div>
+
+<!-- ============================ THE COHORT ============================ -->
+<div class="section-banner">
+  <h2>The cohort</h2>
+  <form class="picker" action="overview-mood_valence.html" data-demo-action="/func/exploration/overview" method="get">
+    <label class="picker__label" for="var-select">Variable shown</label>
+    <select class="picker__select" id="var-select" name="target_var" onchange="this.form.submit()">
+      
+        <optgroup label="Mood">
+          
+            <option value="happy" >happy</option>
+          
+            <option value="enthusiastic" >enthusiastic</option>
+          
+            <option value="relaxed" selected>relaxed</option>
+          
+            <option value="content" >content</option>
+          
+            <option value="anxious" >anxious (reversed)</option>
+          
+            <option value="irritated" >irritated (reversed)</option>
+          
+            <option value="sad" >sad (reversed)</option>
+          
+            <option value="insecure" >insecure (reversed)</option>
+          
+            <option value="lonely" >lonely (reversed)</option>
+          
+            <option value="stressed" >stressed (reversed)</option>
+          
+            <option value="mood_valence" >mood valence (happy &amp; sad)</option>
+          
+        </optgroup>
+      
+        <optgroup label="Sleep">
+          
+            <option value="sleep_quality" >sleep quality</option>
+          
+        </optgroup>
+      
+    </select>
+    <span class="picker__hint">−3 = negative valence, +3 = positive valence.</span>
+  </form>
+</div>
+
+<div class="card">
+  <div class="kpi-grid">
+    
+      <div class="kpi">
+        <div class="kpi__label">Participants</div>
+        <div class="kpi__value">800</div>
+        <div class="kpi__note">one row per participant and sequence · sequences 2</div>
+      </div>
+    
+      <div class="kpi">
+        <div class="kpi__label">Countries</div>
+        <div class="kpi__value">8</div>
+        <div class="kpi__note">Belgium, Cyprus, Germany, Italy, Poland, Slovenia, Spain, United Kingdom</div>
+      </div>
+    
+      <div class="kpi">
+        <div class="kpi__label">Gender</div>
+        <div class="kpi__value">54% female</div>
+        <div class="kpi__note">female 54% · male 46%</div>
+      </div>
+    
+      <div class="kpi">
+        <div class="kpi__label">Age group</div>
+        <div class="kpi__value">56% &lt;17</div>
+        <div class="kpi__note">&lt;17 56% · 17+ 44%</div>
+      </div>
+    
+      <div class="kpi">
+        <div class="kpi__label">Average relaxed</div>
+        <div class="kpi__value">+0.83</div>
+        <div class="kpi__note">scale -3 to 3 · selected participant +0.78</div>
+      </div>
+    
+  </div>
+</div>
+
+<section class="ov-grid">
+  <div class="card">
+    <div class="card-head">
+      <h2 class="h2-inline">Across Europe — relaxed</h2>
+      
+<div class="help-buttons help-buttons--md">
+  <div class="help">
+    <button type="button" class="help-btn help-btn--info" data-help-toggle
+            aria-label="Show the explanation" aria-expanded="false" aria-controls="help-map-info">
+      <span aria-hidden="true">i</span>
+    </button>
+    <div class="help-pop help-pop--info" id="help-map-info" role="dialog" aria-label="Explanation" hidden>
+      <div class="help-pop__title">ⓘ About this view</div>
+      <div class="help-pop__body">Each participating country is colored by the cohort's average of the selected variable (same colors and scale as the tree map). Countries in grey have no participants.<br><br>SUGGESTED INTERACTION:<br><br>- Hover on a country for its average, standard deviation and number of participants.<br><br>- The selected participant's country has a thicker outline.<br></div>
+    </div>
+  </div>
+</div>
+
+    </div>
+    <div class="result"><div style="height:520px; width:100%;">                            <div id="ov-map" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("ov-map")) {                    Plotly.newPlot(                        "ov-map",                        [{"colorbar":{"len":0.75,"thickness":12,"ticktext":["\u22123 negative","\u22122","\u22121","0 neutral","+1","+2","+3 positive"],"tickvals":[-3,-2,-1,0,1,2,3],"title":{"side":"right","text":"relaxed"}},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"hovertemplate":"%{text}\u003cextra\u003e\u003c\u002fextra\u003e","locationmode":"ISO-3","locations":["BEL","CYP","DEU","ITA","POL","SVN","ESP","GBR"],"marker":{"line":{"color":"#1F2933","width":0.6}},"text":["\u003cb\u003eBelgium\u003c\u002fb\u003e\u003cbr\u003eAverage relaxed: 0.78 (SD 1.19)\u003cbr\u003e100 participant(s)","\u003cb\u003eCyprus\u003c\u002fb\u003e\u003cbr\u003eAverage relaxed: 0.71 (SD 1.19)\u003cbr\u003e100 participant(s)","\u003cb\u003eGermany\u003c\u002fb\u003e\u003cbr\u003eAverage relaxed: 0.18 (SD 1.13)\u003cbr\u003e100 participant(s)","\u003cb\u003eItaly\u003c\u002fb\u003e\u003cbr\u003eAverage relaxed: 0.76 (SD 0.93)\u003cbr\u003e100 participant(s)","\u003cb\u003ePoland\u003c\u002fb\u003e\u003cbr\u003eAverage relaxed: 1.05 (SD 0.85)\u003cbr\u003e100 participant(s)","\u003cb\u003eSlovenia\u003c\u002fb\u003e\u003cbr\u003eAverage relaxed: 0.84 (SD 0.79)\u003cbr\u003e100 participant(s)","\u003cb\u003eSpain\u003c\u002fb\u003e\u003cbr\u003eAverage relaxed: 1.13 (SD 0.89)\u003cbr\u003e100 participant(s)","\u003cb\u003eUnited Kingdom\u003c\u002fb\u003e\u003cbr\u003eAverage relaxed: 1.19 (SD 0.65)\u003cbr\u003e100 participant(s)"],"z":{"dtype":"f8","bdata":"wfo\u002fh\u002fny6D+p2QOtwJDmP1TQ7SWN0cY\u002fpI0j1uJT6D8BvAUSFL\u002fwP11Q3zKny+o\u002fTpzc71AU8j8jpkQSvQzzPw=="},"zmax":3,"zmin":-3,"type":"choropleth"},{"colorscale":[[0,"rgba(0,0,0,0)"],[1,"rgba(0,0,0,0)"]],"hovertemplate":"Selected participant's country\u003cextra\u003e\u003c\u002fextra\u003e","locationmode":"ISO-3","locations":["ESP"],"marker":{"line":{"color":"#1F2933","width":3}},"showscale":false,"z":[0],"type":"choropleth"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"geo":{"projection":{"type":"mercator"},"lonaxis":{"range":[-12,36]},"lataxis":{"range":[33,61]},"scope":"europe","showframe":false,"showcoastlines":true,"coastlinecolor":"#E5E7EB","showland":true,"landcolor":"#E5E7EB","showcountries":true,"countrycolor":"#ffffff","showlakes":false,"bgcolor":"rgba(0,0,0,0)"},"font":{"color":"#1F2933","size":12},"margin":{"l":10,"r":10,"t":10,"b":10},"hoverlabel":{"font":{"color":"#1F2933"},"bgcolor":"#ffffff","bordercolor":"#CBD5E1"},"height":520,"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(0,0,0,0)"},                        {"displaylogo": false, "responsive": true, "topojsonURL": "../../static/topojson/"}                    )                };            </script>        </div></div>
+    
+  </div>
+  <div class="card">
+    <div class="card-head">
+      <h2 class="h2-inline">Demographics — relaxed</h2>
+      
+<div class="help-buttons help-buttons--md">
+  <div class="help">
+    <button type="button" class="help-btn help-btn--info" data-help-toggle
+            aria-label="Show the explanation" aria-expanded="false" aria-controls="help-treemap-info">
+      <span aria-hidden="true">i</span>
+    </button>
+    <div class="help-pop help-pop--info" id="help-treemap-info" role="dialog" aria-label="Explanation" hidden>
+      <div class="help-pop__title">ⓘ About this view</div>
+      <div class="help-pop__body">A. DEMOGRAPHICS TREE MAP:<br><br>Shows participant distribution across demographic subgroups. Each box represents a subgroup (e.g., Italian females aged 10–17).<br><br><br>SUGGESTED INTERACTION:<br><br>- Hover on boxes to explore information of each subgroup<br><br>- Click on boxes to focus on one subgroup<br><br>- Click on the little camera at top right of the plot card to download the plot as .PNG file<br><br><br>ADDITIONAL VISUAL ELEMENTS:<br><br>- Color of boxes and colorbar: each box is colored reflecting the subgroup's average value of the variable picked in the dashboard<br></div>
+    </div>
+  </div>
+</div>
+
+    </div>
+    <div class="result"><div style="height:560px; width:100%;">                            <div id="ov-treemap" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("ov-treemap")) {                    Plotly.newPlot(                        "ov-treemap",                        [{"branchvalues":"total","customdata":[["-1.916","relaxed"],["1.867","relaxed"],["2.3550000000000004","relaxed"],["2.4939999999999998","relaxed"],["1.6529999999999996","relaxed"],["1.7409999999999997","relaxed"],["-0.17700000000000005","relaxed"],["1.5359999999999996","relaxed"],["0.9189999999999992","relaxed"],["1.585","relaxed"],["-0.43599999999999994","relaxed"],["1.5549999999999997","relaxed"],["1.8049999999999997","relaxed"],["-0.14100000000000001","relaxed"],["0.06700000000000017","relaxed"],["-0.04700000000000015","relaxed"],["-1.6840000000000002","relaxed"],["0.36999999999999966","relaxed"],["-0.9590000000000001","relaxed"],["0.5630000000000002","relaxed"],["0.3520000000000003","relaxed"],["1.2510000000000003","relaxed"],["0.6660000000000004","relaxed"],["1.0090000000000003","relaxed"],["0.9009999999999998","relaxed"],["0.3680000000000003","relaxed"],["0.09699999999999998","relaxed"],["1.1929999999999996","relaxed"],["0.1809999999999996","relaxed"],["0.29800000000000004","relaxed"],["1.6189999999999998","relaxed"],["1.3769999999999998","relaxed"],["0.14899999999999958","relaxed"],["-0.18900000000000006","relaxed"],["0.18999999999999995","relaxed"],["1.1479999999999997","relaxed"],["-0.891","relaxed"],["-0.1509999999999998","relaxed"],["1.9290000000000003","relaxed"],["0.968","relaxed"],["1.0330000000000004","relaxed"],["-0.9889999999999999","relaxed"],["-0.31800000000000006","relaxed"],["-1.154","relaxed"],["2.117","relaxed"],["0.24199999999999955","relaxed"],["-0.5960000000000001","relaxed"],["0.5310000000000001","relaxed"],["0.2999999999999994","relaxed"],["1.4370000000000003","relaxed"],["-0.879","relaxed"],["-0.9470000000000001","relaxed"],["0.5229999999999997","relaxed"],["1.4880000000000004","relaxed"],["-0.14500000000000002","relaxed"],["1.9880000000000004","relaxed"],["1.4939999999999998","relaxed"],["-0.06400000000000006","relaxed"],["0.935","relaxed"],["1.1280000000000001","relaxed"],["1.4960000000000004","relaxed"],["1.5060000000000002","relaxed"],["1.3010000000000002","relaxed"],["-0.33999999999999986","relaxed"],["-0.9950000000000001","relaxed"],["1.787","relaxed"],["0.12299999999999978","relaxed"],["1.3360000000000003","relaxed"],["1.0149999999999997","relaxed"],["1.064","relaxed"],["2.336000000000001","relaxed"],["0.7439999999999998","relaxed"],["-0.3849999999999998","relaxed"],["0.7969999999999993","relaxed"],["-0.30100000000000016","relaxed"],["1.5069999999999997","relaxed"],["-0.2769999999999997","relaxed"],["0.39599999999999946","relaxed"],["1.654","relaxed"],["1.8600000000000003","relaxed"],["2.1020000000000003","relaxed"],["1.4169999999999998","relaxed"],["2.157","relaxed"],["1.8680000000000003","relaxed"],["0.1710000000000007","relaxed"],["2.776","relaxed"],["1.396","relaxed"],["1.846","relaxed"],["2.2300000000000004","relaxed"],["0.8630000000000009","relaxed"],["-0.31000000000000005","relaxed"],["0.8810000000000002","relaxed"],["1.1509999999999998","relaxed"],["-0.2879999999999998","relaxed"],["2.477999999999999","relaxed"],["0.3059999999999996","relaxed"],["1.8659999999999997","relaxed"],["0.7550000000000003","relaxed"],["0.5329999999999999","relaxed"],["2.3649999999999993","relaxed"],["2.5490000000000004","relaxed"],["2.4379999999999997","relaxed"],["-0.4990000000000001","relaxed"],["-0.746","relaxed"],["2.1289999999999996","relaxed"],["-1.8130000000000002","relaxed"],["2.075","relaxed"],["-1.046","relaxed"],["1.1929999999999996","relaxed"],["0.6650000000000005","relaxed"],["0.6890000000000001","relaxed"],["0.5830000000000002","relaxed"],["0.347","relaxed"],["0.4440000000000004","relaxed"],["0.28800000000000026","relaxed"],["-0.927","relaxed"],["0.7419999999999995","relaxed"],["2.364","relaxed"],["-1.4799999999999998","relaxed"],["0.69","relaxed"],["1.314","relaxed"],["-0.387","relaxed"],["1.7919999999999998","relaxed"],["1.077","relaxed"],["1.2619999999999996","relaxed"],["0.9279999999999995","relaxed"],["1.7279999999999998","relaxed"],["1.2649999999999997","relaxed"],["1.7430000000000003","relaxed"],["-1.625","relaxed"],["1.8860000000000001","relaxed"],["1.1440000000000001","relaxed"],["1.1790000000000003","relaxed"],["0.7850000000000001","relaxed"],["2.3649999999999993","relaxed"],["-0.0950000000000002","relaxed"],["1.9109999999999996","relaxed"],["1.4720000000000004","relaxed"],["0.11800000000000033","relaxed"],["0.7089999999999996","relaxed"],["1.4180000000000001","relaxed"],["0.6880000000000002","relaxed"],["2.074","relaxed"],["-0.5230000000000001","relaxed"],["-0.6789999999999998","relaxed"],["0.02200000000000024","relaxed"],["1.6230000000000002","relaxed"],["1.255","relaxed"],["0.5709999999999997","relaxed"],["0.8710000000000004","relaxed"],["1.9779999999999998","relaxed"],["-0.794","relaxed"],["1.8609999999999998","relaxed"],["2.6580000000000004","relaxed"],["2.535","relaxed"],["2.433","relaxed"],["1.5780000000000003","relaxed"],["0.3949999999999996","relaxed"],["-0.26900000000000013","relaxed"],["0.8819999999999997","relaxed"],["1.726","relaxed"],["0.0950000000000002","relaxed"],["-0.2240000000000002","relaxed"],["1.4379999999999997","relaxed"],["1.4459999999999997","relaxed"],["0.38999999999999924","relaxed"],["2.1929999999999996","relaxed"],["-0.16900000000000004","relaxed"],["1.0970000000000004","relaxed"],["1.9610000000000003","relaxed"],["0.8710000000000004","relaxed"],["1.38","relaxed"],["1.4420000000000002","relaxed"],["0.5899999999999999","relaxed"],["-0.16100000000000003","relaxed"],["0.8550000000000004","relaxed"],["1.0549999999999997","relaxed"],["1.4720000000000004","relaxed"],["0.016000000000000014","relaxed"],["0.07500000000000062","relaxed"],["0.4500000000000006","relaxed"],["0.7829999999999999","relaxed"],["-0.4950000000000001","relaxed"],["2.5140000000000002","relaxed"],["-0.04700000000000015","relaxed"],["1.819","relaxed"],["-1.5019999999999998","relaxed"],["0.2919999999999998","relaxed"],["-1.4740000000000002","relaxed"],["0.13100000000000023","relaxed"],["0.75","relaxed"],["1.2720000000000002","relaxed"],["0.6869999999999998","relaxed"],["1.4960000000000004","relaxed"],["1.9089999999999998","relaxed"],["0.4470000000000005","relaxed"],["-0.15399999999999991","relaxed"],["-0.8860000000000001","relaxed"],["2.373","relaxed"],["2.3129999999999997","relaxed"],["0.7050000000000001","relaxed"],["-0.2469999999999999","relaxed"],["0.35400000000000054","relaxed"],["1.8570000000000002","relaxed"],["1.2190000000000003","relaxed"],["0.9870000000000001","relaxed"],["0.4299999999999997","relaxed"],["-0.35199999999999987","relaxed"],["0.18800000000000017","relaxed"],["1.1799999999999997","relaxed"],["1.2220000000000004","relaxed"],["1.0350000000000001","relaxed"],["0.9180000000000006","relaxed"],["0.20899999999999963","relaxed"],["2.5439999999999996","relaxed"],["0.9019999999999997","relaxed"],["0.6560000000000001","relaxed"],["1.6550000000000002","relaxed"],["0.19100000000000028","relaxed"],["0.24099999999999966","relaxed"],["2.0570000000000004","relaxed"],["-0.44700000000000006","relaxed"],["1.492","relaxed"],["0.7969999999999993","relaxed"],["1.846","relaxed"],["2.2569999999999997","relaxed"],["1.229","relaxed"],["0.016000000000000014","relaxed"],["2.168","relaxed"],["1.343","relaxed"],["1.8440000000000003","relaxed"],["-0.09699999999999998","relaxed"],["1.8719999999999999","relaxed"],["0.4760000000000004","relaxed"],["1.755","relaxed"],["1.8209999999999997","relaxed"],["1.9429999999999996","relaxed"],["-0.7109999999999999","relaxed"],["2.3820000000000006","relaxed"],["-0.29899999999999993","relaxed"],["0.2930000000000006","relaxed"],["0.1980000000000004","relaxed"],["2.8390000000000013","relaxed"],["-0.5529999999999999","relaxed"],["1.9569999999999999","relaxed"],["0.6130000000000009","relaxed"],["0.38400000000000034","relaxed"],["-0.1940000000000004","relaxed"],["1.2729999999999997","relaxed"],["-0.8260000000000001","relaxed"],["0.8439999999999999","relaxed"],["1.2640000000000002","relaxed"],["0.4500000000000006","relaxed"],["1.9320000000000004","relaxed"],["2.072","relaxed"],["1.404","relaxed"],["1.798","relaxed"],["0.3579999999999992","relaxed"],["0.9120000000000004","relaxed"],["0.09999999999999964","relaxed"],["-1.0739999999999998","relaxed"],["1.024","relaxed"],["0.8200000000000003","relaxed"],["1.255","relaxed"],["0.7580000000000005","relaxed"],["1.3639999999999999","relaxed"],["1.7560000000000002","relaxed"],["-0.7490000000000001","relaxed"],["1.3710000000000004","relaxed"],["1.548","relaxed"],["0.2599999999999998","relaxed"],["-1.0119999999999998","relaxed"],["0.6150000000000002","relaxed"],["0.2270000000000003","relaxed"],["-0.758","relaxed"],["1.359","relaxed"],["1.7030000000000003","relaxed"],["1.479","relaxed"],["0.7509999999999999","relaxed"],["0.32399999999999984","relaxed"],["1.3680000000000003","relaxed"],["0.6109999999999993","relaxed"],["1.5750000000000002","relaxed"],["0.8529999999999998","relaxed"],["2.088","relaxed"],["1.455","relaxed"],["2.441","relaxed"],["0.9599999999999995","relaxed"],["2.069","relaxed"],["1.0579999999999998","relaxed"],["2.415","relaxed"],["-0.1680000000000006","relaxed"],["0.9589999999999996","relaxed"],["1.25","relaxed"],["2.6879999999999997","relaxed"],["2.59","relaxed"],["2.816","relaxed"],["0.31499999999999995","relaxed"],["-0.34399999999999986","relaxed"],["2.106","relaxed"],["0.07000000000000028","relaxed"],["2.0460000000000003","relaxed"],["0.718","relaxed"],["1.2480000000000002","relaxed"],["-0.5960000000000001","relaxed"],["-1.6360000000000001","relaxed"],["2.1769999999999996","relaxed"],["1.7350000000000003","relaxed"],["1.5170000000000003","relaxed"],["-0.9980000000000002","relaxed"],["0.3890000000000007","relaxed"],["-0.11799999999999988","relaxed"],["-0.4700000000000002","relaxed"],["0.7419999999999995","relaxed"],["0.5739999999999998","relaxed"],["-0.03500000000000014","relaxed"],["2.2939999999999996","relaxed"],["1.3470000000000004","relaxed"],["1.2649999999999997","relaxed"],["2.035","relaxed"],["0.3070000000000004","relaxed"],["1.2069999999999999","relaxed"],["0.6300000000000003","relaxed"],["1.5679999999999996","relaxed"],["-0.9039999999999999","relaxed"],["2.061","relaxed"],["0.6210000000000004","relaxed"],["-0.34299999999999997","relaxed"],["0.375","relaxed"],["2.338","relaxed"],["1.4720000000000004","relaxed"],["0.20899999999999963","relaxed"],["-1.234","relaxed"],["1.8490000000000002","relaxed"],["1.8639999999999999","relaxed"],["1.4989999999999997","relaxed"],["1.8120000000000003","relaxed"],["0.7629999999999999","relaxed"],["0.13300000000000045","relaxed"],["-0.7639999999999998","relaxed"],["1.3410000000000002","relaxed"],["0.7690000000000001","relaxed"],["0.3019999999999996","relaxed"],["0.18399999999999972","relaxed"],["-0.02300000000000013","relaxed"],["1.6749999999999998","relaxed"],["1.1520000000000001","relaxed"],["-0.20100000000000007","relaxed"],["2.7169999999999996","relaxed"],["2.1849999999999996","relaxed"],["0.43599999999999994","relaxed"],["2.5309999999999997","relaxed"],["1.814","relaxed"],["1.1020000000000003","relaxed"],["1.2690000000000001","relaxed"],["0.9610000000000003","relaxed"],["0.3319999999999994","relaxed"],["0.6240000000000001","relaxed"],["0.8989999999999996","relaxed"],["-0.3420000000000001","relaxed"],["-0.6869999999999998","relaxed"],["1.0830000000000002","relaxed"],["0.43900000000000006","relaxed"],["-0.4460000000000002","relaxed"],["0.5410000000000004","relaxed"],["-0.43800000000000017","relaxed"],["-0.3759999999999999","relaxed"],["0.9279999999999995","relaxed"],["1.6950000000000003","relaxed"],["-1.562","relaxed"],["2.2619999999999996","relaxed"],["1.0620000000000003","relaxed"],["-1.7389999999999999","relaxed"],["1.1980000000000004","relaxed"],["0.2699999999999996","relaxed"],["1.4290000000000003","relaxed"],["-0.08999999999999986","relaxed"],["1.4370000000000003","relaxed"],["1.5519999999999996","relaxed"],["0.0860000000000003","relaxed"],["1.295","relaxed"],["-1.1840000000000002","relaxed"],["2.3520000000000003","relaxed"],["0.7969999999999993","relaxed"],["0.5289999999999999","relaxed"],["1.8659999999999997","relaxed"],["0.05899999999999972","relaxed"],["0.28500000000000014","relaxed"],["2.2750000000000004","relaxed"],["0.14100000000000001","relaxed"],["0.4730000000000003","relaxed"],["-1.0179999999999998","relaxed"],["0.9749999999999996","relaxed"],["-0.9929999999999999","relaxed"],["-0.9609999999999999","relaxed"],["0.6760000000000002","relaxed"],["1.8120000000000003","relaxed"],["2.1929999999999996","relaxed"],["2.1289999999999996","relaxed"],["0.0990000000000002","relaxed"],["1.8479999999999999","relaxed"],["2.157","relaxed"],["1.029","relaxed"],["1.0259999999999998","relaxed"],["1.798","relaxed"],["1.266","relaxed"],["0.10299999999999976","relaxed"],["0.5340000000000003","relaxed"],["0.5250000000000004","relaxed"],["0.9659999999999997","relaxed"],["2.346","relaxed"],["-0.7749999999999999","relaxed"],["1.0629999999999997","relaxed"],["0.7159999999999997","relaxed"],["-0.17300000000000004","relaxed"],["0.7670000000000008","relaxed"],["-0.44899999999999984","relaxed"],["-0.44799999999999995","relaxed"],["2.0279999999999996","relaxed"],["0.7919999999999998","relaxed"],["-0.2530000000000001","relaxed"],["0.6059999999999999","relaxed"],["0.6040000000000005","relaxed"],["1.7800000000000002","relaxed"],["2.822","relaxed"],["1.0810000000000004","relaxed"],["2.0389999999999997","relaxed"],["3.0","relaxed"],["1.5629999999999997","relaxed"],["1.3369999999999997","relaxed"],["1.0579999999999998","relaxed"],["0.051000000000000156","relaxed"],["-0.5150000000000001","relaxed"],["0.7580000000000005","relaxed"],["0.9240000000000008","relaxed"],["0.43999999999999995","relaxed"],["0.8940000000000001","relaxed"],["1.471","relaxed"],["0.3420000000000001","relaxed"],["0.36000000000000076","relaxed"],["1.5730000000000004","relaxed"],["3.0","relaxed"],["-0.20900000000000007","relaxed"],["-1.516","relaxed"],["-0.5939999999999999","relaxed"],["-1.0830000000000002","relaxed"],["-0.9300000000000002","relaxed"],["1.806","relaxed"],["0.7789999999999999","relaxed"],["1.7590000000000003","relaxed"],["0.9949999999999997","relaxed"],["1.4240000000000004","relaxed"],["-0.02699999999999969","relaxed"],["1.1420000000000003","relaxed"],["-0.08599999999999985","relaxed"],["0.8689999999999998","relaxed"],["1.0540000000000003","relaxed"],["1.5220000000000002","relaxed"],["1.8470000000000004","relaxed"],["1.338","relaxed"],["1.617","relaxed"],["-0.8109999999999999","relaxed"],["2.1100000000000003","relaxed"],["-0.1499999999999999","relaxed"],["1.9139999999999997","relaxed"],["2.4050000000000002","relaxed"],["0.9779999999999998","relaxed"],["-0.27","relaxed"],["1.104","relaxed"],["2.4800000000000004","relaxed"],["0.5179999999999993","relaxed"],["0.5839999999999996","relaxed"],["1.6079999999999997","relaxed"],["0.625","relaxed"],["1.4409999999999998","relaxed"],["0.8620000000000001","relaxed"],["1.2770000000000001","relaxed"],["-0.39400000000000013","relaxed"],["1.0199999999999996","relaxed"],["1.484","relaxed"],["2.397000000000001","relaxed"],["1.2809999999999997","relaxed"],["-1.6349999999999998","relaxed"],["1.4450000000000003","relaxed"],["-0.1499999999999999","relaxed"],["-2.5789999999999997","relaxed"],["0.41000000000000014","relaxed"],["0.7140000000000004","relaxed"],["0.5400000000000005","relaxed"],["2.1159999999999997","relaxed"],["1.258","relaxed"],["1.6980000000000004","relaxed"],["1.646","relaxed"],["0.9459999999999997","relaxed"],["1.3399999999999999","relaxed"],["1.6600000000000001","relaxed"],["1.0069999999999997","relaxed"],["0.33699999999999974","relaxed"],["0.5540000000000003","relaxed"],["-0.11100000000000021","relaxed"],["1.702","relaxed"],["0.9390000000000001","relaxed"],["2.1820000000000004","relaxed"],["1.3529999999999998","relaxed"],["2.008","relaxed"],["0.016000000000000014","relaxed"],["0.6199999999999997","relaxed"],["0.8570000000000007","relaxed"],["1.5140000000000002","relaxed"],["0.4180000000000006","relaxed"],["1.5250000000000004","relaxed"],["0.28200000000000003","relaxed"],["3.0","relaxed"],["1.9539999999999997","relaxed"],["1.1310000000000002","relaxed"],["1.697","relaxed"],["-0.15300000000000002","relaxed"],["-0.3340000000000001","relaxed"],["0.7810000000000001","relaxed"],["-0.9590000000000001","relaxed"],["0.6219999999999999","relaxed"],["1.3719999999999999","relaxed"],["0.18599999999999994","relaxed"],["2.032","relaxed"],["-0.246","relaxed"],["-1.279","relaxed"],["1.5990000000000002","relaxed"],["-0.2230000000000003","relaxed"],["-0.6859999999999999","relaxed"],["-0.8769999999999998","relaxed"],["1.4809999999999999","relaxed"],["2.149","relaxed"],["2.473","relaxed"],["0.577","relaxed"],["1.388","relaxed"],["-1.187","relaxed"],["0.9629999999999996","relaxed"],["1.6100000000000003","relaxed"],["-0.6629999999999998","relaxed"],["1.343","relaxed"],["1.3289999999999997","relaxed"],["1.7960000000000003","relaxed"],["2.777","relaxed"],["-0.6259999999999999","relaxed"],["0.06499999999999995","relaxed"],["0.6130000000000009","relaxed"],["0.4109999999999996","relaxed"],["1.9180000000000001","relaxed"],["2.8649999999999993","relaxed"],["0.3879999999999999","relaxed"],["0.2270000000000003","relaxed"],["0.6180000000000003","relaxed"],["0.6420000000000008","relaxed"],["1.1280000000000001","relaxed"],["1.721","relaxed"],["0.3049999999999997","relaxed"],["2.348","relaxed"],["1.6760000000000002","relaxed"],["0.8190000000000004","relaxed"],["3.0","relaxed"],["-0.613","relaxed"],["0.13000000000000034","relaxed"],["2.117","relaxed"],["1.9509999999999996","relaxed"],["0.7999999999999994","relaxed"],["0.5340000000000003","relaxed"],["0.9049999999999998","relaxed"],["2.0570000000000004","relaxed"],["0.09200000000000008","relaxed"],["0.7380000000000009","relaxed"],["-0.08099999999999996","relaxed"],["1.7199999999999998","relaxed"],["1.4240000000000004","relaxed"],["1.0730000000000004","relaxed"],["-1.125","relaxed"],["1.141","relaxed"],["-0.40200000000000014","relaxed"],["2.6130000000000004","relaxed"],["0.8970000000000002","relaxed"],["-1.4479999999999997","relaxed"],["2.404","relaxed"],["0.11000000000000076","relaxed"],["0.4979999999999998","relaxed"],["1.5919999999999996","relaxed"],["0.3319999999999994","relaxed"],["1.0700000000000003","relaxed"],["1.5700000000000003","relaxed"],["0.7249999999999996","relaxed"],["1.3760000000000003","relaxed"],["1.4459999999999997","relaxed"],["0.6600000000000001","relaxed"],["0.6310000000000002","relaxed"],["0.18999999999999995","relaxed"],["-0.6709999999999998","relaxed"],["0.7910000000000004","relaxed"],["1.3449999999999998","relaxed"],["-0.34299999999999997","relaxed"],["1.6180000000000003","relaxed"],["-1.1219999999999999","relaxed"],["1.9269999999999996","relaxed"],["0.3579999999999992","relaxed"],["-0.6749999999999998","relaxed"],["-0.037000000000000366","relaxed"],["0.266","relaxed"],["0.984","relaxed"],["0.1420000000000008","relaxed"],["-0.05299999999999949","relaxed"],["-1.6309999999999996","relaxed"],["-0.5489999999999999","relaxed"],["1.0309999999999997","relaxed"],["-0.8410000000000002","relaxed"],["2.724","relaxed"],["0.42900000000000027","relaxed"],["1.7679999999999998","relaxed"],["0.41899999999999915","relaxed"],["0.020999999999999464","relaxed"],["1.9059999999999997","relaxed"],["-0.0819999999999994","relaxed"],["1.9820000000000002","relaxed"],["0.56","relaxed"],["-0.9670000000000001","relaxed"],["1.423","relaxed"],["1.306","relaxed"],["1.2220000000000004","relaxed"],["0.3330000000000002","relaxed"],["1.202","relaxed"],["0.7389999999999994","relaxed"],["1.3079999999999998","relaxed"],["-0.605","relaxed"],["0.4569999999999994","relaxed"],["1.3600000000000003","relaxed"],["0.06000000000000005","relaxed"],["1.8319999999999999","relaxed"],["0.14599999999999946","relaxed"],["1.891","relaxed"],["-0.621","relaxed"],["1.2590000000000003","relaxed"],["1.3360000000000003","relaxed"],["1.3769999999999998","relaxed"],["-1.0330000000000001","relaxed"],["0.8460000000000001","relaxed"],["-1.4020000000000001","relaxed"],["0.46199999999999974","relaxed"],["1.2149999999999999","relaxed"],["1.396","relaxed"],["-0.46399999999999997","relaxed"],["0.04100000000000037","relaxed"],["0.14899999999999958","relaxed"],["2.0549999999999997","relaxed"],["0.38400000000000034","relaxed"],["2.143","relaxed"],["1.0860000000000003","relaxed"],["0.28400000000000025","relaxed"],["0.20199999999999996","relaxed"],["0.08499999999999952","relaxed"],["0.7789999999999999","relaxed"],["2.7699999999999996","relaxed"],["1.561","relaxed"],["0.7599999999999998","relaxed"],["0.3740000000000001","relaxed"],["-0.22699999999999987","relaxed"],["2.383","relaxed"],["1.4960000000000004","relaxed"],["2.4160000000000004","relaxed"],["-1.665","relaxed"],["0.6169999999999995","relaxed"],["1.4720000000000004","relaxed"],["1.0899999999999999","relaxed"],["0.14100000000000001","relaxed"],["0.3330000000000002","relaxed"],["0.33399999999999963","relaxed"],["0.8190000000000004","relaxed"],["1.1109999999999998","relaxed"],["1.7039999999999997","relaxed"],["-0.2749999999999999","relaxed"],["0.548","relaxed"],["1.5979999999999999","relaxed"],["2.1470000000000002","relaxed"],["2.3099999999999996","relaxed"],["1.3689999999999998","relaxed"],["2.0629999999999997","relaxed"],["2.128","relaxed"],["0.3520000000000003","relaxed"],["0.9440000000000004","relaxed"],["0.02699999999999969","relaxed"],["1.8090000000000002","relaxed"],["2.708000000000001","relaxed"],["0.484","relaxed"],["1.1630000000000003","relaxed"],["2.018","relaxed"],["1.2919999999999998","relaxed"],["0.0009999999999998899","relaxed"],["1.3639999999999999","relaxed"],["0.6910000000000003","relaxed"],["2.1710000000000003","relaxed"],["-0.13600000000000056","relaxed"],["1.2030000000000003","relaxed"],["0.8989999999999996","relaxed"],["-1.021","relaxed"],["2.79","relaxed"],["0.20199999999999996","relaxed"],["2.2270000000000003","relaxed"],["0.5640000000000001","relaxed"],["-0.9750000000000001","relaxed"],["0.6440000000000001","relaxed"],["0.9219999999999993","relaxed"],["2.3470000000000004","relaxed"],["1.045","relaxed"],["0.7240000000000002","relaxed"],["0.5389999999999997","relaxed"],["0.935","relaxed"],["0.5839999999999996","relaxed"],["1.4420000000000002","relaxed"],["1.0990000000000002","relaxed"],["1.0590000000000002","relaxed"],["1.1520000000000001","relaxed"],["-1.327","relaxed"],["1.2110000000000003","relaxed"],["0.8800000000000003","relaxed"],["1.4420000000000002","relaxed"],["-0.17300000000000004","relaxed"],["0.5129999999999999","relaxed"],["0.9139999999999997","relaxed"],["-0.14100000000000001","relaxed"],["1.673","relaxed"],["0.7039999999999993","relaxed"],["3.0","relaxed"],["0.29800000000000004","relaxed"],["-0.07500000000000062","relaxed"],["1.4089999999999998","relaxed"],["1.3280000000000003","relaxed"],["-0.8809999999999998","relaxed"],["1.0099999999999998","relaxed"],["-0.2759999999999998","relaxed"],["0.6630000000000003","relaxed"],["-0.13099999999999978","relaxed"],["0.2520000000000002","relaxed"],["0.597","relaxed"],["-0.01200000000000001","relaxed"],["1.279","relaxed"],["0.18399999999999972","relaxed"],["2.064","relaxed"],["1.641","relaxed"],["1.0069999999999997","relaxed"],["0.8200000000000003","relaxed"],["1.7350000000000003","relaxed"],["0.9880000000000009","relaxed"],["1.266","relaxed"],["-0.46399999999999997","relaxed"],["0.359","relaxed"],["1.6849999999999996","relaxed"],["-0.19600000000000017","relaxed"],["1.9240000000000004","relaxed"],["1.1520000000000001","relaxed"],["0.4670000000000001","relaxed"],["1.2539999999999996","relaxed"],["-1.3950000000000002","relaxed"],["-0.1469999999999998","relaxed"],["1.3280000000000003","relaxed"],["1.46","relaxed"],["-0.657","relaxed"],["1.7679999999999998","relaxed"],["-1.2830000000000001","relaxed"],["2.0140000000000002","relaxed"],["0.9009999999999998","relaxed"],["1.0990000000000002","relaxed"],["-1.421","relaxed"],["-0.44499999999999984","relaxed"],["1.6130000000000004","relaxed"],["-0.009999999999999787","relaxed"],["1.5099999999999998","relaxed"],["-0.2900000000000005","relaxed"],["0.7030000000000007","relaxed"],["0.7550000000000003","relaxed"],["1.1310000000000002","relaxed"],["2.037","relaxed"],["0.5419999999999998","relaxed"],["1.1950000000000003","relaxed"],["1.388","relaxed"],["1.569","relaxed"],["2.295","relaxed"],["1.2999999999999998","relaxed"],["0.516","relaxed"],["1.2089999999999996","relaxed"],["1.8550000000000004","relaxed"],["0.10500000000000043","relaxed"],["2.651","relaxed"],["0.46899999999999986","relaxed"],["0.5329999999999999","relaxed"],["1.7199999999999998","relaxed"],["0.5","relaxed"],["0.3770000000000002","relaxed"],["0.2569999999999997","relaxed"],["0.3780000000000001","relaxed"],["0.04399999999999915","relaxed"],["0.798","relaxed"],["1.7969999999999997","relaxed"],["-1.048","relaxed"],["2.0940000000000003","relaxed"],["-0.20400000000000018","relaxed"]],"domain":{"x":[0.0,1.0],"y":[0.0,1.0]},"hovertemplate":"\u003cb\u003eSubgroup: %{label}\u003c\u002fb\u003e\u003cbr\u003eNumber of users: %{value}\u003cbr\u003eShare of parent: %{percentParent:.1%}\u003cbr\u003eShare of total: %{percentRoot:.1%}\u003cbr\u003eAverage %{customdata[1]}: %{customdata[0]:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","ids":["Cyprus\u002fmale\u002f\u003c17","Belgium\u002ffemale\u002f17+","United Kingdom\u002ffemale\u002f\u003c17","Italy\u002ffemale\u002f17+","Spain\u002ffemale\u002f\u003c17","Belgium\u002fmale\u002f\u003c17","United Kingdom\u002fmale\u002f\u003c17","Poland\u002fmale\u002f17+","Poland\u002ffemale\u002f17+","Germany\u002fmale\u002f\u003c17","Slovenia\u002ffemale\u002f\u003c17","Cyprus\u002ffemale\u002f\u003c17","Poland\u002fmale\u002f\u003c17","Germany\u002ffemale\u002f17+","Germany\u002ffemale\u002f\u003c17","Belgium\u002fmale\u002f17+","United Kingdom\u002ffemale\u002f17+","Cyprus\u002ffemale\u002f17+","Poland\u002ffemale\u002f\u003c17","Belgium\u002ffemale\u002f\u003c17","Italy\u002fmale\u002f17+","Italy\u002ffemale\u002f\u003c17","Cyprus\u002fmale\u002f17+","United Kingdom\u002fmale\u002f17+","Spain\u002fmale\u002f\u003c17","Slovenia\u002fmale\u002f\u003c17","Slovenia\u002fmale\u002f17+","Spain\u002fmale\u002f17+","Italy\u002fmale\u002f\u003c17","Slovenia\u002ffemale\u002f17+","Spain\u002ffemale\u002f17+","Germany\u002fmale\u002f17+","Cyprus\u002fmale","Belgium\u002ffemale","United Kingdom\u002ffemale","Italy\u002ffemale","Spain\u002ffemale","Belgium\u002fmale","United Kingdom\u002fmale","Poland\u002fmale","Poland\u002ffemale","Germany\u002fmale","Slovenia\u002ffemale","Cyprus\u002ffemale","Germany\u002ffemale","Italy\u002fmale","Spain\u002fmale","Slovenia\u002fmale","Cyprus","Belgium","United Kingdom","Italy","Spain","Poland","Germany","Slovenia"],"labels":["\u003c17","17+","\u003c17","17+","\u003c17","\u003c17","\u003c17","17+","17+","\u003c17","\u003c17","\u003c17","\u003c17","17+","\u003c17","17+","17+","17+","\u003c17","\u003c17","17+","\u003c17","17+","17+","\u003c17","\u003c17","17+","17+","\u003c17","17+","17+","17+","male","female","female","female","female","male","male","male","female","male","female","female","female","male","male","male","Cyprus","Belgium","United Kingdom","Italy","Spain","Poland","Germany","Slovenia"],"marker":{"coloraxis":"coloraxis","colors":{"dtype":"f8","bdata":"gZVDi2xH5D9TnS3V2VLnP\u002fvDxDfOm\u002fU\u002fWx0TPJin6z+E2+69SI\u002fzPzl9\u002fCPPtOU\u002f9ihcj8I18j8kBoGVQ4voPxTFZQruwfI\u002fzx37NlsFvj9C2O3HpG\u002frP7fVWkaYUPE\u002fN\u002fjCZKrg8T\u002fm0CLb+f7HP2EHzhlR2rs\u002fDThIjmga8T81peLsw6fxP66UZYhjXdo\u002fwOyePCzU8T\u002fBTe2ooVvnPwzrDF6jK+c\u002fv9H2seg56D+Cif5OVsvXP7H8HIigjfI\u002fKZ4ifMNb8T\u002ftw2fYFaDrP1JGb8taHec\u002fc2iR7Xw\u002f7T9phahAKRnmP54uokGf3+s\u002fukkMAiuH8z8CklRKc8\u002fWP+18PzVeuuE\u002fXux7mfxX5z\u002fZJaq3BrbzP1jN\u002fv5Zx+k\u002fbvnpeU2L8z+qKxLlbcLqP2wm32xzY\u002fI\u002fo3A9Ctej7T\u002fC9Shcj0LyP8PViDm4HMs\u002fzU+mBTCY6z+fO3JCrK\u002fqPwkv169alMM\u002fNemI3v+w5j+3BzWFdW3wPz3XIWUzsek\u002fqdkDrcCQ5j\u002fB+j+H+fLoPyOmRBK9DPM\u002fpI0j1uJT6D9OnNzvUBTyPwG8BRIUv\u002fA\u002fVNDtJY3Rxj9dUN8yp8vqPw=="}},"name":"","parents":["Cyprus\u002fmale","Belgium\u002ffemale","United Kingdom\u002ffemale","Italy\u002ffemale","Spain\u002ffemale","Belgium\u002fmale","United Kingdom\u002fmale","Poland\u002fmale","Poland\u002ffemale","Germany\u002fmale","Slovenia\u002ffemale","Cyprus\u002ffemale","Poland\u002fmale","Germany\u002ffemale","Germany\u002ffemale","Belgium\u002fmale","United Kingdom\u002ffemale","Cyprus\u002ffemale","Poland\u002ffemale","Belgium\u002ffemale","Italy\u002fmale","Italy\u002ffemale","Cyprus\u002fmale","United Kingdom\u002fmale","Spain\u002fmale","Slovenia\u002fmale","Slovenia\u002fmale","Spain\u002fmale","Italy\u002fmale","Slovenia\u002ffemale","Spain\u002ffemale","Germany\u002fmale","Cyprus","Belgium","United Kingdom","Italy","Spain","Belgium","United Kingdom","Poland","Poland","Germany","Slovenia","Cyprus","Germany","Italy","Spain","Slovenia","","","","","","","",""],"values":{"dtype":"i1","bdata":"IBYaGBscGBgaGiUiFCAZExgUHh8aHQ4aHxgSEBUVGhEuNTI1NS8yLDgrOjY5Ly8qZGRkZGRkZGQ="},"type":"treemap"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"coloraxis":{"colorbar":{"title":{"text":"relaxed"},"tickvals":[-3,-2,-1,0,1,2,3],"ticktext":["\u22123 negative","\u22122","\u22121","0 neutral","+1","+2","+3 positive"]},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"cmid":0.83,"cmin":-3,"cmax":3,"autocolorscale":false},"legend":{"tracegroupgap":0},"title":{},"font":{"color":"#1F2933","size":12},"margin":{"t":10,"l":5,"r":5,"b":5},"hoverlabel":{"font":{"size":13,"color":"#1F2933"},"bgcolor":"#ffffff","bordercolor":"#CBD5E1","namelength":-1},"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"#ffffff","height":560},                        {"responsive": true}                    )                };            </script>        </div></div>
+    
+  </div>
+</section>
+
+<div class="card">
+  <div class="card-head">
+    <h2 class="h2-inline">Distribution by country — relaxed</h2>
+    
+<div class="help-buttons help-buttons--md">
+  <div class="help">
+    <button type="button" class="help-btn help-btn--info" data-help-toggle
+            aria-label="Show the explanation" aria-expanded="false" aria-controls="help-violin-info">
+      <span aria-hidden="true">i</span>
+    </button>
+    <div class="help-pop help-pop--info" id="help-violin-info" role="dialog" aria-label="Explanation" hidden>
+      <div class="help-pop__title">ⓘ About this view</div>
+      <div class="help-pop__body">DISTRIBUTION BY COUNTRY:<br><br>One violin per country with every participant's average of the selected variable; the violin is colored by the country's average (same colors as the map and the tree map). Inside: a box (median and quartiles) and the mean (line). Each dot is a participant (shape and color = gender); the large star is the selected participant.<br><br>For moods, the lower half (below 0) is negative valence and the upper half positive valence; negative moods are reversed.<br><br>SUGGESTED INTERACTION:<br><br>- Hover on a violin for the country's mean, median and n; on a dot for the participant's gender, age group and value.<br><br>- Click a gender in the legend to hide or show it.<br></div>
+    </div>
+  </div>
+</div>
+
+  </div>
+  <div class="result"><div style="height:540px; width:100%;">                            <div id="ov-violin" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("ov-violin")) {                    Plotly.newPlot(                        "ov-violin",                        [{"box":{"fillcolor":"rgba(255, 255, 255, 0.6)","line":{"color":"#1F2933","width":1},"visible":true,"width":0.18},"fillcolor":"rgba(41, 175, 127, 0.45)","hoveron":"violins","hovertemplate":"\u003cb\u003eBelgium\u003c\u002fb\u003e\u003cbr\u003emean 0.78 \u00b7 median 0.82\u003cbr\u003en = 100\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"rgba(41,175,127,1)","width":1.5},"meanline":{"color":"#1F2933","visible":true,"width":2},"name":"Belgium","points":false,"showlegend":false,"spanmode":"hard","width":0.75,"x":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"y":{"dtype":"f8","bdata":"rBxaZDvf\u002fT9AYOXQItv7P8CfGi\u002fdJPA\u002foEW28\u002f3U7D8A1XjpJjHIv+j7qfHSTe6\u002f7FG4HoXr7T\u002fA9Shcj8LVv9ijcD0K1++\u002faJHtfD81BkAMVg4tsp3rPzIIrBxaZARAWA4tsp3v3782XrpJDAL9v\u002fhT46WbxNi\u002fAAAAAAAA+r\u002fsfD81Xrrlv6Dvp8ZLN9G\u002f0E1iEFg57D\u002foKFyPwvXYP+BPjZduEvc\u002fwPHSTWIQqL+0yHa+nxr9P+Clm8QgsNI\u002fAFTjpZvEwD8cL90kBoHzP8xLN4lBYO0\u002f3Pl+arx0AEA0XrpJDALrP\u002fp+arx0kwBA+FPjpZvE\u002fD+o8\u002f3UeOnWP4CZmZmZmbk\u002fyHa+nxov8b+6SQwCK4cDQFK4HoXrUQNAMC\u002fdJAaBxb8AAAAAAAD0P1gOLbKd7++\u002fAFK4HoXrob8830+Nl27yP3Joke18PwRA2HjpJjEI3L94vp8aL932PxQv3SQGgek\u002fQJHtfD81rj9ACtejcD3SPzQzMzMzMwJAQDVeukkMwj8wMzMzMzPvPyyyne+nxu+\u002f1HjpJjEIAUDAnxov3STGv9JNYhBYOQBAjBbZzvdT4z8AAAAAAAAIQBSDwMqhRfI\u002f9H5qvHST4D8w3SQGgZXrP5YYBFYOLQNAKFyPwvUo+r8wMzMzMzPDv+Ai2\u002fl+ary\u002fCKwcWmQ7+z9ANV66SQzuP2hmZmZmZvg\u002fAAAAAAAACEDkpZvEILDuv8DKoUW28\u002fU\u002fwMqhRbbz5b9iEFg5tMgDQGiR7Xw\u002fNfY\u002foEW28\u002f3U2D8AAAAAAAAIQNz5fmq8dABAINv5fmq8tL+gGi\u002fdJAbRP8QgsHJokeG\u002fCKwcWmQ78z8cWmQ730\u002f9P6wcWmQ73+O\u002fKFyPwvUoBkDASzeJQWDVP2yR7Xw\u002fNeo\u002fmJmZmZmZ0b96FK5H4XoCQIDO91PjpZs\u002fRots5\u002fupBUDsJjEIrBzmP1K4HoXrUQZA7FG4HoXr7T8IrBxaZDv1v6Dvp8ZLN+U\u002f6CYxCKwc8D9ACtejcD3qP+zQItv5fuY\u002fUI2XbhKD4D+wR+F6FK79PwAAAAAAAOA\u002fQEkMAiuHpj8="},"type":"violin"},{"box":{"fillcolor":"rgba(255, 255, 255, 0.6)","line":{"color":"#1F2933","width":1},"visible":true,"width":0.18},"fillcolor":"rgba(38, 172, 129, 0.45)","hoveron":"violins","hovertemplate":"\u003cb\u003eCyprus\u003c\u002fb\u003e\u003cbr\u003emean 0.71 \u00b7 median 0.89\u003cbr\u003en = 100\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"rgba(38,172,129,1)","width":1.5},"meanline":{"color":"#1F2933","visible":true,"width":2},"name":"Cyprus","points":false,"showlegend":false,"spanmode":"hard","width":0.75,"x":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],"y":{"dtype":"f8","bdata":"Di2yne+n\u002fr\u002fgehSuR+H8P2y8dJMYBOI\u002fSAwCK4cW8z+AlUOLbOf5P1CNl24Sg+y\u002f2M73U+Ol779WDi2yne8AQOBPjZduEuO\u002foHA9Ctej2L8QWDm0yHb6PwDVeOkmMew\u002fauf7qfHSA0CsHFpkO9\u002fnv0zhehSuR+U\u002foBov3SQG9T\u002fgpZvEILDmP2Q730+NlwBALIcW2c73+T+cxCCwcmjpv4DpJjEIrMy\u002fFK5H4XoU9j\u002fqJjEIrBwEQDDdJAaBlfe\u002fGi\u002fdJAaBAkBEi2zn+6nzPxSuR+F6FPw\u002fSAwCK4cW\u002fz+Q7Xw\u002fNV70PzzfT42Xbuq\u002foHA9Ctej0D+wR+F6FK7jP6jGSzeJQei\u002fWmQ730+NAEAaL90kBoEFQNAi2\u002fl+agFAVDm0yHa+5z8mMQisHFoCQEgMAiuHFvk\u002fILByaJHt7L+wHFpkO9\u002fjP2zn+6nx0v0\u002fUGQ730+Nxz96FK5H4XoBQOj7qfHSTfQ\u002fLIcW2c734z+UQ4ts5\u002fvlv8yhRbbz\u002ffY\u002fuB6F61G49D98PzVeuknwvwDTTWIQWLk\u002fNF66SQwC8T8oXI\u002fC9SjcP5CXbhKDwMq\u002fqMZLN4lB+L+IFtnO91Pxv5zEILByaPU\u002fsJ3vp8ZL7z+g76fGSzfZvyCF61G4Hvc\u002fILByaJHtAEDISzeJQWDVvzAGgZVDi8y\u002fqPHSTWIQ7L+c76fGSzflv9wkBoGVQ\u002fU\u002fMLKd76fG4z8EVg4tsp3jv5SZmZmZmek\u002fYGQ730+Ntz+ClUOLbOcEQGy8dJMYBPY\u002fwMqhRbbz8b+YmZmZmZnlv7ByaJHtfO8\u002ffD81XrpJ\u002fD+MbOf7qfHuv0w3iUFg5fQ\u002fxPUoXI\u002fC9T\u002fAHoXrUbiuP6jGSzeJQf4\u002f1HjpJjEI9j++nxov3SQBQKRwPQrXo\u002fq\u002fXGQ730+N9z8gWmQ730\u002fVP5QYBFYOLQFA0PdT46Wb5D8sXI\u002fC9SjsP+BPjZduEvc\u002fQIts5\u002fup0b8830+Nl27yP+omMQisHABAoEW28\u002f3U7D8j2\u002fl+arz2vyhcj8L1KPg\u002fLFyPwvUo6D9oke18PzUFQITrUbgehfs\u002f+FPjpZvE8L8="},"type":"violin"},{"box":{"fillcolor":"rgba(255, 255, 255, 0.6)","line":{"color":"#1F2933","width":1},"visible":true,"width":0.18},"fillcolor":"rgba(30, 151, 138, 0.45)","hoveron":"violins","hovertemplate":"\u003cb\u003eGermany\u003c\u002fb\u003e\u003cbr\u003emean 0.18 \u00b7 median 0.10\u003cbr\u003en = 100\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"rgba(30,151,138,1)","width":1.5},"meanline":{"color":"#1F2933","visible":true,"width":2},"name":"Germany","points":false,"showlegend":false,"spanmode":"hard","width":0.75,"x":[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],"y":{"dtype":"f8","bdata":"gJVDi2zn278A\u002ftR46SaxP8Dx0k1iEKi\u002fjGzn+6nx+r+oR+F6FK7XP+Slm8QgsO6\u002f1HjpJjEI9j\u002fQT42XbhLDPxBYObTIdvK\u002fKDMzMzMz0z9U46WbxCDsvyDb+X5qvOA\u002fOIlBYOXQ9D\u002fYo3A9CtcBQDjfT42XbtK\u002fI9v5fmq88L8QLbKd76fiP2iR7Xw\u002fNdY\u002frUfhehSu97\u002fYzvdT46X7P5QYBFYOLf4\u002fgJHtfD81vj\u002fkpZvEILD2P7AcWmQ73+s\u002fJAaBlUOLAUDgehSuR+HiP9R46SYxCPi\u002fGC2yne+n1j+4SQwCK4fWv9D3U+Olm9y\u002fdpMYBFYOA0CGwMqhRbYGQBgEVg4tsuG\u002f2MzMzMzM3D8QWDm0yHb2PyyHFtnO9+e\u002f\u002fdR46SYx8L8g2\u002fl+arzUP7gehetRuARAAFK4HoXrsT+UGARWDi36vxiuR+F6FN6\u002fXGQ730+N9T9YObTIdr7zv4BkO99PjZe\u002f9FPjpZvE7D+Aarx0kxjcP6jx0k1iENi\u002fIIXrUbge+z\u002fLoUW28\u002f34v2zn+6nx0vu\u002f+FPjpZvE\u002fD+A7Xw\u002fNV66PwDVeOkmMdC\u002fMAisHFpk9T8Y2c73U+PVPxjXo3A9Ctc\u002fNF66SQwC47\u002fE9Shcj8Ltv4DO91PjpZu\u002fYLx0kxgEtr\u002fsfD81Xrr5P3STGARWDvc\u002fbhKDwMqhBMBM4XoUrkfhPwCq8dJNYpA\u002f1KNwPQrX4z+oxks3iUEAQKBwPQrXo7A\u002f5KWbxCCw\u002fj+AkxgEVg7NP\u002fCnxks3ifs\u002fAAAAAAAA8r9dukkMAiv3v0S28\u002f3UeOW\u002fQEFg5dAiq799arx0kxj6v+D5fmq8dNs\u002fgC7dJAaBlT\u002fQpZvEILDCP8CfGi\u002fdJPQ\u002fPN9PjZdu9r+g9Shcj8K1P0A1XrpJDMI\u002fwEkMAiuH1j8AqPHSTWJQP7DEILByaMG\u002fQGDl0CLbyT9ANV66SQzCv2AzMzMzM7O\u002fWOOlm8Qg0D8YBFYOLbLdvxjZzvdT490\u002fU7gehetR9r8wiUFg5dDCv7tJDAIrh\u002fS\u002feBSuR+F63L8EK4cW2c75P1yPwvUoXAJAAHsUrkfhuj8="},"type":"violin"},{"box":{"fillcolor":"rgba(255, 255, 255, 0.6)","line":{"color":"#1F2933","width":1},"visible":true,"width":0.18},"fillcolor":"rgba(40, 174, 127, 0.45)","hoveron":"violins","hovertemplate":"\u003cb\u003eItaly\u003c\u002fb\u003e\u003cbr\u003emean 0.76 \u00b7 median 0.92\u003cbr\u003en = 100\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"rgba(40,174,127,1)","width":1.5},"meanline":{"color":"#1F2933","visible":true,"width":2},"name":"Italy","points":false,"showlegend":false,"spanmode":"hard","width":0.75,"x":[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3],"y":{"dtype":"f8","bdata":"wMqhRbbzA0AQLbKd76fGv2y8dJMYBPQ\u002fULgehetRyD+Q7Xw\u002fNV7yPygxCKwcWtS\u002fzKFFtvP99j9YDi2yne\u002f3PwArhxbZzuc\u002f6NJNYhBY2T\u002fYo3A9CtfTvyxcj8L1KOg\u002fdJMYBFYO4T8aL90kBoEDQNR46SYxCAFAQN9PjZdu0j9Ei2zn+6ntv1Q5tMh2vuc\u002ftvP91HjpAkAUrkfhehTmPxjZzvdT4\u002fs\u002fJNv5fmq84L9cZDvfT43xP2CPwvUoXOs\u002fKDEIrBxa9D9YDi2yne\u002f3PygxCKwcWuy\u002fhMDKoUW2\u002fT8w3SQGgZXvP3STGARWDgJAGFg5tMh23j+Ml24Sg8Dmv4hBYOXQItO\u002f1E1iEFg59D\u002f4U+Olm8T4P0SLbOf7qfc\u002f1HjpJjEI6D9I4XoUrkf3P7QehetRuO4\u002fFIPAyqFF+D9gke18PzW+vzwK16NwPfQ\u002f4M73U+Ol0z\u002fAyqFFtvPVv6SbxCCwcui\u002f3Pl+arx09T+AFtnO91PTPxQEVg4tsu0\u002fjGzn+6nx8r+Ml24Sg8Duv\u002fhT46WbxAJAtPP91Hjp5j8AAAAAAAAIQDReukkMAvk\u002f0PdT46Wb7D\u002fwp8ZLN4n3P3i+nxov3fA\u002fwMqhRbbz6b84tMh2vp\u002f+P0SLbOf7qfE\u002fPN9PjZdu9D9ACtejcD3aPxACK4cW2eY\u002fVOOlm8Qg9D8Qg8DKoUXuP0A1XrpJDNI\u002fMN0kBoGVw7\u002fMoUW28\u002f3oPxBYObTIdvS\u002f1HjpJjEI5L+A61G4HoXTP7BwPQrXo8A\u002f9Chcj8L17D9gukkMAivxPyCF61G4Hvk\u002fiEFg5dAi9z+goUW28\u002f20vyBaZDvfT9U\u002fILByaJHt9D\u002fISzeJQWD1P4gW2c73UwNAvHSTGARW8L84iUFg5dABQDQzMzMzM++\u002fMN0kBoGV8T+MbOf7qfHwPzzfT42XbvI\u002fyEs3iUFg8z\u002fQItv5fmrgP3Boke18P+0\u002f4E+Nl24S0z8oXI\u002fC9SjwP6jx0k1iEPQ\u002foBov3SQG5b8w3SQGgZXxPwAUrkfheoS\u002fmML1KFyP0r+Aarx0kxjyP\u002fDSTWIQWPM\u002faLx0kxgE3j8="},"type":"violin"},{"box":{"fillcolor":"rgba(255, 255, 255, 0.6)","line":{"color":"#1F2933","width":1},"visible":true,"width":0.18},"fillcolor":"rgba(56, 185, 118, 0.45)","hoveron":"violins","hovertemplate":"\u003cb\u003ePoland\u003c\u002fb\u003e\u003cbr\u003emean 1.05 \u00b7 median 0.98\u003cbr\u003en = 100\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"rgba(56,185,118,1)","width":1.5},"meanline":{"color":"#1F2933","visible":true,"width":2},"name":"Poland","points":false,"showlegend":false,"spanmode":"hard","width":0.75,"x":[4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4],"y":{"dtype":"f8","bdata":"lMQgsHJo7T9cj8L1KFz5P0A1XrpJDMK\u002fULpJDAIrxz9Q5dAi2\u002fnOP4CVQ4ts5\u002fc\u002fAKrx0k1isL+Aarx0kxj4P+AkBoGVQ9O\u002f6CYxCKwc+D\u002fE9Shcj8L9P6jGSzeJQQFA8KfGSzeJ\u002fT\u002fQItv5fmryPyjdJAaBldM\u002fFARWDi2y7T8ghetRuB7pPwBKDAIrh5Y\u002fYLgehetRuD90kxgEVg7pP7BH4XoUrt+\u002f2PdT46Wb3D+WQ4ts5\u002fsCQIDrUbgehds\u002fJjEIrBxaBEDMoUW28\u002f3kPwACK4cW2c4\u002f8tJNYhBYAUCwcmiR7Xz1P4hBYOXQIv0\u002frMZLN4lB6D90aJHtfD\u002f7P7Cd76fGS+s\u002f4KWbxCCw7j9g5dAi2\u002fnmP5DtfD81XuI\u002fHFpkO99P8z9OYhBYObQCQICXbhKDwMo\u002fMN0kBoGV\u002fT+UQ4ts5\u002fv3P7AaL90kBsE\u002fzMzMzMzM+j+Ql24Sg8DuPygGgZVDi9y\u002fIFpkO99P4T9+arx0kxgCQDiJQWDl0AJAGIPAyqFF3j\u002fQItv5fmrwP+J6FK5H4QBASOF6FK5H0b\u002fgpZvEILDiPwAAAAAAAOQ\u002fYLpJDAIr+z+8dJMYBFb6P5DC9Shcj\u002fo\u002f6CYxCKwc8D\u002fAILByaJHVP9jO91PjpfU\u002f3CQGgZVD\u002fz+Aarx0kxjyP\u002fT91HjpJvs\u002fMN0kBoGV+T80iUFg5dDuP8T1KFyPwvk\u002fnu+nxks3BkDqUbgehesGQDiJQWDl0Po\u002fVg4tsp3vAECc76fGSzf\u002fP2QQWDm0yPY\u002fqMZLN4lB8j9QYhBYObTsPzAzMzMzM+c\u002fwMqhRbbz1b8Y2c73U+P5P6jz\u002fdR46dY\u002fKIlBYOXQ2j\u002fsUbgehevhP\u002fhT46WbxPY\u002fXGQ730+N8z\u002fAILByaJHdP7x0kxgEVvY\u002fGARWDi2y3b8AokW28\u002f2kP0Bg5dAi28k\u002fWA4tsp3v1z8aL90kBoEAQND3U+Olm\u002fI\u002f9FPjpZvE7D8usp3vp8YCQLgehetRuPA\u002fwJ8aL90kxr\u002f4U+Olm8T6P7RJDAIrh+Y\u002fAAAAAAAACED81HjpJjHsv\u002fBT46WbxMC\u002fANV46SYx2D8="},"type":"violin"},{"box":{"fillcolor":"rgba(255, 255, 255, 0.6)","line":{"color":"#1F2933","width":1},"visible":true,"width":0.18},"fillcolor":"rgba(43, 177, 125, 0.45)","hoveron":"violins","hovertemplate":"\u003cb\u003eSlovenia\u003c\u002fb\u003e\u003cbr\u003emean 0.84 \u00b7 median 0.79\u003cbr\u003en = 100\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"rgba(43,177,125,1)","width":1.5},"meanline":{"color":"#1F2933","visible":true,"width":2},"name":"Slovenia","points":false,"showlegend":false,"spanmode":"hard","width":0.75,"x":[5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5],"y":{"dtype":"f8","bdata":"4HoUrkfh+D\u002fgT42XbhLTP4AW2c73U8O\u002fBCuHFtnO9z+QwvUoXI\u002fCv6ByaJHtfL8\u002fyEs3iUFg9T+gGi\u002fdJAbxPxQv3SQGgek\u002f6Hw\u002fNV660b946SYxCKz2P7x0kxgEVvY\u002fPArXo3A99D\u002fo+6nx0k3yPxCDwMqhReI\u002f2M73U+Ol\u002fz9A4XoUrkfZP4hBYOXQIvc\u002fyEs3iUFg\u002fz\u002fQ91PjpZvEv+B6FK5H4fA\u002fXGQ730+N9z9gMzMzMzOzP9jMzMzMzNw\u002fkML1KFyP5j8AVg4tsp3Pv7Dx0k1iEMg\u002fdL6fGi\u002fd7D+wm8QgsHLIP6wcWmQ73\u002fc\u002fFC\u002fdJAaB6T8AqvHSTWKQP6BFtvP91Li\u002fmJduEoPA0j8A001iEFjJPxxaZDvfT\u002f8\u002fsEW28\u002f3UyL8UrkfhehT0P4BqvHSTGPw\u002fgJMYBFYOzT8Y2c73U+P1P2i8dJMYBNa\u002fDAIrhxbZAEDgT42XbhLjvyxcj8L1KOQ\u002fAAAAAAAA2D+AlUOLbOfbP3ASg8DKofE\u002faGiR7Xw\u002f1T+IFtnO91PxP0DhehSuR9E\u002fANejcD0Kt78gsHJoke3gP3ASg8DKoeU\u002fqMZLN4lBAUD6fmq8dJMGQCCwcmiR7fA\u002ffBSuR+F64L+sxks3iUHoP9SjcD0K1+8\u002fKDEIrBxa+D9cZDvfT439PzAzMzMzM8O\u002fPgrXo3A9A0Dk0CLb+X70P\u002fB8PzVeuuE\u002fqvHSTWIQAECYl24Sg8DaPxgEVg4tsvc\u002f\u002ftR46SYxAUBANV66SQzyP2yR7Xw\u002fNeo\u002fDFYOLbKd5z+E61G4HoX7P2Bcj8L1KLw\u002fqBxaZDvf3z8gWmQ730\u002fpP6BFtvP91P4\u002fwGzn+6nxor9cj8L1KFzjv+BPjZduEus\u002f0E+Nl24Swz8gsHJoke3oP3CTGARWDs2\u002fqvHSTWIQA0CAlUOLbOf1P3jpJjEIrPQ\u002fbOf7qfHS9T+S7Xw\u002fNV4BQBQv3SQGge0\u002fcGiR7Xw\u002f4T\u002fgT42XbhL3P1BkO99Pjcc\u002fUI2XbhKDAEAMVg4tsp3vP2Dl0CLb+dY\u002fUAwCK4cWyb9oke18PzX2P1jjpZvEINg\u002f8CYxCKwcyr8="},"type":"violin"},{"box":{"fillcolor":"rgba(255, 255, 255, 0.6)","line":{"color":"#1F2933","width":1},"visible":true,"width":0.18},"fillcolor":"rgba(62, 188, 115, 0.45)","hoveron":"violins","hovertemplate":"\u003cb\u003eSpain\u003c\u002fb\u003e\u003cbr\u003emean 1.13 \u00b7 median 1.31\u003cbr\u003en = 100\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"rgba(62,188,115,1)","width":1.5},"meanline":{"color":"#1F2933","visible":true,"width":2},"name":"Spain","points":false,"showlegend":false,"spanmode":"hard","width":0.75,"x":[6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6],"y":{"dtype":"f8","bdata":"pJvEILBy+j\u002fASQwCK4fWP3i+nxov3f4\u002fvEkMAiuH8D8EK4cW2c7\u002fP2Q730+Nl\u002fw\u002f5qWbxCCwAkA4iUFg5dAAQBjZzvdT4\u002f0\u002fQGDl0CLb\u002fT\u002fqUbgehesCQJqZmZmZmQBA2CLb+X5q3D8IrBxaZDvxP+pRuB6F6wJAYLgehetRuL9cZDvfT433PxSuR+F6FPQ\u002fLLKd76fG\u002fT\u002feJAaBlUMFQEjhehSuRwRABFYOLbKd+z9wEoPAyqHFvwCq8dJNYpA\u002flEOLbOf75T8kBoGVQ4v+P4DAyqFFtsO\u002fXGQ730+N8z8MVg4tsp3jPwB\u002farx0k9g\u002fzHa+nxov7T\u002f8qfHSTWLwP1g5tMh2vvU\u002fNDMzMzMz+T9OYhBYObQAQLpJDAIrhwZAzKFFtvP9\u002fD\u002fQItv5fmroP\u002fB8PzVeusm\u002foBov3SQG\u002fT8Y2c73U+PVv8yhRbbz\u002ffA\u002fYLpJDAIr8z+gRbbz\u002fdT4P4C8dJMYBLY\u002fQGDl0CLb\u002fT8kBoGVQ4sBQMQgsHJokf0\u002fEFg5tMh28D+08\u002f3UeOnuP8zMzMzMzOi\u002fINv5fmq83L946SYxCKzcv3wUrkfhevw\u002fYLpJDAIr+T9MN4lBYOX8PyCwcmiR7eg\u002fwJ8aL90k\u002fD9kEFg5tMj2PwArhxbZzus\u002frBxaZDvf+T9YObTIdr73P3A9CtejcPU\u002f3Pl+arx0AUDUTWIQWDn4P7ByaJHtfM+\u002fy6FFtvP98r8k2\u002fl+arz8P+D7qfHSTdo\u002fTAwCK4cW4T\u002fwfD81XrrZvwisHFpkOwNARLbz\u002fdR4+T8ghetRuB7xP1C4HoXrUcg\u002fuPP91Hjp6r+EwMqhRbb\u002fP9TO91Pjpec\u002fu0kMAiuH8L+YGARWDi3SP1Q5tMh2vuM\u002fxCCwcmiR+T+gGi\u002fdJAYBQIxs5\u002fup8fw\u002fYOXQItv53j++nxov3SQAQEA1XrpJDOI\u002f4KWbxCCw4j8kBoGVQ4v2P3Roke18P\u002fU\u002ftMh2vp8a4z+oxks3iUH6P8T1KFyPwvs\u002fqMZLN4lB9D9cj8L1KFz3P\u002fDSTWIQWOE\u002fzMzMzMzM9D90kxgEVg7hP6CbxCCwctA\u002f8KfGSzeJ6T8="},"type":"violin"},{"box":{"fillcolor":"rgba(255, 255, 255, 0.6)","line":{"color":"#1F2933","width":1},"visible":true,"width":0.18},"fillcolor":"rgba(66, 190, 113, 0.45)","hoveron":"violins","hovertemplate":"\u003cb\u003eUnited Kingdom\u003c\u002fb\u003e\u003cbr\u003emean 1.19 \u00b7 median 1.15\u003cbr\u003en = 100\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"rgba(66,190,113,1)","width":1.5},"meanline":{"color":"#1F2933","visible":true,"width":2},"name":"United Kingdom","points":false,"showlegend":false,"spanmode":"hard","width":0.75,"x":[7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7],"y":{"dtype":"f8","bdata":"2KNwPQrXAkD4fmq8dJP4PyBaZDvfT+U\u002fYGQ730+N1z+gRbbz\u002fdS4P2Dl0CLb+e4\u002fzKFFtvP94D9ANV66SQzyPzwK16NwPfA\u002fMNnO91PjxT9IDAIrhxbzP0A1XrpJDOY\u002feOkmMQis\u002fD\u002f81HjpJjH0P3i+nxov3fI\u002f+H5qvHST\u002fj9svHSTGATmPxBYObTIdgNAdGiR7Xw\u002f+T80XrpJDAL3P7AcWmQ73+s\u002fAAAAAAAA6D\u002fgehSuR+HyP5DC9Shcj\u002fA\u002fgJduEoPAyj98FK5H4Xr6P\u002fCnxks3if0\u002fHC\u002fdJAaB\u002fT\u002fAyqFFtvP9P7jz\u002fdR46f4\u002fQArXo3A96j9s5\u002fup8dL1P1gOLbKd7\u002fU\u002fVGQ730+N4z8gsHJoke3wPyhcj8L1KNQ\u002fku18PzVeAEAshxbZzvfzP8T1KFyPwvs\u002fWDeJQWDl2D9I4XoUrkcAQLByaJHtfABAXGQ730+N9z\u002fQ91PjpZvoPyLb+X5qvAVAzKFFtvP9\u002fD+oxks3iUH0P0wMAiuHFuE\u002f0MzMzMzM4D8sBoGVQ4voP\u002fDSTWIQWOk\u002fMAisHFpk4z+0ne+nxkvxPxxaZDvfTwBAACcxCKwcqj\u002fMILByaJHtP9ijcD0K1wNAULgehetR8D8MgZVDi2zrP4CVQ4ts5+M\u002fACuHFtnOxz8QWDm0yHbiP7ByaJHtfPU\u002fDFYOLbKd4z8sBoGVQ4vkP2IQWDm0yAJAaGiR7Xw\u002f1T8ghetRuB7lPwDVeOkmMeQ\u002fhOtRuB6F9T+wGARWDi3CP+TQItv5fvA\u002fmG4Sg8DKBUDk0CLb+X7+P2hoke18P90\u002fcD0K16Nw8z9wPQrXo3AAQAB\u002farx0k9g\u002fyEs3iUFg8T9g5dAi2\u002fn4P1C4HoXrUeg\u002fWA4tsp3v9z9wPQrXo3DxPyyyne+nxvE\u002f3CQGgZVD+z\u002fwp8ZLN4nhP2yR7Xw\u002fNe4\u002fdGiR7Xw\u002f8z9gukkMAivnPwB\u002farx0k4i\u002fEFg5tMh29D\u002f0KFyPwvX6P2QQWDm0yP4\u002fdGiR7Xw\u002f9T98PzVeukn8P7Kd76fGSwBAIIXrUbge8z+0yHa+nxr5P4yXbhKDwPw\u002fjpduEoPAAEA="},"type":"violin"},{"customdata":[["Belgium","17+"],["United Kingdom","\u003c17"],["Italy","17+"],["Spain","\u003c17"],["Italy","17+"],["Poland","17+"],["Slovenia","\u003c17"],["Cyprus","\u003c17"],["Germany","17+"],["Germany","\u003c17"],["Germany","17+"],["Spain","\u003c17"],["Italy","17+"],["United Kingdom","\u003c17"],["United Kingdom","17+"],["United Kingdom","17+"],["Cyprus","17+"],["Poland","\u003c17"],["Slovenia","\u003c17"],["Cyprus","\u003c17"],["Germany","17+"],["Germany","17+"],["Belgium","\u003c17"],["Italy","\u003c17"],["Slovenia","\u003c17"],["Spain","\u003c17"],["Cyprus","17+"],["Italy","\u003c17"],["Germany","17+"],["Cyprus","\u003c17"],["Poland","17+"],["Germany","17+"],["Italy","17+"],["Belgium","\u003c17"],["Germany","17+"],["Poland","17+"],["Belgium","\u003c17"],["United Kingdom","\u003c17"],["Germany","\u003c17"],["Belgium","\u003c17"],["Slovenia","\u003c17"],["United Kingdom","17+"],["Cyprus","\u003c17"],["Slovenia","\u003c17"],["Poland","\u003c17"],["Poland","17+"],["Poland","17+"],["Poland","\u003c17"],["United Kingdom","17+"],["Slovenia","17+"],["Germany","17+"],["Italy","17+"],["Cyprus","\u003c17"],["Poland","17+"],["Germany","17+"],["Cyprus","17+"],["Poland","17+"],["Spain","17+"],["Italy","\u003c17"],["Spain","\u003c17"],["Cyprus","17+"],["Spain","17+"],["Germany","\u003c17"],["United Kingdom","17+"],["Germany","17+"],["Germany","17+"],["Spain","\u003c17"],["Italy","\u003c17"],["Italy","17+"],["Italy","17+"],["Germany","17+"],["Italy","\u003c17"],["Belgium","\u003c17"],["United Kingdom","17+"],["Slovenia","17+"],["Belgium","\u003c17"],["Germany","17+"],["Poland","\u003c17"],["Spain","\u003c17"],["Spain","\u003c17"],["Spain","17+"],["Germany","17+"],["Cyprus","17+"],["United Kingdom","\u003c17"],["Spain","\u003c17"],["Slovenia","17+"],["Spain","17+"],["Spain","\u003c17"],["United Kingdom","17+"],["Slovenia","\u003c17"],["Belgium","17+"],["Belgium","17+"],["Spain","\u003c17"],["Cyprus","17+"],["United Kingdom","17+"],["Slovenia","\u003c17"],["Slovenia","\u003c17"],["United Kingdom","17+"],["Belgium","17+"],["Italy","17+"],["Slovenia","17+"],["Slovenia","17+"],["Poland","17+"],["Cyprus","\u003c17"],["Belgium","\u003c17"],["United Kingdom","17+"],["Italy","17+"],["Spain","17+"],["Italy","\u003c17"],["Spain","17+"],["Poland","17+"],["Poland","\u003c17"],["Cyprus","\u003c17"],["Slovenia","17+"],["Germany","17+"],["Italy","17+"],["Poland","17+"],["Germany","\u003c17"],["Slovenia","\u003c17"],["United Kingdom","17+"],["Spain","\u003c17"],["Belgium","\u003c17"],["United Kingdom","\u003c17"],["Poland","\u003c17"],["Slovenia","17+"],["Poland","\u003c17"],["United Kingdom","\u003c17"],["Slovenia","\u003c17"],["Germany","\u003c17"],["Slovenia","\u003c17"],["Poland","17+"],["United Kingdom","17+"],["United Kingdom","17+"],["Italy","\u003c17"],["Cyprus","\u003c17"],["Germany","17+"],["Germany","\u003c17"],["Slovenia","\u003c17"],["Cyprus","\u003c17"],["Italy","\u003c17"],["Belgium","17+"],["Germany","\u003c17"],["Belgium","\u003c17"],["Spain","\u003c17"],["United Kingdom","17+"],["Germany","\u003c17"],["United Kingdom","17+"],["Italy","17+"],["Germany","17+"],["Cyprus","\u003c17"],["Slovenia","\u003c17"],["Poland","\u003c17"],["Italy","\u003c17"],["Germany","17+"],["Slovenia","\u003c17"],["United Kingdom","\u003c17"],["Spain","\u003c17"],["Spain","17+"],["Belgium","\u003c17"],["Italy","17+"],["Belgium","\u003c17"],["Belgium","\u003c17"],["Poland","\u003c17"],["Belgium","\u003c17"],["Cyprus","\u003c17"],["Germany","\u003c17"],["United Kingdom","17+"],["United Kingdom","\u003c17"],["Slovenia","\u003c17"],["Cyprus","\u003c17"],["Italy","\u003c17"],["Belgium","17+"],["Cyprus","\u003c17"],["Germany","\u003c17"],["United Kingdom","\u003c17"],["Slovenia","\u003c17"],["Italy","\u003c17"],["Slovenia","17+"],["United Kingdom","\u003c17"],["Poland","\u003c17"],["Spain","17+"],["Spain","17+"],["Poland","\u003c17"],["Italy","\u003c17"],["Italy","\u003c17"],["Germany","\u003c17"],["Slovenia","17+"],["Belgium","17+"],["Slovenia","\u003c17"],["Poland","17+"],["Slovenia","\u003c17"],["Cyprus","\u003c17"],["Germany","\u003c17"],["Cyprus","\u003c17"],["Poland","17+"],["Germany","17+"],["Poland","17+"],["Spain","\u003c17"],["Spain","17+"],["Slovenia","\u003c17"],["Belgium","\u003c17"],["Slovenia","\u003c17"],["Cyprus","\u003c17"],["Spain","\u003c17"],["Cyprus","17+"],["Italy","17+"],["Poland","17+"],["Slovenia","\u003c17"],["Spain","17+"],["Belgium","\u003c17"],["Belgium","\u003c17"],["Cyprus","17+"],["Belgium","\u003c17"],["Italy","\u003c17"],["Poland","\u003c17"],["Germany","\u003c17"],["Spain","\u003c17"],["Italy","\u003c17"],["Spain","17+"],["Belgium","17+"],["Germany","17+"],["Belgium","\u003c17"],["Spain","\u003c17"],["Slovenia","\u003c17"],["United Kingdom","\u003c17"],["Italy","\u003c17"],["Italy","\u003c17"],["Slovenia","17+"],["United Kingdom","\u003c17"],["Italy","17+"],["Italy","\u003c17"],["Germany","17+"],["Cyprus","17+"],["Cyprus","\u003c17"],["Spain","\u003c17"],["Spain","17+"],["Slovenia","\u003c17"],["Germany","17+"],["Germany","17+"],["Spain","\u003c17"],["Slovenia","\u003c17"],["Cyprus","17+"],["Spain","\u003c17"],["Poland","17+"],["Slovenia","17+"],["Slovenia","\u003c17"],["Cyprus","\u003c17"],["Italy","\u003c17"],["United Kingdom","\u003c17"],["Belgium","\u003c17"],["Germany","17+"],["Italy","\u003c17"],["Slovenia","\u003c17"],["Belgium","17+"],["Cyprus","17+"],["Belgium","17+"],["Germany","\u003c17"],["Poland","17+"],["Italy","17+"],["Spain","17+"],["Poland","17+"],["Slovenia","\u003c17"],["Belgium","\u003c17"],["Belgium","\u003c17"],["Poland","17+"],["Slovenia","17+"],["Germany","\u003c17"],["United Kingdom","\u003c17"],["Slovenia","17+"],["Belgium","\u003c17"],["Belgium","\u003c17"],["Poland","\u003c17"],["Poland","\u003c17"],["Poland","\u003c17"],["Cyprus","17+"],["Italy","17+"],["Belgium","17+"],["Belgium","17+"],["United Kingdom","\u003c17"],["Spain","17+"],["Italy","\u003c17"],["Cyprus","\u003c17"],["Belgium","\u003c17"],["Cyprus","17+"],["Slovenia","\u003c17"],["Belgium","17+"],["Poland","\u003c17"],["Cyprus","\u003c17"],["United Kingdom","17+"],["Spain","\u003c17"],["Poland","\u003c17"],["Italy","\u003c17"],["United Kingdom","\u003c17"],["Germany","\u003c17"],["Belgium","17+"],["Cyprus","\u003c17"],["United Kingdom","\u003c17"],["Germany","17+"],["Poland","17+"],["Slovenia","17+"],["Cyprus","17+"],["Italy","\u003c17"],["Poland","17+"],["Poland","17+"],["Cyprus","\u003c17"],["Cyprus","\u003c17"],["Belgium","\u003c17"],["Poland","\u003c17"],["Poland","\u003c17"],["Spain","17+"],["Cyprus","\u003c17"],["Poland","\u003c17"],["Spain","17+"],["Slovenia","\u003c17"],["Slovenia","17+"],["Spain","17+"],["Poland","\u003c17"],["United Kingdom","17+"],["Germany","17+"],["Slovenia","17+"],["Germany","17+"],["United Kingdom","\u003c17"],["Germany","\u003c17"],["Germany","17+"],["United Kingdom","\u003c17"],["Italy","17+"],["Poland","17+"],["Cyprus","17+"],["Belgium","17+"],["Spain","\u003c17"],["United Kingdom","17+"],["Cyprus","\u003c17"],["Cyprus","\u003c17"],["Germany","\u003c17"],["Cyprus","\u003c17"],["Germany","17+"],["Italy","17+"],["Cyprus","\u003c17"],["Spain","\u003c17"],["Slovenia","\u003c17"],["Germany","17+"],["Poland","17+"],["Poland","\u003c17"],["United Kingdom","\u003c17"],["United Kingdom","17+"],["Poland","\u003c17"],["Germany","17+"],["Belgium","\u003c17"],["United Kingdom","17+"],["Slovenia","17+"],["United Kingdom","\u003c17"],["Italy","17+"],["United Kingdom","17+"],["Cyprus","17+"],["Belgium","17+"],["Belgium","17+"],["United Kingdom","\u003c17"],["United Kingdom","\u003c17"],["Belgium","17+"],["Spain","\u003c17"],["Cyprus","17+"],["Belgium","17+"],["Slovenia","\u003c17"],["Spain","17+"],["Germany","\u003c17"],["United Kingdom","\u003c17"],["Belgium","17+"],["Spain","17+"],["Poland","\u003c17"],["Spain","17+"],["Slovenia","\u003c17"],["Slovenia","\u003c17"],["Poland","\u003c17"],["Italy","17+"],["Belgium","\u003c17"],["Germany","\u003c17"],["Italy","\u003c17"],["Spain","17+"],["Italy","\u003c17"],["Cyprus","\u003c17"],["Poland","\u003c17"],["Poland","\u003c17"],["Slovenia","\u003c17"],["Belgium","\u003c17"],["Slovenia","17+"],["Italy","17+"],["Poland","17+"],["Germany","\u003c17"],["Poland","\u003c17"],["Italy","17+"],["Germany","17+"],["Poland","\u003c17"],["Italy","\u003c17"],["Cyprus","\u003c17"],["Belgium","17+"],["Poland","\u003c17"],["Germany","\u003c17"],["United Kingdom","17+"],["Slovenia","\u003c17"],["Spain","\u003c17"],["Belgium","\u003c17"],["Belgium","\u003c17"],["Spain","17+"],["Germany","\u003c17"],["Slovenia","\u003c17"],["Slovenia","17+"],["Cyprus","17+"],["Italy","17+"],["Germany","\u003c17"],["Spain","17+"],["Italy","\u003c17"],["United Kingdom","17+"],["Germany","\u003c17"],["Cyprus","\u003c17"],["Cyprus","17+"],["Italy","\u003c17"],["Cyprus","\u003c17"],["Cyprus","\u003c17"],["Italy","\u003c17"],["Spain","\u003c17"],["Slovenia","17+"],["United Kingdom","\u003c17"],["Spain","\u003c17"],["Belgium","17+"],["Italy","17+"],["Cyprus","\u003c17"],["Slovenia","17+"],["Spain","17+"],["Poland","17+"],["Belgium","\u003c17"],["Spain","17+"],["United Kingdom","\u003c17"],["Cyprus","17+"],["Slovenia","\u003c17"]],"hovertemplate":"%{customdata[0]} \u00b7 female \u00b7 %{customdata[1]}\u003cbr\u003erelaxed: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#1C9FFF","line":{"color":"#ffffff","width":1},"opacity":0.9,"size":8,"symbol":"circle"},"mode":"markers","name":"female","x":{"dtype":"f8","bdata":"bDpkOXcurD9OC3X597IcQN\u002f+Egdt+AhAIWNXeTCEF0CFRgYE7UsHQM0P1+hOqBBA6blOoxchE0D6jqpC7kLyPyqV3fixCwFAqK30CTbG\u002fz\u002fTTqhkBJ3+P+qZmN0qnBdAu+5QqxsjB0CAyKTqQOcbQFFSiZwMAhxAl4t4kBoYHEAHEZirAn3zP6lh7pvcgxBAKKwWkAw3FEDuHrE5OXHzP9IKqf7q\u002fv0\u002fVNRw256b\u002fT90fHkZWVqpPw2vSXoJZQZATxqhzcsuE0CKNZlTtQYYQCRNHrcwhu8\u002fjK+2EOt3CUBcnuHHcnQAQLRO1oFxGfA\u002fyJM5vi79D0ACjU0X9jj+P6QYdV0RSAZAIcQE2etSwb+Q+JVCC60AQAyBefI18g5AhPrDZQ9krb\u002fFGT8KZyAbQBTG06BpKQFAbNxk1vN1w7\u002fK0XcfSpcTQHfR3slcqxxAjqE5OKUR8D+osdB5aZwUQK5djnLzPhBAsjFlrO5sEECn0wV2448OQK1ZpqqJEhBAdkfReYADHEDZWwqIT6cUQC2h8ev2Bf8\u002fe+eqwnlYCEC+9v7TVMvpPxSGFSa+mg9A5fiZqxHB\u002fj\u002fWQTHkJhPrP4dF8n+HjhBAHfKW6q7JF0A2JXfHaK8JQGn4ufGLKBhA0g1MKla98D9hi0L9LD4YQCtyXboAnwBAzc1+t6hiG0CFrBI4bpT\u002fPx3XqrqhKv4\u002fySF70xHUF0AcWYD9lJQGQG6C97eRpQlAloxWNy\u002f\u002fBkCPJSXxx5oAQBgXL5AnTAdAG8GRomkRxT+ZH5lkFkkcQLmyllQFWhNAP6oGA0Fvwz8hD1mi85ABQKFEmB79tRBA14cJpGkfGEBNdOkoQmAXQK2ryLRvdRdAj4+sKJiBAUAS2TYNTl7wP9VdEdoRcBtA8KmgaQqtGEDnYi1byT8UQB8RlMVmHxhAbqCTn0LIF0DtNXZI4dcbQGRBe8+fihNA9dwuykAEyr\u002fr6u7sSjDFP95bEOV18RdAkz2gndlV8D9cZve3368bQHElJKk8cRRAG\u002fqanBIqE0CVRH1racYbQLNfwzNfc8q\u002f0ulJNy6sBkBtaXRyetIUQHPzFacURxRAgyk0XVG\u002fD0BNCSUOySrwP1v32iIi\u002f8Q\u002fcwohvM65G0A5hjjuXFEIQIlA1sXCUhhAaArj4LV9B0B31DPimggYQFVLQIaCdxBAT1nuHVy4EEAgq0fOQhbrP00giwxIwxRAG5vPqzaE\u002fD+YG\u002fCM9uMIQJ4bPjXpixBAkbu3lFxx\u002fT+azxkTdtsTQH3F5rcKjhxA3yUvaCYlF0BUDRXJnfCsP1siUlUGhBxAwMt+4NsFEEBpJyQ7wmUUQHNp0od5CQ9AUb2Oaip4G0Ct4UKaVMITQNyqwnQ2vv0\u002fRxiLNaS6E0AFbYsi6MkQQFIBKnEKIRxAsMbc6fC3G0Clw5HDHTIHQOjJzAOvLvM\u002f5pR4uO+b\u002fz98l3uw5LABQJTW0m\u002f+BhRAju5gfSUm8D+mw\u002fyhVGUJQB7xkwVnWLs\u002fCkVsi61IAEC8804QP4agv9fIWnVlqhhAX\u002fBV+DDYG0AcEx0F9XwBQAIX+i2uPRtA6ZenNOvAB0A0VU7PlREAQAfkEeiyLPM\u002f8KGdas+PE0AKqmKV44kQQHQI848FnwhAcMXQ1Z7DAEDmmN8OZzoUQDPShGV31BxAMirV6py0F0Cy4+HCKtIXQDq00QNlu8C\u002fl1BnZCFrBkANCvpERCvAv\u002fE6oOchZsc\u002fht\u002feNkSZEEBFYyuSTdTFv0gEy+IIu\u002fA\u002f0mW20IHa\u002fz9WBmdFqSocQCU+flDDRxxAcQXAdOOoE0D7eroGdz\u002fzP2h\u002f7r834QdABMVdoMrbrD+sYQfFtfPwP8h5pPZKxv0\u002fmYjPFZg6G0BNMZkNItgTQEtpLjzs7QhADzF+vQaOFECVGJW7n2ccQE1c6YRzow5A+vkUvT26GEArduvpFYgYQIQ59zAsqhBAT5xn9f8UCECn30KTiXYJQKqcLWL1zvw\u002fXpSV710sE0AUkb5UfgXLv5jGNIKbkBNAmXK7Ym4dD0BbEqiVM3MTQHCuCsbZePA\u002fFEfETyTB\u002fD\u002ffl7+P5qLwP0RiWDUJ0w5Ayx83GkmgAECbgsNxblAOQE32sIemqhdA0CnBwX\u002fFGECVtXjETBEUQJt8BTdxjME\u002fMUpcQjNHFEB9mo94mcfwP0J\u002f9gvkdBdArsLLwhOG8D8KPwvFM2EGQPl0b\u002fzqhxBAdL4aIErPFEA8qoOYgJ8YQJK97xbVTcm\u002f9g7JPF8ssr\u002f2u8YE\u002f2\u002ftP1r4EMDQz8W\u002fTgVSqhdyCEB60k3TBYYQQMCw5AhIsP4\u002ffaXdonejGEBDfqI7vwsJQCOoKYbnWBdA7lJdohsPvj\u002fYM9WEyVgBQCIawEGODMG\u002fglllBS4hGEDl1iTjgz4UQCsQCvtCMRxA\u002fhJcPSuUBkArKLy6QJEIQDKc7xl0OxRAHO1hCu6RHECXu1pZgBEJQIXfMgBCZAdARXT0XhfIAEC\u002fu60v6pXyP5EUsKgvxPI\u002fHuLIsX1nF0CjVD9CwCoXQFP8IaPyQxRAt4nfNcf9\u002fT\u002fXN8H8aDkAQLQxvz9pyBhAh+XpUaDJE0DFmNp84YTsP1rpGLln7BdAL2OSCtlGEEDbKiZqRUwTQP+t0T4yyhNAZ5mqXsHX6j8WW6AvYpIIQPGYKwrvlBxAHMSynwy+q7+4CL3W0Bj\u002fPzH5Mh+dIwhASNeQzp1\u002fE0D7GQwXqHO8vwufqrm0mu0\u002fIP8YvKkuk79td\u002fW60Q39P9I0SvnecRBAv3Ap1zxHCEDcYa0EwKUXQHl1u5pRgw5AJGTbLJR2FEDgAZ\u002fZEsfEv3oOnLRlqMS\u002ft7uQwjOzDkDPU1RjVUMTQFv1YVI1bgFA7Sq43AeYG0BmKem+xqgTQJUXG6UzvsI\u002fvLP8+C8Eqz+lh04iFOYOQDvU5VFCxQ9AgB416PqsEECacVbDyT7uPyWR5ZIHvghAqREAtzG1xr8qeO7TGZu5PzqQnWKRfBxAZ2sBCceSGEC1HOja+ZwIQLss+RYPLu4\u002fdcaZESiLyL\u002f5EA\u002fb1iHwP+YtaUoAdBRA5PwjVXhpwb+TJVUIWi0PQNlGBdQYQfA\u002fFoiYZeNvHEDYAGSlr7IYQESbyom\u002frg5AYWi8VH3jBkCGDsmZ9YYcQGJ3HDg7ggBA5pA3ou\u002fjuD8mInQFTX\u002fzP5X1+H3gxRxAmCbaUxs1AUBeRvF323wQQIMu3imz0BNAhaNPXIf+8D+xxt7MpeMGQMiyqfbqdBBA1sw26Bp0EEBWeOW7047xP7gY1ngHOe8\u002fAPtji4txq78JwjM4tLcPQHgyDY97Ww5ADj4FCiObGED5kQ5WXEzwP6iFNAukmg9APJaszKMVGECFbz663GMUQHX0YkyXyhNAnxjLNPmUGEDxe89P\u002frwQQJkeHRBIzRtAdKpD\u002fkFz\u002fT9HNrBUUHUUQF3HXsE0vAFAIJYzxWVhG0D0JkJ0pb8AQKx9xMknJQFAK+ZmLn69HED6OAEYn6wGQOUMvfcrkA5ANUxw\u002fUJv8z\u002fiHtYHk5XFv5ys3+VhbhdAcS6\u002fUsUhHED8JKOcVz7vP6FngU5Ew\u002fE\u002fpgRGVU\u002fS\u002fT+CekT25eryP1nPoDZRAv4\u002fSH\u002fmVIDyCEAOn4SAb+npP6VLRCoE9BdANEXwtGMtE0AosoI0cbD+P48XMBzMVg9Ai6D4hQJjEEDOy7uQu+sbQL7Xn91MOBtAA2qfrTDfEECsOKTEQ14BQAFwwXKGcsc\u002fRs2NK9GNG0DXbSxSStATQBqXivcThRtANl804v6tBkAgBxJpmS0bQO5NNlkDBvA\u002feO\u002ff+KA5xb92BYuGBDvCv8UU53lqohxA9KALgub4G0BS00VbVtDBv31Uw7+ITBhAJoLgixC07D9ALUfoDUaIPwTF8w01nhNACWnuFUgHGECA1xH+0nMAQBzEjlxQEBxASMGav6+Ep7\u002f\u002fs9BwB4MYQIjhtodBqBBA3Y2vmolvF0B4XVagIlwTQERRYzm4URNAc61fTBbYEEA49M0\u002f7Y0JQIe1QCNwVr6\u002fSZbVb3GnAUCOG35qtfgGQOjQKPfqAhhAmI6xw6T9B0CEFN6h2evyP2DeGBz2YQ5Ai2eR4ptZD0DIMepqCy0UQHibn8Oia8i\u002fdxC520yJE0CgQVKahOAHQLq+Q1SZqxBAbxJn5SfrAEALtnW2OZQQQP0nW1RB6whA0TasbC67AEBNuBvOjp0QQED8NUOIowhASBdh58Go8T98LmlUv1e2v1qi5SCB1A5ArzTy5yjnAEBJQgiNcGkbQGhVgXL9vBRANHkNHIsrGECQtxcfaTazv08tIHF8l8g\u002fxgAakZ1kF0CMeSYxCQ0AQPkCdHn4RxNAo\u002fDs\u002frPRFECnfU+D2IfwPyaq9tmjEQlABIPNy\u002fh2\u002fj9PMKk8+ocYQNvInfLItghAFkoYtLxAHEDc9qDbApYBQJfV+FZFEO8\u002fVBr1HfDN7j\u002fUzgTLH60IQFTwgp7ZW\u002fI\u002fGAt86Yit7T8gHiWh4ZgIQMgNoWXnfBdAOQmpP0sXFEAxfyMrR3kcQNrJRvclPBdAAhevcASquT\u002fpAh61WEsGQGX5k4cOOvM\u002fkUP\u002fROLxE0CvmFLtB9cXQL1BpNNSYxBAsP2Sab3+hD+buPPhAmgYQNrOkpToRBtAZOZZgCpx8D\u002fbTq5zLhoUQA=="},"y":{"dtype":"f8","bdata":"rBxaZDvf\u002fT\u002fYo3A9CtcCQMDKoUW28wNApJvEILBy+j8QLbKd76fGv1yPwvUoXPk\u002f4HoUrkfh+D\u002fgehSuR+H8P8Dx0k1iEKi\u002fqEfhehSu1z\u002fkpZvEILDuv8BJDAIrh9Y\u002fbLx0kxgE9D8gWmQ730\u002flP2BkO99Pjdc\u002foEW28\u002f3UuD9IDAIrhxbzP1C6SQwCK8c\u002f4E+Nl24S0z+AlUOLbOf5P9R46SYxCPY\u002f0E+Nl24Swz8A1XjpJjHIv5DtfD81XvI\u002fgBbZzvdTw794vp8aL93+P9jO91Pjpe+\u002fKDEIrBxa1L8QWDm0yHbyv1YOLbKd7wBAUOXQItv5zj8oMzMzMzPTP8yhRbbz\u002ffY\u002f6Pup8dJN7r8g2\u002fl+arzgPwCq8dJNYrC\u002f7FG4HoXr7T9ANV66SQzyPziJQWDl0PQ\u002f2KNwPQrX77+gcmiR7Xy\u002fPzwK16NwPfA\u002foHA9Ctej2L8UL90kBoHpP+AkBoGVQ9O\u002f6CYxCKwc+D\u002fE9Shcj8L9P6jGSzeJQQFAMNnO91PjxT+8dJMYBFb2P9ijcD0K1wFA2KNwPQrX078A1XjpJjHsP9Ai2\u002fl+avI\u002fON9PjZdu0r9q5\u002fup8dIDQCjdJAaBldM\u002fQGDl0CLb\u002fT8sXI\u002fC9SjoP+pRuB6F6wJArBxaZDvf57+amZmZmZkAQCPb+X5qvPC\u002fQDVeukkM5j8QLbKd76fiP2iR7Xw\u002fNdY\u002f2CLb+X5q3D9A30+Nl27SP1Q5tMh2vuc\u002ftvP91HjpAkCtR+F6FK73vxSuR+F6FOY\u002f+FPjpZvE2L\u002f81HjpJjH0PzwK16NwPfQ\u002fAAAAAAAA+r+UGARWDi3+PyCF61G4Huk\u002f6lG4HoXrAkBguB6F61G4v1xkO99Pjfc\u002fgJHtfD81vj\u002fgpZvEILDmP2y8dJMYBOY\u002fFK5H4XoU9D8Qg8DKoUXiPyyyne+nxv0\u002fSOF6FK5HBEAQWDm0yHYDQEDhehSuR9k\u002foO+nxks30b\u002fQTWIQWDnsPwRWDi2ynfs\u002fgOkmMQiszL80XrpJDAL3P4hBYOXQIvc\u002fyEs3iUFg\u002fz+wHFpkO9\u002frP+BPjZduEvc\u002fYI\u002fC9Shc6z9cZDvfT433P9jMzMzMzNw\u002fdJMYBFYO6T\u002fqJjEIrBwEQABU46WbxMA\u002fAAAAAAAA6D8oMQisHFr0P5RDi2zn++U\u002fWA4tsp3v9z8kBoGVQ4v+P9j3U+Olm9w\u002flkOLbOf7AkAaL90kBoECQABWDi2ync+\u002fGC2yne+n1j8w3SQGgZXvP4DrUbgehds\u002fuEkMAiuH1r+w8dJNYhDIP+B6FK5H4fI\u002fXGQ730+N8z\u002fMSzeJQWDtP4CXbhKDwMo\u002fJjEIrBxaBEB0vp8aL93sP8yhRbbz\u002feQ\u002ffBSuR+F6+j+wm8QgsHLIP9D3U+Olm9y\u002fFC\u002fdJAaB6T\u002fy0k1iEFgBQBwv3SQGgf0\u002fwMqhRbbz\u002fT8YWDm0yHbePxSuR+F6FPw\u002fdpMYBFYOA0AYBFYOLbLhvxxaZDvfT\u002f8\u002fkO18PzVe9D\u002fUTWIQWDn0P\u002fp+arx0kwBAEFg5tMh29j+o8\u002f3UeOnWP8x2vp8aL+0\u002fbOf7qfHS9T8shxbZzvfnv1gOLbKd7\u002fU\u002f+FPjpZvE+D\u002f91HjpJjHwv7BH4XoUruM\u002fgJMYBFYOzT90aJHtfD\u002f7P0SLbOf7qfc\u002fINv5fmq81D8Y2c73U+P1P1RkO99PjeM\u002fNDMzMzMz+T9OYhBYObQAQLpJDAIrhwNAtB6F61G47j9SuB6F61EDQDAv3SQGgcW\u002f4KWbxCCw7j8AAAAAAAD0Pxov3SQGgQVAAFK4HoXrsT+S7Xw\u002fNV4AQCyHFtnO9\u002fM\u002f4E+Nl24S47\u002fQItv5fmoBQBSDwMqhRfg\u002fWA4tsp3v778mMQisHFoCQFxkO99PjfU\u002fSOF6FK5HAEAsXI\u002fC9SjkP8DKoUW289W\u002fAAAAAAAA2D9cZDvfT433P5RDi2zn+\u002fc\u002fzKFFtvP9\u002fD\u002fQItv5fmroP7AaL90kBsE\u002f3Pl+arx09T+AFtnO91PTP4BkO99PjZe\u002fgJVDi2zn2z9yaJHtfD8EQHASg8DKofE\u002fkJduEoPA7j9oaJHtfD\u002fVPyyHFtnO9+M\u002f9FPjpZvE7D+UQ4ts5\u002fvlvyBaZDvfT+E\u002fqPHSTWIQ2L9+arx0kxgCQMyhRbbz\u002ffA\u002fYLpJDAIr8z9A4XoUrkfRP3i+nxov3fY\u002fANejcD0Kt7\u002fMoUW28\u002f32P4C8dJMYBLY\u002fuB6F61G49D+MbOf7qfHyvziJQWDl0AJAILByaJHt4D9AYOXQItv9P0CR7Xw\u002fNa4\u002fQDVeukkMwj98PzVeuknwvzAzMzMzM+8\u002fjJduEoPA7r\u002fQItv5fmrwP\u002fhT46WbxPw\u002ftPP91Hjp7j\u002f4U+Olm8QCQMzMzMzMzOi\u002fwJ8aL90kxr8A1XjpJjHQv4wW2c73U+M\u002ffBSuR+F6\u002fD\u002f6fmq8dJMGQBxaZDvfTwBAAAAAAAAACEA0XrpJDAL5P6zGSzeJQeg\u002fzCCwcmiR7T\u002fQ91PjpZvsP\u002fCnxks3ifc\u002fGNejcD0K1z+Ql24Sg8DKv6jGSzeJQfi\u002fTDeJQWDl\u002fD8gsHJoke3oP9SjcD0K1+8\u002fgM73U+Olm79gvHSTGAS2vwArhxbZzus\u002fKDEIrBxa+D+cxCCwcmj1P6wcWmQ73\u002fk\u002f4noUrkfhAEAwMzMzMzPDvz4K16NwPQNAsJ3vp8ZL7z9Ei2zn+6nxP9ijcD0K1wNA9H5qvHST4D90kxgEVg73PzzfT42XbvQ\u002f5NAi2\u002fl+9D8oXI\u002fC9Sj6vyCF61G4Hvc\u002fMDMzMzMzw79uEoPAyqEEwLx0kxgEVvo\u002fEIPAyqFF7j9wPQrXo3D1P+gmMQisHPA\u002f8Hw\u002fNV664T8IrBxaZDv7P0A1XrpJDO4\u002f2M73U+Ol9T+q8dJNYhAAQACq8dJNYpA\u002fDIGVQ4ts6z+Yl24Sg8DaP2hmZmZmZvg\u002fAAAAAAAACEDcJAaBlUP\u002fP4BqvHSTGPI\u002f9P3UeOkm+z\u002fISzeJQWDVv8yhRbbz\u002feg\u002f5KWbxCCw7r\u002fAyqFFtvP1PwArhxbZzsc\u002fsHJoke18z78QWDm0yHb0vzAGgZVDi8y\u002fwMqhRbbz5b+o8dJNYhDsv\u002f7UeOkmMQFAaJHtfD819j\u002fE9Shcj8L5P5zvp8ZLN+W\u002fsHJoke189T8k2\u002fl+arz8P57vp8ZLNwZA1HjpJjEI5L8MVg4tsp3jP+Slm8QgsP4\u002foEW28\u002f3U2D8wsp3vp8bjPywGgZVDi+Q\u002f8KfGSzeJ+z84iUFg5dD6P2yR7Xw\u002fNeo\u002fBFYOLbKd47+wcD0K16PAP1YOLbKd7wBAnO+nxks3\u002fz+UmZmZmZnpP2BkO99Pjbc\u002fINv5fmq8tL9kEFg5tMj2P6jGSzeJQfI\u002f8Hw\u002fNV662b+ClUOLbOcEQFBiEFg5tOw\u002fCKwcWmQ7A0BgXI\u002fC9Si8P6gcWmQ7398\u002fRLbz\u002fdR4+T8wMzMzMzPnPwDVeOkmMeQ\u002fRLbz\u002fdR45b+gRbbz\u002fdT+P31qvHSTGPq\u002fmG4Sg8DKBUDg+X5qvHTbP4Au3SQGgZU\u002f5NAi2\u002fl+\u002fj+goUW28\u002f20v\u002fhT46WbxPY\u002fTDeJQWDl9D8IrBxaZDvzP9TO91Pjpec\u002faGiR7Xw\u002f3T\u002fE9Shcj8L1P8AehetRuK4\u002f0KWbxCCwwj+oxks3iUH+P8CfGi\u002fdJPQ\u002fyEs3iUFg9T\u002fUeOkmMQj2P7tJDAIrh\u002fC\u002f4E+Nl24S6z8830+Nl272v8AgsHJokd0\u002fAKJFtvP9pD9wPQrXo3AAQAB\u002farx0k9g\u002fQGDl0CLbyT+g9Shcj8K1Pyhcj8L1KAZAULgehetR6D+q8dJNYhADQFgOLbKd7\u002fc\u002fiBbZzvdTA0BwPQrXo3DxPyBaZDvfT9U\u002fwEs3iUFg1T9ske18PzXqPyyyne+nxvE\u002f3CQGgZVD+z+YmZmZmZnRv8QgsHJokfk\u002flBgEVg4tAUB6FK5H4XoCQICVQ4ts5\u002fU\u002foBov3SQGAUDASQwCK4fWP2yR7Xw\u002fNe4\u002fRots5\u002fupBUBg5dAi2\u002fneP9D3U+Olm\u002fI\u002fvp8aL90kAEB46SYxCKz0P5LtfD81XgFA9FPjpZvE7D+8dJMYBFbwv1K4HoXrUQZAQGDl0CLbyT84iUFg5dABQEA1XrpJDOI\u002fNDMzMzMz77\u002fQ91PjpZvkPy6yne+nxgJAuB6F61G48D9waJHtfD\u002fhP+xRuB6F6+0\u002f4E+Nl24S9z\u002fISzeJQWDzP8CfGi\u002fdJMa\u002fQDVeukkMwr\u002f4U+Olm8T6P+BPjZduEtM\u002fYDMzMzMzs7\u002f81HjpJjHsvyhcj8L1KPA\u002fQIts5\u002fup0b+g76fGSzflP\u002fBT46WbxMC\u002fWOOlm8Qg0D8QWDm0yHb0P1BkO99Pjcc\u002fqMZLN4lB+j\u002foJjEIrBzwP0AK16NwPeo\u002fxPUoXI\u002fC+z8YBFYOLbLdv2Dl0CLb+dY\u002fUAwCK4cWyb8830+Nl27yP6jx0k1iEPQ\u002fMIlBYOXQwr9cj8L1KFz3P6AaL90kBuW\u002ffD81XrpJ\u002fD+7SQwCK4f0v+omMQisHABAoEW28\u002f3U7D8w3SQGgZXxPyhcj8L1KPg\u002fLFyPwvUo6D+Aarx0kxjyP\u002fDSTWIQWOE\u002faJHtfD819j+0yHa+nxr5P8zMzMzMzPQ\u002fUI2XbhKD4D9ovHSTGATeP4TrUbgehfs\u002fWOOlm8Qg2D+gm8QgsHLQPwDVeOkmMdg\u002fQEkMAiuHpj\u002fwp8ZLN4npP4yXbhKDwPw\u002f+FPjpZvE8L\u002fwJjEIrBzKvw=="},"type":"scatter"},{"customdata":[["Cyprus","\u003c17"],["Belgium","\u003c17"],["United Kingdom","\u003c17"],["Poland","17+"],["Germany","\u003c17"],["Poland","\u003c17"],["Germany","\u003c17"],["Germany","\u003c17"],["Cyprus","\u003c17"],["Belgium","17+"],["Belgium","17+"],["Italy","17+"],["Cyprus","17+"],["United Kingdom","17+"],["Spain","\u003c17"],["Cyprus","\u003c17"],["United Kingdom","\u003c17"],["Germany","\u003c17"],["Slovenia","\u003c17"],["Slovenia","17+"],["Spain","\u003c17"],["Poland","\u003c17"],["Italy","17+"],["Poland","17+"],["Belgium","17+"],["Spain","17+"],["Slovenia","\u003c17"],["Slovenia","\u003c17"],["Spain","\u003c17"],["Italy","17+"],["Slovenia","\u003c17"],["Italy","\u003c17"],["Cyprus","\u003c17"],["Spain","\u003c17"],["Slovenia","\u003c17"],["Spain","17+"],["Belgium","17+"],["Poland","17+"],["Belgium","\u003c17"],["Italy","17+"],["Belgium","17+"],["Italy","\u003c17"],["Belgium","\u003c17"],["Italy","17+"],["Belgium","\u003c17"],["United Kingdom","\u003c17"],["Cyprus","17+"],["Italy","\u003c17"],["Cyprus","\u003c17"],["United Kingdom","17+"],["Spain","17+"],["Poland","17+"],["Germany","17+"],["Italy","\u003c17"],["Slovenia","\u003c17"],["United Kingdom","\u003c17"],["United Kingdom","17+"],["Germany","17+"],["Cyprus","17+"],["Italy","17+"],["Belgium","\u003c17"],["Poland","\u003c17"],["Cyprus","\u003c17"],["Germany","17+"],["Slovenia","17+"],["Cyprus","17+"],["Spain","\u003c17"],["United Kingdom","17+"],["Poland","17+"],["Belgium","17+"],["Germany","\u003c17"],["Spain","\u003c17"],["Italy","17+"],["Cyprus","\u003c17"],["Germany","17+"],["Slovenia","17+"],["Slovenia","\u003c17"],["Spain","17+"],["Slovenia","17+"],["Poland","\u003c17"],["Belgium","17+"],["Belgium","17+"],["Germany","\u003c17"],["Belgium","\u003c17"],["Cyprus","\u003c17"],["Spain","\u003c17"],["Italy","17+"],["Slovenia","17+"],["Italy","17+"],["Belgium","\u003c17"],["United Kingdom","\u003c17"],["Poland","17+"],["Belgium","\u003c17"],["Slovenia","\u003c17"],["United Kingdom","\u003c17"],["Italy","17+"],["Cyprus","17+"],["Slovenia","\u003c17"],["Poland","\u003c17"],["Slovenia","\u003c17"],["Poland","\u003c17"],["Cyprus","17+"],["Italy","\u003c17"],["Italy","17+"],["Slovenia","17+"],["Slovenia","\u003c17"],["Germany","\u003c17"],["Spain","\u003c17"],["Spain","17+"],["Slovenia","\u003c17"],["Cyprus","\u003c17"],["Belgium","\u003c17"],["Germany","\u003c17"],["United Kingdom","\u003c17"],["Belgium","\u003c17"],["Belgium","17+"],["Belgium","\u003c17"],["Spain","\u003c17"],["United Kingdom","17+"],["Slovenia","\u003c17"],["Poland","17+"],["Slovenia","\u003c17"],["Cyprus","17+"],["Cyprus","\u003c17"],["Spain","17+"],["Italy","17+"],["Poland","17+"],["Italy","\u003c17"],["Cyprus","\u003c17"],["United Kingdom","17+"],["Germany","17+"],["Spain","17+"],["United Kingdom","17+"],["Slovenia","17+"],["Slovenia","\u003c17"],["Poland","\u003c17"],["Germany","17+"],["United Kingdom","\u003c17"],["United Kingdom","17+"],["Italy","17+"],["Germany","\u003c17"],["Cyprus","\u003c17"],["Poland","17+"],["Belgium","\u003c17"],["Italy","\u003c17"],["Italy","\u003c17"],["Poland","17+"],["Cyprus","\u003c17"],["Cyprus","\u003c17"],["United Kingdom","\u003c17"],["Cyprus","17+"],["Poland","\u003c17"],["Poland","17+"],["Germany","\u003c17"],["Poland","\u003c17"],["Cyprus","\u003c17"],["Italy","\u003c17"],["United Kingdom","\u003c17"],["Cyprus","\u003c17"],["Poland","\u003c17"],["Belgium","17+"],["Spain","\u003c17"],["United Kingdom","17+"],["Cyprus","\u003c17"],["Spain","\u003c17"],["Cyprus","\u003c17"],["Spain","17+"],["Slovenia","17+"],["Germany","\u003c17"],["Poland","17+"],["Belgium","17+"],["Italy","\u003c17"],["Germany","\u003c17"],["Germany","\u003c17"],["Germany","\u003c17"],["Spain","\u003c17"],["Belgium","17+"],["Belgium","\u003c17"],["Belgium","17+"],["Poland","17+"],["Belgium","17+"],["Slovenia","17+"],["United Kingdom","17+"],["Spain","\u003c17"],["Belgium","17+"],["Cyprus","\u003c17"],["Spain","\u003c17"],["Slovenia","17+"],["Spain","17+"],["United Kingdom","17+"],["Germany","\u003c17"],["United Kingdom","\u003c17"],["United Kingdom","\u003c17"],["Cyprus","17+"],["Italy","17+"],["United Kingdom","\u003c17"],["Spain","\u003c17"],["Spain","\u003c17"],["Belgium","17+"],["United Kingdom","17+"],["United Kingdom","\u003c17"],["United Kingdom","\u003c17"],["Germany","\u003c17"],["Slovenia","\u003c17"],["United Kingdom","\u003c17"],["Slovenia","\u003c17"],["Cyprus","17+"],["Germany","\u003c17"],["Spain","17+"],["Belgium","\u003c17"],["Germany","17+"],["Cyprus","\u003c17"],["Germany","17+"],["Spain","\u003c17"],["Spain","\u003c17"],["Belgium","\u003c17"],["Italy","17+"],["Slovenia","17+"],["Italy","\u003c17"],["Italy","\u003c17"],["Poland","17+"],["Poland","17+"],["Germany","\u003c17"],["Poland","17+"],["Belgium","\u003c17"],["Cyprus","17+"],["United Kingdom","\u003c17"],["Spain","\u003c17"],["Belgium","\u003c17"],["Italy","17+"],["Italy","\u003c17"],["Germany","\u003c17"],["Cyprus","\u003c17"],["Italy","\u003c17"],["Poland","17+"],["Poland","17+"],["Poland","17+"],["Belgium","\u003c17"],["Spain","\u003c17"],["Germany","\u003c17"],["Spain","17+"],["Italy","17+"],["Italy","\u003c17"],["United Kingdom","\u003c17"],["Germany","17+"],["Poland","\u003c17"],["Slovenia","\u003c17"],["Belgium","\u003c17"],["United Kingdom","17+"],["Spain","17+"],["Poland","\u003c17"],["Cyprus","17+"],["Germany","17+"],["Spain","\u003c17"],["Poland","\u003c17"],["Germany","\u003c17"],["Slovenia","\u003c17"],["Italy","17+"],["United Kingdom","\u003c17"],["Belgium","17+"],["Spain","17+"],["Italy","17+"],["Belgium","\u003c17"],["Slovenia","17+"],["Slovenia","\u003c17"],["Italy","17+"],["Germany","\u003c17"],["Germany","17+"],["United Kingdom","17+"],["Spain","\u003c17"],["Italy","\u003c17"],["Cyprus","\u003c17"],["Italy","\u003c17"],["United Kingdom","17+"],["Spain","\u003c17"],["Slovenia","17+"],["United Kingdom","17+"],["Poland","17+"],["Poland","\u003c17"],["Cyprus","\u003c17"],["Poland","17+"],["Cyprus","17+"],["Slovenia","\u003c17"],["Belgium","\u003c17"],["Cyprus","\u003c17"],["United Kingdom","17+"],["Germany","\u003c17"],["Belgium","\u003c17"],["United Kingdom","\u003c17"],["Spain","\u003c17"],["Cyprus","\u003c17"],["Poland","\u003c17"],["Spain","\u003c17"],["Poland","\u003c17"],["Cyprus","\u003c17"],["Poland","17+"],["Italy","17+"],["Italy","17+"],["Slovenia","17+"],["Belgium","\u003c17"],["Belgium","\u003c17"],["United Kingdom","17+"],["Poland","\u003c17"],["Poland","\u003c17"],["Slovenia","17+"],["Cyprus","\u003c17"],["United Kingdom","17+"],["Spain","17+"],["Slovenia","17+"],["United Kingdom","17+"],["Poland","17+"],["Slovenia","\u003c17"],["Cyprus","17+"],["Spain","\u003c17"],["Cyprus","\u003c17"],["Germany","17+"],["United Kingdom","17+"],["Poland","\u003c17"],["Belgium","\u003c17"],["Spain","\u003c17"],["Germany","17+"],["Slovenia","\u003c17"],["Belgium","\u003c17"],["Germany","17+"],["United Kingdom","\u003c17"],["Slovenia","17+"],["United Kingdom","17+"],["Spain","17+"],["Italy","17+"],["Italy","\u003c17"],["Italy","\u003c17"],["Belgium","\u003c17"],["Cyprus","\u003c17"],["Cyprus","\u003c17"],["Italy","\u003c17"],["Italy","17+"],["Poland","\u003c17"],["Poland","17+"],["Spain","\u003c17"],["Spain","17+"],["Spain","\u003c17"],["United Kingdom","\u003c17"],["Slovenia","17+"],["Slovenia","\u003c17"],["Spain","\u003c17"],["United Kingdom","\u003c17"],["United Kingdom","17+"],["Germany","17+"],["Germany","17+"],["United Kingdom","17+"],["Cyprus","\u003c17"],["Germany","\u003c17"],["Germany","\u003c17"],["Italy","17+"],["Italy","\u003c17"],["Belgium","17+"],["United Kingdom","\u003c17"],["United Kingdom","17+"],["Germany","17+"],["Italy","17+"],["Belgium","\u003c17"],["Germany","\u003c17"],["Cyprus","\u003c17"],["Spain","\u003c17"],["Belgium","17+"],["United Kingdom","17+"]],"hovertemplate":"%{customdata[0]} \u00b7 male \u00b7 %{customdata[1]}\u003cbr\u003erelaxed: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#FFB100","line":{"color":"#ffffff","width":1},"opacity":0.9,"size":8,"symbol":"square"},"mode":"markers","name":"male","x":{"dtype":"f8","bdata":"AZRo38UK8z8GDMgQ7u3Jv7NyIQ++6htATCvdYw47EECPKdKlui0AQN\u002f\u002f0p5EgA5ApUNfjQJUAEDoj3MFVQv+P3S4gvSctus\u002fX9JcVO9TxT\u002fJMGgCfQTBv3MYx3vP1gdAuMxHuBPD8T+bKQV0aF0cQN+CMCQWGBhAU6GjwF4p8j+MoWcfmfAbQP7nIlJ7bABApvy56rCPFEBkKgywPVAUQBsc2vXmPxhAcjqnJGmrD0ARwX5yjjQIQPXSjaZbog9Ayu3AVF+Euz+dbJZpIMoXQGH8xvj18BNAzthyRxlzFED2Yw2spQEYQEr61UMMbgdAP1H\u002fZECTFEAaf7qmu5QHQIUr3tlIbfI\u002fluohloSAGEBfp6YdQOgTQL\u002fOaY7rXxhAGwY5ziE5yr9+cYv0sZwPQAlvhyNDS8Q\u002flklqrKxHCEBoWTA50w2aP7XtuhJzlAhAFutzjU8DtD\u002fw9Z4BVUsIQCgPv+Vw4aG\u002f3x3y8WNxG0BxmLoVlRTtPySub+VlRQdAysRkGF8G7z+FFBsd2+AcQJcEdtiQvRdAPNpfGZXQD0Br4hVepBj\u002fP4NtU0xgSQhAf1yJIM7JFEDniI\u002f5TK8cQDlOJsWkyBtAv3rHYOZb\u002fj8EmHFOx7TyPxvv5G5x+gdArmruHTzmtD+rx3j\u002fe38OQKFfTvyflPI\u002fvTL7F+uu\u002fj\u002fvjIq4iP0TQGDSNuWFv+s\u002fVHgghBDcF0D6cq1DzpMcQD1hUxeYkxBAQLXMVoS5h7\u002fsVN9wa\u002fEAQAEImUob7RdAHldQ\u002feCNB0AgxHn0s1LwP2Ka9o++5f0\u002fe2oFl1mtE0ACl\u002fC4DV0UQB+x1v3heRhAL8cTOkU4E0A8owTz5mgQQEP2Xu6t4ME\u002fuBN\u002fso6xmL\u002fQUkvbb+v8P7oqEBZ1mrQ\u002fI64TTw1t7D9TR+VQl0AYQOcQiHPSkAdAzFC85sw9FECdA8btDCYHQFAT5eiYJIW\u002fIg47ER4LHEBKoyuABzsQQG7m0sqzt8C\u002fUHQEhi7QFEBLKyd6\u002fqAbQBa0omszUQdA+qwJA6KR7D+diTRCHz0TQFpg71aLug9AQt51g3p6FEABUZUnbF4QQD+jTG6ytus\u002fVPbuAtW4BkAtChvMFV8HQET\u002fYnPdeBRAxb5i5KD6E0AkqZP4Vn0BQHAYOtR1RhhAm7lYy3k2GEAC+ddknHgUQDlYNYIGw\u002fE\u002fBEU3EA+Xsb\u002fgz2IhEkr+P9Sqnwrl4xtAICXEsBBhc7\u002fc+nbInC3EvzB0XRbxbpq\u002frsQjr\u002f8+GECX\u002fkUW3lsbQGCb5RLqXBNAVIHj3PvZDkDTnl63YJ4TQBaBfGUcQPM\u002fc+IPZblS6T9ulUJogXEXQNDjFfwq0gZADH0YbuLoD0Au09a6BUsGQIjdQXg8ae8\u002fDz\u002fBVyBoG0AKxfkd1mD+P6Z2AhXDgxhALmB1QKdxG0CaHH0IxjQUQJQjD77J1RNATC1kZL61D0DIxrYHhB0BQPwZn8o4ZxtAFKIDsvO+HECCgX4dlWIJQHoQOqStlwBAqNLA6\u002f2n6T\u002fer+yNlEkQQHQMTiw4m6Y\u002fekLJSUr1CEByaBG\u002fIP4GQA8QA5tDzBBAF3CFGwW48j98bShB9ZHqPy0\u002f7sK8rBtAYDeHVbRq6T8Ii0CQHJUQQKWOPGwGuxBA0RlYfWC5AUCZD7\u002fObTIQQAinZlYlK\u002fE\u002fuOePycOgCEDowvonmx8cQMK4OepfL\u002fM\u002fy9CXE5kwEED2KkNH+oCyv1zp2k3NBRhA1xpt9SAnG0CUvpvs7ZPxPz1CLYJfVxhA4hLZL27j7j8wKIwCXZ4YQDHqCz0hcxRAqkiBnKrZ\u002fj+QTHdkRoMOQKpdujmUtsS\u002fOvPRy33jBkDJyYz8nJ7+PzvkLSZpof8\u002flxN3IK2BAUBVtM\u002f5KZwXQNXAO7XGcsY\u002fWm4oT8dTtD8HMBDwoejDP+6Iy9fRqA9AipmzWLf5y7\u002fOwp3HS4EUQJezWFRSjRtAZuU1d+peF0AjsmnAC97AP06pGBfPT\u002fE\u002fFFHDAG1+F0BimgcbSJcTQDiyVBflxRhApgxwZLaXG0DMCh5ZZLYAQK+VQG0XWRtAiVqxS\u002fGNHEAElj9gnJ3qP6B\u002flHl0DghAmix7cJYuG0AMaEs6kBYYQNM5aYAsnBhAz5zj5xtox7\u002fpgND+SZobQNlRWZZCdxxA2WdibLQwHEDEzfx2na7+P2r84TQUOhRAjffcIpjrG0CC16JjQ6MUQJYj6fCnFe0\u002f8T4JBz\u002foAEDMuuccIT0YQOoQfV\u002f2FLs\u002fYq5VJJkk\u002fz9TPpCVXJXxP86C8kPOsgBAxDY9l07NF0C\u002fX7xooyoXQP+B7kc\u002fEso\u002fZsZWxnrACEC2KUqQ93oTQBZZtyj8zwhAhmbpMJE4B0C\u002fWkuMUuQPQJTkrLUmohBA6CP22Gmi\u002fz+yGn\u002fu90APQObqVcLT6LW\u002fzJukAF4L6j8\u002flsLUnoEbQA13l5\u002femBdAPLJ67Bprwr+PpRYQRXYGQILDowMs4QdA7x3l9UX9\u002fT8o9D9fUq7xPy2TMIu\u002ffAlA293BlW4zD0CCGFFcjSAQQF2SwsIHAxBA9ky0FA3ux7+sFzfA+1YXQBJA1YK7WgFAaCv0m1r0F0Dg3Al2fRIJQKIvAu9veQZAMq\u002fUELgqHEC8f9OdMEkBQDl5DqNipRBAD0M+XUwhE0CAB3snipKDP0W7UJH6xBtAkpgSHyp1GEDln0tKa38OQEcn+7eusOw\u002fCsfmiboZAUAQty2DSPIXQG6vvWbI1Q9AmIb1QTqmAUDgjnWV2a4TQDmAZ10JYwZACaP9FG7PG0DiurzboYXDv91FeQCeQxdA1QGueyY9CEAhAzHwnYvJP6TY7CLHIxRARh+sr0hCFEAwUEWFEWEHQDoKPRkXQABAQCKhdU3jAEC7bEtqOigcQIiGmnlriBhALFRt6notCECStrFe97\u002frP1u8JtmLSghAQzSZgur7G0B+cMHhe2kXQDIFW\u002f2wNRRA8m5AS8+OHEAmFLGTK7cOQN1A6jRAFBBAkZ1NCSml8T\u002fbjYZym6gPQBbi8+Iiw+w\u002fJMG3ZHTGE0DgfXezpcmSPw3MdCNoUPE\u002fLDoKeKkaHED8HN\u002fJwzv9Px2R0rVC58E\u002fi8lSZ\u002fm+HECXydvGW0wXQBfjed0leew\u002fJ4pqlfLZDkDcs9m6UJ0YQI9SMO3auBBAqCZUB1iV6T9co19i\u002fWgPQFZXRZfm6gZACCyfmYvkB0DYmAuo870UQB6maTM1Nci\u002fuOUGsXiDwr\u002f1J+vpJ\u002fobQLA8ET7UChBAcZdf8ZxuEED+UZF\u002f7OMTQDpymg588uo\u002fEU\u002f3GQu+G0C\u002fy3Y9NtkYQCrIgiL3cBRAwyfo3iNTG0CLdNzh3YoQQIlrgZ\u002fPqhNAwKjq3CT78T9bCpqncyQXQL8oKTAenfI\u002fnjXT82af\u002fT8hpgEgEOwbQGsaKG\u002fhSBBAANt6mp5dbD8156\u002faPWkXQP8m9N2adf0\u002f\u002fPsQeeueE0Bnbk5wlDXJvxPMu0glAf4\u002f\u002fNPZEVdZG0CXWsKRI\u002fATQLEJhV9ZvxtATmX4hR8nGECo3PupizoHQGxD83f\u002fWwZAosBsW89nB0DK1ayWWb68P+FujWzsj+w\u002fZHZgXfKn7j83gRk0w+UIQAVei5zoqwdAKb23MmyuEEBTixptXbwQQCubEtqhqhdACZYw11BqGECtReuuw5AXQKwvE2qVXRtAUf2W\u002fQLkE0CdFqeDKy4UQKP\u002fXoRCxBhAbD1oF3VgG0Cl79+frl8cQFrMZfnH0\u002f8\u002fhhOkc0Bo\u002fT+bZ6H39dQcQIqf25fSYPE\u002frHwhQB1j\u002fT8RH\u002ftiom0BQFvu\u002fxdXmgZAWCwa5e+QBkAi761YXvmyv2dIW65TxRxANQ+DeZktG0ARVVLb2ngBQHHVGk+TZAhAv+8gADdiyL8Xkj0zzz0AQEADjUR2a+8\u002f9OleMdQcGEDGXaGe9re6Pz5K3oZ6UBxA"},"y":{"dtype":"f8","bdata":"Di2yne+n\u002fr9AYOXQItv7P\u002fh+arx0k\u002fg\u002flMQgsHJo7T+AlUOLbOfbv0A1XrpJDMK\u002fAP7UeOkmsT+MbOf7qfH6v2y8dJMYBOI\u002fwJ8aL90k8D+gRbbz\u002fdTsP1C4HoXrUcg\u002fUI2XbhKD7L9g5dAi2\u002fnuP7xJDAIrh\u002fA\u002f4E+Nl24S47\u002fMoUW28\u002f3gP1TjpZvEIOy\u002fBCuHFtnO9z+QwvUoXI\u002fCvwQrhxbZzv8\u002fgJVDi2zn9z9YDi2yne\u002f3P4BqvHSTGPg\u002fwPUoXI\u002fC1b9kO99PjZf8P8hLN4lBYPU\u002foBov3SQG8T\u002fmpZvEILACQAArhxbZzuc\u002f6Hw\u002fNV660b\u002fo0k1iEFjZPxBYObTIdvo\u002fOIlBYOXQAEB46SYxCKz2PxjZzvdT4\u002f0\u002faJHtfD81BkDwp8ZLN4n9PwxWDi2ynes\u002fdJMYBFYO4T8yCKwcWmQEQBov3SQGgQNAWA4tsp3v37\u002fUeOkmMQgBQDZeukkMAv2\u002fSAwCK4cW8z9M4XoUrkflP0SLbOf7qe2\u002foBov3SQG9T946SYxCKz8PwisHFpkO\u002fE\u002fFARWDi2y7T\u002fYzvdT46X7PxjZzvdT4\u002fs\u002f6Pup8dJN8j94vp8aL93yP\u002fh+arx0k\u002f4\u002f5KWbxCCw9j9kO99PjZcAQCTb+X5qvOC\u002f7Hw\u002fNV665b8ASgwCK4eWPyyHFtnO9\u002fk\u002fsBxaZDvf6z\u002fYzvdT46X\u002fP5zEILByaOm\u002f3iQGgZVDBUB0aJHtfD\u002f5P2C4HoXrUbg\u002f6Chcj8L12D8kBoGVQ4sBQHASg8DKocW\u002fXGQ730+N8T8UrkfhehT2P+B6FK5H4eI\u002f0PdT46WbxL\u002fgehSuR+HwPwCq8dJNYpA\u002fYDMzMzMzsz+wR+F6FK7fv8Dx0k1iEKi\u002ftMh2vp8a\u002fT\u002fUeOkmMQj4v+Clm8QgsNI\u002fMN0kBoGV97+AwMqhRbbDvygxCKwcWuy\u002fkML1KFyP5j+EwMqhRbb9Pxwv3SQGgfM\u002fkML1KFyP8D8AAiuHFtnOP9z5fmq8dABArBxaZDvf9z\u002fwp8ZLN4n9P3STGARWDgJARIts5\u002fup8z8AqvHSTWKQP7ByaJHtfPU\u002foEW28\u002f3UuL+IQWDl0CL9P0gMAiuHFv8\u002fjJduEoPA5r+IQWDl0CLTv5iXbhKDwNI\u002fANNNYhBYyT+GwMqhRbYGQAxWDi2yneM\u002fAH9qvHST2D+wRbbz\u002fdTIvzzfT42Xbuq\u002fNF66SQwC6z\u002fYzMzMzMzcP7jz\u002fdR46f4\u002f+FPjpZvE\u002fD+AmZmZmZm5P8h2vp8aL\u002fG\u002f\u002fKnx0k1i8D9ACtejcD3qPxSuR+F6FPQ\u002frMZLN4lB6D+Aarx0kxj8P6BwPQrXo9A\u002fqMZLN4lB6L9YObTIdr71P9R46SYxCOg\u002fsJ3vp8ZL6z9I4XoUrkf3P1pkO99PjQBAILByaJHt8D+4HoXrUbgEQLpJDAIrhwZAKFyPwvUo1D9ovHSTGATWvwwCK4cW2QBAYOXQItv55j+UGARWDi36v8T1KFyPwvs\u002fWDeJQWDl2D9gke18PzW+vxiuR+F6FN6\u002fVDm0yHa+5z+Q7Xw\u002fNV7iPwBSuB6F66G\u002fPArXo3A99D\u002fgzvdT46XTPxxaZDvfT\u002fM\u002fSAwCK4cW+T8gsHJoke3sv7ByaJHtfABAsBxaZDvf4z9OYhBYObQCQICXbhKDwMo\u002fWDm0yHa+878w3SQGgZX9P2zn+6nx0v0\u002fpJvEILBy6L\u002fQ91PjpZvoP1BkO99Pjcc\u002fzMzMzMzM+j8830+Nl27yP\u002fB8PzVeusm\u002fItv5fmq8BUB6FK5H4XoBQKAaL90kBv0\u002f6Pup8dJN9D8Y2c73U+PVv4gW2c73U\u002fE\u002fgGq8dJMY3D8oBoGVQ4vcv9h46SYxCNy\u002fFARWDi2y7T8ghetRuB77P8uhRbbz\u002ffi\u002fbOf7qfHS+7+gRbbz\u002fdT4PxQv3SQGgek\u002fQArXo3A90j80MzMzMzMCQBiDwMqhRd4\u002fLLKd76fG779wEoPAyqHlP8yhRbbz\u002ffw\u002fJAaBlUOLAUDUeOkmMQgBQADTTWIQWLk\u002fxCCwcmiR\u002fT+oxks3iUEBQBBYObTIdvA\u002fqMZLN4lB9D+A7Xw\u002fNV66P0wMAiuHFuE\u002f0MzMzMzM4D80XrpJDALxP7Tz\u002fdR46eY\u002fLAaBlUOL6D8g2\u002fl+arzcv3jpJjEIrNy\u002f0k1iEFg5AEDw0k1iEFjpPzAIrBxaZOM\u002ftJ3vp8ZL8T8wCKwcWmT1PyCwcmiR7fA\u002fACcxCKwcqj98FK5H4Xrgvyhcj8L1KNw\u002fGNnO91Pj1T9gukkMAiv5PwAAAAAAAAhANF66SQwC47+IFtnO91Pxv8T1KFyPwu2\u002fwJ8aL90k\u002fD9kEFg5tMj2PxSDwMqhRfI\u002feL6fGi\u002fd8D9cZDvfT439P8DKoUW28+m\u002fOLTIdr6f\u002fj9I4XoUrkfRv+Clm8QgsOI\u002f7Hw\u002fNV66+T8AAAAAAADkPzDdJAaBles\u002foO+nxks32b9QuB6F61HwP1g5tMh2vvc\u002flhgEVg4tA0BACtejcD3aPxACK4cW2eY\u002fTOF6FK5H4T8gsHJoke0AQFTjpZvEIPQ\u002fYLpJDAIr+z+QwvUoXI\u002f6P8AgsHJokdU\u002f4CLb+X5qvL\u002fc+X5qvHQBQNSjcD0K1+M\u002f1E1iEFg5+D9ANV66SQzSPzDdJAaBlcO\u002fgJVDi2zn4z+oxks3iUEAQDDdJAaBlfk\u002fGARWDi2y9z9iEFg5tMgDQBBYObTIduI\u002fy6FFtvP98r80iUFg5dDuP9wkBoGVQ\u002fU\u002foHA9CtejsD\u002fg+6nx0k3aP+pRuB6F6wZAgJMYBFYOzT9ANV66SQzyP4DrUbgehdM\u002fYhBYObTIAkAAAAAAAAAIQEwMAiuHFuE\u002f9Chcj8L17D\u002fc+X5qvHQAQAxWDi2ynec\u002fhOtRuB6F+z9gukkMAivxPwAAAAAAAPK\u002fXbpJDAIr979oaJHtfD\u002fVPyCF61G4HvE\u002fIIXrUbge+T9svHSTGAT2P4hBYOXQIvc\u002fIIXrUbge5T9QuB6F61HIPyBaZDvfT+k\u002fhOtRuB6F9T\u002fAyqFFtvPVvxjZzvdT4\u002fk\u002fwMqhRbbz8b+o8\u002f3UeOnWP5iZmZmZmeW\u002fwGzn+6nxor+gGi\u002fdJAbRP7ByaJHtfO8\u002fsBgEVg4twj9AQWDl0CKrv8QgsHJokeG\u002f5NAi2\u002fl+8D+48\u002f3UeOnqv3w\u002fNV66Sfw\u002fKIlBYOXQ2j+EwMqhRbb\u002fP+xRuB6F6+E\u002fjGzn+6nx7r9cZDvfT43zPyBaZDvfT9U\u002fILByaJHt9D9cj8L1KFzjvxxaZDvfT\u002f0\u002frBxaZDvf479wPQrXo3DzP7x0kxgEVvY\u002fGARWDi2y3b\u002fQT42XbhLDP76fGi\u002fdJAFAyEs3iUFg8T+YGARWDi3SPyCwcmiR7eg\u002fYOXQItv5+D9YDi2yne\u002fXP3CTGARWDs2\u002fpHA9Ctej+r9UObTIdr7jP1xkO99Pjfc\u002fQDVeukkMwj\u002fwp8ZLN4nhPxov3SQGgQBAgM73U+Olmz+MbOf7qfH8PwCo8dJNYlA\u002fbOf7qfHS9T\u002fsJjEIrBzmP7DEILByaMG\u002fdGiR7Xw\u002f8z8UL90kBoHtP2C6SQwCK+c\u002f4KWbxCCw4j8w3SQGgZXxP4xs5\u002fup8fA\u002fPN9PjZdu8j8IrBxaZDv1vyxcj8L1KOw\u002f4E+Nl24S9z\u002fQItv5fmrgP3Boke18P+0\u002ftEkMAiuH5j8AAAAAAAAIQCQGgZVDi\u002fY\u002fdGiR7Xw\u002f9T+0yHa+nxrjPwB\u002farx0k4i\u002fUI2XbhKDAEAMVg4tsp3vP6jGSzeJQfQ\u002f9Chcj8L1+j9kEFg5tMj+PxjZzvdT490\u002fU7gehetR9r90aJHtfD\u002f1PyPb+X5qvPa\u002feBSuR+F63L8EK4cW2c75PwAUrkfheoS\u002fmML1KFyP0r\u002fs0CLb+X7mP7Kd76fGSwBAIIXrUbge8z9cj8L1KFwCQPDSTWIQWPM\u002fsEfhehSu\u002fT8AexSuR+G6P2iR7Xw\u002fNQVAdJMYBFYO4T8AAAAAAADgP46XbhKDwABA"},"type":"scatter"},{"hoverinfo":"skip","hovertemplate":"\u003cb\u003eSofia Demo (selected participant)\u003c\u002fb\u003e\u003cbr\u003erelaxed: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#1F2933","line":{"color":"#ffffff","width":1.5},"opacity":0.25,"size":34,"symbol":"star"},"mode":"markers","name":"Sofia Demo (selected participant)","showlegend":false,"x":[6],"y":[0.779220779220779],"type":"scatter"},{"hovertemplate":"\u003cb\u003eSofia Demo (selected participant)\u003c\u002fb\u003e\u003cbr\u003erelaxed: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#1F2933","line":{"color":"#ffffff","width":1.5},"opacity":1.0,"size":22,"symbol":"star"},"mode":"markers","name":"Sofia Demo (selected participant)","showlegend":true,"x":[6],"y":[0.779220779220779],"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"shapes":[{"fillcolor":"rgba(68, 1, 84, 0.07)","layer":"below","line":{"width":0},"type":"rect","x0":0,"x1":1,"xref":"x domain","y0":-3,"y1":0,"yref":"y"},{"fillcolor":"rgba(253, 231, 36, 0.07)","layer":"below","line":{"width":0},"type":"rect","x0":0,"x1":1,"xref":"x domain","y0":0,"y1":3,"yref":"y"},{"line":{"color":"#1F2933","dash":"dot","width":1},"opacity":0.5,"type":"line","x0":0,"x1":1,"xref":"x domain","y0":0,"y1":0,"yref":"y"}],"annotations":[{"font":{"color":"#1F2933","size":11},"opacity":0.75,"showarrow":false,"text":"positive valence \u25b2","x":1,"xanchor":"right","xref":"paper","y":2.85},{"font":{"color":"#1F2933","size":11},"opacity":0.75,"showarrow":false,"text":"negative valence \u25bc","x":1,"xanchor":"right","xref":"paper","y":-2.85}],"font":{"color":"#1F2933","size":12},"margin":{"l":10,"r":10,"t":10,"b":10},"hoverlabel":{"font":{"color":"#1F2933"},"bgcolor":"#ffffff","bordercolor":"#CBD5E1"},"legend":{"orientation":"h","yanchor":"bottom","y":1.01,"xanchor":"left","x":0},"xaxis":{"tickvals":[0,1,2,3,4,5,6,7],"showgrid":false,"zeroline":false,"ticktext":["\u003cb\u003eBelgium\u003c\u002fb\u003e\u003cbr\u003en = 100","\u003cb\u003eCyprus\u003c\u002fb\u003e\u003cbr\u003en = 100","\u003cb\u003eGermany\u003c\u002fb\u003e\u003cbr\u003en = 100","\u003cb\u003eItaly\u003c\u002fb\u003e\u003cbr\u003en = 100","\u003cb\u003ePoland\u003c\u002fb\u003e\u003cbr\u003en = 100","\u003cb\u003eSlovenia\u003c\u002fb\u003e\u003cbr\u003en = 100","\u003cb\u003eSpain\u003c\u002fb\u003e\u003cbr\u003en = 100","\u003cb\u003eUnited Kingdom\u003c\u002fb\u003e\u003cbr\u003en = 100"],"range":[-0.6,7.6]},"yaxis":{"range":[-3.15,3.15],"gridcolor":"#E5E7EB","zeroline":false,"title":{"text":"relaxed"},"tickvals":[-3,-2,-1,0,1,2,3],"ticktext":["\u22123 negative","\u22122","\u22121","0 neutral","+1","+2","+3 positive"]},"height":540,"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(0,0,0,0)"},                        {"displaylogo": false, "responsive": true}                    )                };            </script>        </div></div>
+  
+</div>
+
+<!-- ============================ THE GAME ============================ -->
+<div class="section-banner">
+  <h2>The game</h2>
+  <span class="small">800 of 800 participants have started the game · a module = the sublevels the DSS analyses in it</span>
+</div>
+
+
+<div class="card">
+    <div class="card-head">
+      <h2 class="h2-inline">Points and completion by module</h2>
+      
+<div class="help-buttons help-buttons--md">
+  <div class="help">
+    <button type="button" class="help-btn help-btn--info" data-help-toggle
+            aria-label="Show the explanation" aria-expanded="false" aria-controls="help-game-info">
+      <span aria-hidden="true">i</span>
+    </button>
+    <div class="help-pop help-pop--info" id="help-game-info" role="dialog" aria-label="Explanation" hidden>
+      <div class="help-pop__title">ⓘ About this view</div>
+      <div class="help-pop__body">The game over the cohort, module by module. A module here means the sublevels of that module the DSS analyses (the clinicians' sheet), not every scene of the game; the number of sublevels is under each module.<br><br>Every percentage is out of the participants who STARTED the game (played at least one analysed sublevel), not the whole cohort.<br><br>TOP: points awarded as a share of the points possible, in total and in Thoughts and Behaviours: bar = mean, line = standard deviation, over the participants who played that part of the module (hover for n).<br><br>BOTTOM: REACHED = played at least one of the module's analysed sublevels; COMPLETED = played all of them; diamond = average share of them played.<br><br>The numbers are in the table below the chart. Source: dss_secrets/pilot_summary/game_scores_summary.csv (functionalities/offline/build_game_scores_csv.py).<br></div>
+    </div>
+  </div>
+</div>
+
+    </div>
+    <div class="result"><div style="height:600px; width:100%;">                            <div id="ov-game" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("ov-game")) {                    Plotly.newPlot(                        "ov-game",                        [{"customdata":{"dtype":"f8","bdata":"isyJBjvWJEAAAAAAAACJQBQPjYQwZy1AAAAAAAAYhEB2DXuLHhQxQAAAAAAAKIBAImpqMDOeM0AAAAAAAAB9QIe+CzrhqDFAAAAAAABQdkA=","shape":"5, 2"},"error_y":{"array":{"dtype":"f8","bdata":"isyJBjvWJEAUD42EMGctQHYNe4seFDFAImpqMDOeM0CHvgs64agxQA=="},"color":"#1F2933","thickness":1.2,"type":"data","visible":true,"width":4},"hovertemplate":"Total: %{y:.0f}% \u00b1 %{customdata[0]:.0f} (n = %{customdata[1]})\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"points","marker":{"color":"#1F2933"},"name":"Total","x":["Module 1\u003cbr\u003e\u003csub\u003e5 sublevels\u003c\u002fsub\u003e","Module 2\u003cbr\u003e\u003csub\u003e6 sublevels\u003c\u002fsub\u003e","Module 3\u003cbr\u003e\u003csub\u003e3 sublevels\u003c\u002fsub\u003e","Module 4\u003cbr\u003e\u003csub\u003e4 sublevels\u003c\u002fsub\u003e","Module 5\u003cbr\u003e\u003csub\u003e5 sublevels\u003c\u002fsub\u003e"],"y":{"dtype":"f8","bdata":"43DmV\u002fO4TEAzo68oNuRSQAa\u002fMRJ\u002fYlFAsYvWUvM0U0DRjb9ByxlSQA=="},"type":"bar","xaxis":"x","yaxis":"y"},{"customdata":{"dtype":"f8","bdata":"\u002f49cXnOYJEAAAAAAAACJQGc3qylSZTFAAAAAAAAYhEAtrFNklGMyQAAAAAAAKIBASrjxAPszM0AAAAAAAAB9QF1\u002flXuSskNAAAAAAACAZ0A=","shape":"5, 2"},"error_y":{"array":{"dtype":"f8","bdata":"\u002f49cXnOYJEBnN6spUmUxQC2sU2SUYzJASrjxAPszM0Bdf5V7krJDQA=="},"color":"#1F2933","thickness":1.2,"type":"data","visible":true,"width":4},"hovertemplate":"Thoughts: %{y:.0f}% \u00b1 %{customdata[0]:.0f} (n = %{customdata[1]})\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"points","marker":{"color":"#1C9FFF"},"name":"Thoughts","x":["Module 1\u003cbr\u003e\u003csub\u003e5 sublevels\u003c\u002fsub\u003e","Module 2\u003cbr\u003e\u003csub\u003e6 sublevels\u003c\u002fsub\u003e","Module 3\u003cbr\u003e\u003csub\u003e3 sublevels\u003c\u002fsub\u003e","Module 4\u003cbr\u003e\u003csub\u003e4 sublevels\u003c\u002fsub\u003e","Module 5\u003cbr\u003e\u003csub\u003e5 sublevels\u003c\u002fsub\u003e"],"y":{"dtype":"f8","bdata":"hbuzdtuyTED5YP6qhvlRQLqy4rQxBFFARrBAjI4uU0BBJfP8IdBSQA=="},"type":"bar","xaxis":"x","yaxis":"y"},{"customdata":{"dtype":"f8","bdata":"AAAAAAAA+H8AAAAAAAAAAIT6hTIwAjFAAAAAAAAYhEBaGRpk0rI2QAAAAAAAAH1AAAAAAAAA+H8AAAAAAAAAABgg0+Wn0jBAAAAAAABQdkA=","shape":"5, 2"},"error_y":{"array":{"dtype":"f8","bdata":"AAAAAAAAAACE+oUyMAIxQFoZGmTSsjZAAAAAAAAAAAAYINPlp9IwQA=="},"color":"#1F2933","thickness":1.2,"type":"data","visible":true,"width":4},"hovertemplate":"Behaviours: %{y:.0f}% \u00b1 %{customdata[0]:.0f} (n = %{customdata[1]})\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"points","marker":{"color":"#FFB100"},"name":"Behaviours","x":["Module 1\u003cbr\u003e\u003csub\u003e5 sublevels\u003c\u002fsub\u003e","Module 2\u003cbr\u003e\u003csub\u003e6 sublevels\u003c\u002fsub\u003e","Module 3\u003cbr\u003e\u003csub\u003e3 sublevels\u003c\u002fsub\u003e","Module 4\u003cbr\u003e\u003csub\u003e4 sublevels\u003c\u002fsub\u003e","Module 5\u003cbr\u003e\u003csub\u003e5 sublevels\u003c\u002fsub\u003e"],"y":{"dtype":"f8","bdata":"AAAAAAAA+H9rU173mXRVQNYzUlRm1VRAAAAAAAAA+H9AMUemlx1SQA=="},"type":"bar","xaxis":"x","yaxis":"y"},{"cliponaxis":false,"customdata":{"dtype":"i2","bdata":"IAMgA4MCIAMFAiAD0AEgA2UBIAM=","shape":"5, 2"},"hovertemplate":"Reached the module: %{y:.0f}% (%{customdata[0]} of %{customdata[1]})\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"completion","marker":{"color":["rgba(28, 159, 255, 0.45)","rgba(255, 177, 0, 0.45)","rgba(12, 196, 186, 0.45)","rgba(167, 41, 255, 0.45)","rgba(255, 62, 210, 0.45)"],"line":{"color":["#1C9FFF","#FFB100","#0CC4BA","#A729FF","#FF3ED2"],"width":1.5}},"name":"Reached the module","text":["100%","80%","65%","58%","45%"],"textposition":"outside","x":["Module 1\u003cbr\u003e\u003csub\u003e5 sublevels\u003c\u002fsub\u003e","Module 2\u003cbr\u003e\u003csub\u003e6 sublevels\u003c\u002fsub\u003e","Module 3\u003cbr\u003e\u003csub\u003e3 sublevels\u003c\u002fsub\u003e","Module 4\u003cbr\u003e\u003csub\u003e4 sublevels\u003c\u002fsub\u003e","Module 5\u003cbr\u003e\u003csub\u003e5 sublevels\u003c\u002fsub\u003e"],"y":{"dtype":"f8","bdata":"AAAAAAAAWUAAAAAAABhUQAAAAAAAKFBAAAAAAAAATUAAAAAAAFBGQA=="},"type":"bar","xaxis":"x2","yaxis":"y2"},{"cliponaxis":false,"customdata":{"dtype":"i2","bdata":"IAMgAwUCIAPQASADZQEgA7wAIAM=","shape":"5, 2"},"hovertemplate":"Completed the module: %{y:.0f}% (%{customdata[0]} of %{customdata[1]})\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"completion","marker":{"color":["rgba(28, 159, 255, 1.0)","rgba(255, 177, 0, 1.0)","rgba(12, 196, 186, 1.0)","rgba(167, 41, 255, 1.0)","rgba(255, 62, 210, 1.0)"],"line":{"color":["#1C9FFF","#FFB100","#0CC4BA","#A729FF","#FF3ED2"],"width":1.5}},"name":"Completed the module","text":["100%","65%","58%","45%","24%"],"textposition":"outside","x":["Module 1\u003cbr\u003e\u003csub\u003e5 sublevels\u003c\u002fsub\u003e","Module 2\u003cbr\u003e\u003csub\u003e6 sublevels\u003c\u002fsub\u003e","Module 3\u003cbr\u003e\u003csub\u003e3 sublevels\u003c\u002fsub\u003e","Module 4\u003cbr\u003e\u003csub\u003e4 sublevels\u003c\u002fsub\u003e","Module 5\u003cbr\u003e\u003csub\u003e5 sublevels\u003c\u002fsub\u003e"],"y":{"dtype":"f8","bdata":"AAAAAAAAWUAAAAAAAChQQAAAAAAAAE1AAAAAAABQRkAAAAAAAIA3QA=="},"type":"bar","xaxis":"x2","yaxis":"y2"},{"hovertemplate":"On average %{y:.0f}% of its analysed sublevels played\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#1F2933","line":{"color":"#ffffff","width":1},"size":11,"symbol":"diamond"},"mode":"markers","name":"Mean share of analysed sublevels played","x":["Module 1\u003cbr\u003e\u003csub\u003e5 sublevels\u003c\u002fsub\u003e","Module 2\u003cbr\u003e\u003csub\u003e6 sublevels\u003c\u002fsub\u003e","Module 3\u003cbr\u003e\u003csub\u003e3 sublevels\u003c\u002fsub\u003e","Module 4\u003cbr\u003e\u003csub\u003e4 sublevels\u003c\u002fsub\u003e","Module 5\u003cbr\u003e\u003csub\u003e5 sublevels\u003c\u002fsub\u003e"],"y":{"dtype":"f8","bdata":"AAAAAAAAWUD\u002f\u002f\u002f\u002f\u002f\u002f8dSQKqqqqqqGk5A\u002f\u002f\u002f\u002f\u002f\u002f9TS0AyMzMzM\u002fM\u002fQA=="},"type":"scatter","xaxis":"x2","yaxis":"y2"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"matches":"x2","showticklabels":false,"gridcolor":"#E5E7EB","linecolor":"#E5E7EB","showgrid":false},"yaxis":{"anchor":"x","domain":[0.47200000000000003,1.0],"gridcolor":"#E5E7EB","zerolinecolor":"#E5E7EB","linecolor":"#E5E7EB","ticksuffix":" %","range":[0,115]},"xaxis2":{"anchor":"y2","domain":[0.0,1.0],"gridcolor":"#E5E7EB","linecolor":"#E5E7EB","showgrid":false},"yaxis2":{"anchor":"x2","domain":[0.0,0.35200000000000004],"gridcolor":"#E5E7EB","zerolinecolor":"#E5E7EB","linecolor":"#E5E7EB","ticksuffix":" %","range":[0,125]},"annotations":[{"font":{"size":12,"color":"#1F2933"},"showarrow":false,"text":"Points awarded (% of points possible) \u2014 mean \u00b1 SD","x":0.5,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"},{"font":{"size":12,"color":"#1F2933"},"showarrow":false,"text":"Completion \u2014 % of the participants who started the game","x":0.5,"xanchor":"center","xref":"paper","y":0.35200000000000004,"yanchor":"bottom","yref":"paper"}],"font":{"color":"#1F2933","size":12},"margin":{"l":10,"r":10,"t":60,"b":30},"hoverlabel":{"font":{"color":"#1F2933"},"bgcolor":"#ffffff","bordercolor":"#CBD5E1"},"legend":{"orientation":"h","yanchor":"bottom","y":1.08,"xanchor":"left","x":0},"height":600,"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(0,0,0,0)","barmode":"group","bargap":0.25},                        {"displaylogo": false, "responsive": true}                    )                };            </script>        </div></div>
+    
+  </div>
+  <div class="card">
+    <h2 class="h2-inline">In numbers</h2>
+    <div class="table-wrap">
+      <table class="game">
+        <thead><tr><th>Analysed sublevels</th><th>Reached</th><th>Completed</th><th>Sublevels played (mean)</th><th>Points % total</th><th>Points % Thoughts</th><th>Points % Behaviours</th></tr></thead>
+        <tbody>
+          
+            <tr><td>Module 1 · 5 sublevels</td><td>800 (100%)</td><td>800 (100%)</td><td>100%</td><td>57% ± 10 (n = 800)</td><td>57% ± 10 (n = 800)</td><td>—</td></tr>
+          
+            <tr><td>Module 2 · 6 sublevels</td><td>643 (80%)</td><td>517 (65%)</td><td>75%</td><td>76% ± 15 (n = 643)</td><td>72% ± 17 (n = 643)</td><td>86% ± 17 (n = 643)</td></tr>
+          
+            <tr><td>Module 3 · 3 sublevels</td><td>517 (65%)</td><td>464 (58%)</td><td>60%</td><td>70% ± 17 (n = 517)</td><td>68% ± 18 (n = 517)</td><td>83% ± 23 (n = 464)</td></tr>
+          
+            <tr><td>Module 4 · 4 sublevels</td><td>464 (58%)</td><td>357 (45%)</td><td>55%</td><td>77% ± 20 (n = 464)</td><td>77% ± 19 (n = 464)</td><td>—</td></tr>
+          
+            <tr><td>Module 5 · 5 sublevels</td><td>357 (45%)</td><td>188 (24%)</td><td>32%</td><td>72% ± 18 (n = 357)</td><td>75% ± 39 (n = 188)</td><td>72% ± 17 (n = 357)</td></tr>
+          
+            <tr><td>Whole game · 23 sublevels</td><td>800 (100%)</td><td>188 (24%)</td><td>66%</td><td>64% ± 12 (n = 800)</td><td>62% ± 12 (n = 800)</td><td>80% ± 16 (n = 643)</td></tr>
+          
+        </tbody>
+      </table>
+    </div>
+    <div class="table-note">
+      Every percentage is out of the 800 participants who <b>started the game</b> (played at least one analysed sublevel), not the whole cohort.
+      A module is the set of its sublevels analysed by the DSS (the clinicians' sheet), not every scene of the game.
+      <b>Reached</b> = played at least one of them; <b>Completed</b> = played all of them; <b>Sublevels played</b> = average share of them played.
+      Points %: mean ± SD over the participants who played that part (n).
+    </div>
+  </div>
+
+
+  </div>
+
+  <!-- Keyboard handling to keep tooltips open if needed -->
+  <script>
+
+    (function () {
+      const THEMES = ["dark", "light", "colorblind"];
+
+      // Read saved theme; fall back to "light" (the default) if unknown
+      const saved = localStorage.getItem("dss-theme");
+      const initial = THEMES.includes(saved) ? saved : "light";
+      document.documentElement.setAttribute("data-theme", initial);
+    })();
+
+    const btn = document.getElementById("themeToggle");
+
+    function nextTheme(current) {
+      if (current === "dark") return "light";
+      if (current === "light") return "colorblind";
+      return "dark"; // colorblind -> dark
+    }
+
+    function nextLabel(theme) {
+      // Button shows the TARGET theme (the next one)
+      if (theme === "dark") return "☀️ Use Light Theme";
+      if (theme === "light") return "👁️ Use Colorblind Theme";
+      return "🌙 Use Dark Theme"; // from colorblind
+    }
+
+    function isLightBackground(theme) {
+      // colorblind is a light canvas
+      return theme === "light" || theme === "colorblind";
+    }
+
+    function syncButtonToTheme() {
+      const current = document.documentElement.getAttribute("data-theme") || "light";
+      const target = nextTheme(current);
+
+      btn.textContent = nextLabel(current);
+      btn.setAttribute("aria-label", `Switch to ${target} theme`);
+      btn.setAttribute("data-target-theme", target);
+
+      // style: for-light = page is lightish (use dark button), for-dark = page is dark (use light button)
+      btn.classList.remove("for-light", "for-dark");
+      if (isLightBackground(current)) {
+        btn.classList.add("for-light");   // page light/colorblind → dark-styled button
+      } else {
+        btn.classList.add("for-dark");    // page dark → light-styled button
+      }
+    }
+
+    syncButtonToTheme();
+
+    btn.addEventListener("click", () => {
+      const current = document.documentElement.getAttribute("data-theme") || "light";
+      const next = nextTheme(current);
+
+      document.documentElement.setAttribute("data-theme", next);
+      localStorage.setItem("dss-theme", next);
+      document.cookie = `theme=${next}; path=/; max-age=31536000`;
+
+      syncButtonToTheme(); // keep UI in sync immediately
+
+      // force a real request with a dummy query
+      const url = new URL(window.location.href);
+      url.searchParams.set("_theme_ts", Date.now().toString());
+      window.location.href = url.toString();
+    });
+    
+
+    
+    document.addEventListener("keydown", (e) => {
+      const isActivator = (e.key === "Enter" || e.key === " ");
+      if (isActivator && e.target.classList && e.target.classList.contains("info")) {
+        e.preventDefault();
+        const expanded = e.target.getAttribute("aria-expanded") === "true";
+        e.target.setAttribute("aria-expanded", String(!expanded));
+      }
+    });
+    document.addEventListener("click", (e) => {
+      const infos = document.querySelectorAll(".info[aria-expanded='true']");
+      if (![...infos].includes(e.target.closest?.(".info"))) {
+        infos.forEach(el => el.setAttribute("aria-expanded", "false"));
+      }
+    });
+  </script>
+  
+  <!-- Print / save as PDF: see the print styles above. The button switches the page to its print
+       layout (html.printing), waits for every chart to be redrawn at that width, then opens the
+       browser dialog; after printing the page goes back to the screen layout. Ctrl+P also works,
+       but charts are then not redrawn first. -->
+  <div class="print-only small" id="printFooter"></div>
+  <script>
+    (function () {
+      const root = document.documentElement;
+      function redrawCharts() {
+        const charts = window.Plotly ? [...document.querySelectorAll(".js-plotly-plot")] : [];
+        return Promise.all(charts.map((el) => window.Plotly.Plots.resize(el)))
+          .then(() => new Promise((resolve) => setTimeout(resolve, 250)));   // let iframes re-layout too
+      }
+      function setFooter() {
+        const footer = document.getElementById("printFooter");
+        if (footer) footer.textContent = "SMILE DSS — " + document.title + " — printed " + new Date().toLocaleString();
+      }
+      document.addEventListener("click", (event) => {
+        if (!event.target.closest("[data-print-page]")) return;
+        root.classList.add("printing");
+        setFooter();
+        redrawCharts().then(() => window.print());
+      });
+      window.addEventListener("beforeprint", () => { root.classList.add("printing"); setFooter(); });
+      window.addEventListener("afterprint", () => { root.classList.remove("printing"); redrawCharts(); });
+    })();
+  </script>
+  <!-- Info / warning buttons (templates/help_buttons.html): one panel open at a time;
+       closes on a second click, a click elsewhere or Escape. -->
+  <script>
+    (function () {
+      function close(btn) {
+        const pop = document.getElementById(btn.getAttribute("aria-controls"));
+        btn.setAttribute("aria-expanded", "false");
+        if (pop) pop.hidden = true;
+      }
+      function closeAll(except) {
+        document.querySelectorAll("[data-help-toggle][aria-expanded='true']").forEach((b) => {
+          if (b !== except) close(b);
+        });
+      }
+      document.addEventListener("click", (event) => {
+        const btn = event.target.closest("[data-help-toggle]");
+        if (btn) {
+          const pop = document.getElementById(btn.getAttribute("aria-controls"));
+          const open = btn.getAttribute("aria-expanded") === "true";
+          closeAll(btn);
+          if (open) { close(btn); return; }
+          btn.setAttribute("aria-expanded", "true");
+          btn.classList.remove("help-btn--attention");
+          pop.hidden = false;
+          // open towards the side with room: right-aligned by default, left-aligned if it would leave the screen
+          pop.classList.remove("help-pop--left");
+          if (pop.getBoundingClientRect().left < 8) pop.classList.add("help-pop--left");
+          return;
+        }
+        if (!event.target.closest(".help-pop")) closeAll(null);
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        const open = document.querySelector("[data-help-toggle][aria-expanded='true']");
+        if (open) { close(open); open.focus(); }
+      });
+    })();
+  </script>
+  <!-- Page loader (styles in the head): on while a page loads and from the moment the user asks for
+       another page (link, form, theme switch); off when the page has finished loading or is shown
+       again from the browser's history. Downloads, new tabs, "#" links and anything marked
+       data-no-loader are left alone, so the loader never stays up on a page that does not change. -->
+  <script>
+    (function () {
+      const root = document.documentElement;
+      const title = document.getElementById("pageLoaderTitle");
+      const hint = document.getElementById("pageLoaderHint");
+      let timer = null;
+
+      function show(text) {
+        title.textContent = text || "Preparing the dashboard…";
+        hint.textContent = "";
+        const start = Date.now();
+        clearInterval(timer);
+        timer = setInterval(() => {
+          const s = Math.round((Date.now() - start) / 1000);
+          if (s >= 4) hint.textContent = `Still working (${s} s): the models and figures are computed for this participant.`;
+        }, 1000);
+        root.classList.add("is-loading");
+      }
+      function hide() {
+        clearInterval(timer);
+        root.classList.remove("is-loading");
+      }
+      window.dssLoader = { show, hide };
+
+      window.addEventListener("load", hide);
+      window.addEventListener("pageshow", (e) => { if (e.persisted) hide(); });   // back / forward cache
+      if (document.readyState === "complete") hide();
+
+      function leavesPage(url) {
+        return url.origin === location.origin
+          && !(url.pathname === location.pathname && url.search === location.search && url.hash);
+      }
+      document.addEventListener("click", (e) => {
+        if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        const a = e.target.closest("a[href]");
+        if (!a || a.target === "_blank" || a.hasAttribute("download") || a.closest("[data-no-loader]")) return;
+        const href = a.getAttribute("href");
+        if (!href || href.startsWith("#") || href.startsWith("javascript:") || href.startsWith("mailto:")) return;
+        const url = new URL(a.href, location.href);
+        if (/\/download\b/.test(url.pathname) || !leavesPage(url)) return;
+        show(a.textContent.trim().startsWith("←") ? "Loading…" : undefined);
+      });
+      document.addEventListener("submit", (e) => {
+        const form = e.target;
+        if (e.defaultPrevented || form.target === "_blank" || form.hasAttribute("data-no-loader")) return;
+        if (/\/download\b/.test(form.action || "")) return;
+        show();
+      });
+      // form.submit() (e.g. a select with onchange) does not fire "submit": cover it too
+      const nativeSubmit = HTMLFormElement.prototype.submit;
+      HTMLFormElement.prototype.submit = function () {
+        if (this.target !== "_blank" && !this.hasAttribute("data-no-loader") && !/\/download\b/.test(this.action || "")) show();
+        return nativeSubmit.call(this);
+      };
+      // the theme button reloads the page
+      const themeBtn = document.getElementById("themeToggle");
+      if (themeBtn) themeBtn.addEventListener("click", () => show("Switching theme…"));
+    })();
+  </script>
+  
+<script>
+  // plotly measures its container when drawn; re-measure once the page is laid out.
+  window.addEventListener("load", () => {
+    document.querySelectorAll(".js-plotly-plot").forEach((el) => Plotly.Plots.resize(el));
+  });
+</script>
+
+
+<script id="demo-router">
+/* Static demo: forms and the theme switch go to pre-rendered pages instead of the server. */
+(function () {
+  var D = {"theme": "light", "slug": "sofia-demo", "page": "overview-relaxed.html", "themes": ["light", "dark", "colorblind"], "routes": {"/ui": ["home", null, null], "/func/exploration/overview": ["overview", "target_var", "mood_valence"], "/func/exploration/analytics_game_scores": ["game_performance", "module", "1"], "/func/exploration/mood_proms": ["mood_proms", "mood", "valence"], "/func/prediction/mood_change": ["game_analytics", "mood", "valence"], "/func/prediction/context_fingerprint": ["esm_analytics", null, null], "/func/prediction/precursors": ["mood_change_analytics", null, null]}};
+  function tok(v) { return String(v).replace(/[^A-Za-z0-9_-]/g, "_"); }
+  function target(form) {
+    var url = new URL(form.getAttribute("data-demo-action") || form.action, location.href);
+    var r = D.routes[url.pathname.replace(/\/+$/, "")];
+    if (!r) return null;
+    var value = r[1] ? (new FormData(form).get(r[1]) || r[2]) : null;
+    return (r[1] ? r[0] + "-" + tok(value) : r[0]) + ".html" + (url.hash || "");
+  }
+  function go(form) { var t = target(form); if (t) { location.href = t; return true; } return false; }
+  HTMLFormElement.prototype.submit = function () { if (!go(this)) alertless(this); };
+  function alertless(form) { console.info("[demo] not available in the demo:", form.action); }
+  window.addEventListener("submit", function (e) {
+    e.preventDefault(); e.stopImmediatePropagation();
+    if (!go(e.target)) alertless(e.target);
+  }, true);
+  window.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("#themeToggle");
+    if (!b) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    var next = D.theme === "dark" ? "light" : D.theme === "light" ? "colorblind" : "dark";   // as in base_ui.html
+    try { localStorage.setItem("dss-theme", next); } catch (err) {}
+    var base = D.slug ? "../../" + next + "/" + D.slug + "/" : "../" + next + "/";
+    location.href = base + D.page + location.hash;
+  }, true);
+})();
+</script>
+</body>
+</html>

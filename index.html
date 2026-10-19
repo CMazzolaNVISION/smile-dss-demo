@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>SMILE DSS demo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="refresh" content="1; url=light/index.html">
+<script>
+  var t = "light";
+  try { var s = localStorage.getItem("dss-theme"); if (["light", "dark", "colorblind"].indexOf(s) >= 0) t = s; } catch (e) {}
+  location.replace(t + "/index.html");
+</script></head>
+<body style="font-family: system-ui, sans-serif; padding: 2rem;">
+<p>Demo - synthetic data, not real participants. <a href="light/index.html">Open the SMILE DSS demo</a>.</p>
+</body></html>
