@@ -29,6 +29,19 @@
       --magenta:#FF3ED2;
       --teal:   #0CC4BA;
 
+      /* DSS colour code (G8, functionalities/plots/palette.py): the same in every theme */
+      --better:   #0072B2;
+      --worse:    #D55E00;
+      --neutral:  #8C8C8C;
+      --check-ok:    #009E73;
+      --check-warn:  #E69F00;
+      --check-alert: #D55E00;
+      --check-info:  #8C8C8C;
+      /* Title bar of every dashboard (G12). TODO (open question, text log §4): the title bar colour
+         (SMILE brand colour?). Placeholder: a dark neutral, not blue / orange (better / worse). */
+      --titlebar-bg: #2F3A4A;
+      --titlebar-text: #FFFFFF;
+
       --gap: 1rem;
       --logo-h: 88px;
       --logo-smile-h: 40px;
@@ -391,20 +404,99 @@
     .is-demo { border-color: color-mix(in srgb, var(--ld-2, #0CC4BA) 70%, var(--border)) !important;
                box-shadow: 0 0 0 1px color-mix(in srgb, var(--ld-2, #0CC4BA) 35%, transparent),
                            0 6px 18px -10px color-mix(in srgb, var(--ld-1, #1C9FFF) 70%, transparent); }
-    /* ---------- Method badges of the Analytics cards: ML / Statistical model ---------- */
+    /* ---------- Method badges of the Analytics cards: Clinical rules / Statistics / ML (H2) ---------- */
     .method-badge { display: inline-flex; align-items: center; padding: .08rem .45rem; border-radius: .35rem;
                     font-size: .68rem; font-weight: 700; letter-spacing: .04em; line-height: 1.4; white-space: nowrap;
                     vertical-align: middle; cursor: help; }
-    .method-badge--ml { background: color-mix(in srgb, var(--ld-3, #A729FF) 18%, transparent);
-                        color: var(--ld-3, #A729FF); border: 1px solid color-mix(in srgb, var(--ld-3, #A729FF) 55%, transparent); }
-    .method-badge--stats { background: color-mix(in srgb, var(--ld-1, #1C9FFF) 15%, transparent);
-                           color: var(--ld-1, #1C9FFF); border: 1px solid color-mix(in srgb, var(--ld-1, #1C9FFF) 50%, transparent); }
-    .card.is-locked > :not(.ml-blocked):not(h2):not(.info-center) { opacity: .5; }
+    .method-badges { display: inline-flex; gap: .3rem; flex-wrap: wrap; vertical-align: middle; }
+    .method-badge--clinical { background: color-mix(in srgb, #009E73 15%, transparent); color: var(--text);
+                              border: 1px solid #009E73; }
+    .method-badge--stats { background: color-mix(in srgb, #56B4E9 15%, transparent); color: var(--text);
+                           border: 1px solid #56B4E9; }
+    .method-badge--ml { background: color-mix(in srgb, #CC79A7 15%, transparent); color: var(--text);
+                        border: 1px solid #CC79A7; }
+    .card.is-locked > :not(.ml-blocked):not(h2):not(.slider) { opacity: .5; }
     .role-legend { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; align-items: center; font-size: .85rem;
                    margin: .75rem 0 .25rem; }
     .ml-blocked { border: 1px dashed var(--border); border-radius: .5rem; padding: .55rem .75rem; font-size: .85rem;
                   color: var(--muted); margin-bottom: .75rem; }
     button[disabled] { opacity: .45; cursor: not-allowed; }
+
+    /* ---------- Title bar of every dashboard (G12; templates/title_bar.html) ----------
+       Left: the dashboard's slider; centre: the title; right: info and print. */
+    .title-bar { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(0, 2fr) minmax(220px, 1fr);
+                 align-items: center; gap: 1rem; padding: .9rem 1.1rem; border-radius: var(--radius);
+                 background: var(--titlebar-bg); color: var(--titlebar-text);
+                 box-shadow: 0 6px 18px rgba(0,0,0,.18); }
+    .title-bar__left { min-width: 0; }
+    .title-bar__centre { text-align: center; min-width: 0; }
+    .title-bar__title { margin: 0; font-size: 1.7rem; font-weight: 750; letter-spacing: .2px; color: var(--titlebar-text); }
+    .title-bar__subtitle { font-size: .92rem; opacity: .85; margin-top: .15rem; }
+    .title-bar__right { display: flex; justify-content: flex-end; }
+    .title-bar .slider { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.25); color: var(--titlebar-text); }
+    .title-bar .slider__dot { background: rgba(255,255,255,.35); }
+    .title-bar .slider__dot[aria-current="true"] { background: var(--titlebar-text); }
+    @media (max-width: 900px) { .title-bar { grid-template-columns: minmax(0, 1fr); }
+                                .title-bar__right { justify-content: center; } }
+    .page-toolbar { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; }
+
+    /* ---------- Slider: the 4 slides of a dashboard (G2; templates/slider.html) ---------- */
+    .slider { border: 1px solid var(--border); border-radius: .6rem; padding: .5rem .6rem; background: var(--surface-2); }
+    .slider__viewport { min-height: 4.5rem; }
+    .slider--compact .slider__viewport { min-height: 2.5rem; }
+    .slider__slide { font-size: .88rem; line-height: 1.4; }
+    .slider--compact .slider__slide { font-size: .8rem; }
+    .slider__slide[hidden] { display: none; }
+    .slider__title { font-weight: 700; margin-bottom: .2rem; }
+    .slider__nav { display: flex; align-items: center; justify-content: center; gap: .45rem; margin-top: .35rem; }
+    .slider__nav button { padding: .1rem .45rem; border-radius: .4rem; font-size: .8rem; color: inherit; border-color: currentColor; }
+    .slider__dot { width: .55rem; height: .55rem; border-radius: 50%; background: var(--border); display: inline-block; }
+    .slider__dot[aria-current="true"] { background: var(--text); }
+
+    /* ---------- Tabs (Cohort Overview) ---------- */
+    .tabs { display: flex; flex-wrap: wrap; gap: .4rem; border-bottom: 2px solid var(--border); }
+    .tabs button { border: 1px solid var(--border); border-bottom: 0; border-radius: .6rem .6rem 0 0; padding: .55rem 1rem;
+                   background: var(--surface-2); color: var(--text); font-weight: 600; margin-bottom: -2px; }
+    .tabs button[aria-selected="true"] { background: var(--surface); border-color: var(--primary); border-bottom: 2px solid var(--surface); }
+    [data-tab-panel][hidden] { display: none !important; }
+    @media print { [data-tab-panel][hidden] { display: grid !important; } .tabs { display: none; } }
+
+    /* ---------- Hover = details (G13) ----------
+       Every chart releases its details on hover: a short hint under the chart title
+       (added by the script at the end of the page) and a pointer cursor on hoverable marks. */
+    .hover-hint { font-size: .78rem; color: var(--muted); margin: .1rem 0 .35rem; }
+    .hover-hint::before { content: "☞ "; }
+    .js-plotly-plot.is-hovering, .js-plotly-plot.is-hovering * { cursor: pointer !important; }
+    @media print { .hover-hint { display: none; } }
+
+    /* ---------- Checks of the trust boxes (G8): icon + colour, never colour alone ---------- */
+    .check__dot { display: inline-grid !important; place-items: center; width: 1.15rem !important; height: 1.15rem !important;
+                  margin-top: .15rem !important; border-radius: 50%; color: #fff; font-size: .72rem; font-weight: 800; line-height: 1; }
+    .check--ok .check__dot { background: var(--check-ok) !important; }
+    .check--ok .check__dot::before { content: "✓"; }
+    .check--info .check__dot { background: var(--check-info) !important; }
+    .check--info .check__dot::before { content: "ℹ"; }
+    .check--warn .check__dot { background: var(--check-warn) !important; color: #111; }
+    .check--warn .check__dot::before { content: "⚠"; }
+    .check--alert .check__dot { background: var(--check-alert) !important; }
+    .check--alert .check__dot::before { content: "✕"; }
+    /* Swatches of the legends: better / worse / uncertain / differs */
+    .sw--better { background: var(--better) !important; }
+    .sw--worse { background: var(--worse) !important; }
+    .sw--faded { background: var(--better) !important; opacity: .4 !important; }
+
+    /* ---------- Participant list: limited data shown last and greyed out (still selectable) ---------- */
+    a.button.is-limited { opacity: .55; border-color: var(--border); }
+    a.button.is-limited:hover { opacity: .8; background: transparent; }
+
+    /* ---------- Jargon card (home page, G3) ---------- */
+    .jargon { grid-column: 1 / -1; }
+    .jargon__grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+    .jargon h3 { margin: .2rem 0 .4rem; font-size: 1rem; }
+    .jargon dl { margin: 0; font-size: .86rem; line-height: 1.45; }
+    .jargon dt { font-weight: 700; margin-top: .45rem; }
+    .jargon dd { margin: 0; color: var(--text); }
+    .jargon__code { margin-top: .8rem; font-size: .86rem; }
 
     /* ---------- Page loader ----------
        Shown while the server prepares the next page (from the click on a
@@ -453,67 +545,6 @@
 
   
 <style>
-  /* Tiny, accessible info tooltip */
-  .info {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 3rem;
-    height: 3rem;
-    margin-left: .5rem;
-    border-radius: 9999px;
-    font-size: 1rem;
-    line-height: 1;
-    font-weight: 600;
-    cursor: help;
-    border: 1px solid currentColor;
-    opacity: .7;
-    color: var(--text);
-  }
-  .info:hover, .info:focus-visible { opacity: 1; outline: none; }
-
-  .info .tip {
-    position: absolute;
-    left: 50%;
-    top: calc(100% + .5rem);
-    transform: translateX(-50%);
-    min-width: 30rem;
-    max-width: 40rem;
-    background: var(--surface);
-    color: var(--text);
-    padding: .6rem .7rem;
-    border-radius: .5rem; 
-    font-size: .8rem;
-    line-height: 1.25;
-    box-shadow: 0 8px 24px rgba(0,0,0,.25);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .15s ease, transform .15s ease;
-    transform-origin: top center;
-    z-index: 50;
-    white-space: pre-line;
-    overflow-wrap: anywhere;
-    text-align: justify;
-  }
-  .info .tip::after {
-    content: "";
-    position: absolute;
-    top: -6px; left: 50%; 
-    transform: translateX(-50%);
-    border: 6px solid transparent; 
-    border-bottom-color: var(--surface);
-  }
-  .info:hover .tip, .info:focus .tip, .info:focus-visible .tip {
-    opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(-2px);
-  }
-  .info[aria-expanded="true"] .tip { opacity: 1; transform: translateX(-50%) translateY(-2px); }
-  .info-center {
-    display: flex;
-    justify-content: center;   /* center horizontally within the card */
-    margin: .5rem 0 1rem;      /* spacing below the title */
-  }
-
   .h2-inline {
     display: flex;
     align-items: center;
@@ -686,7 +717,6 @@
       <div class="header-actions">
         <div>
           <h1>DSS Prototype</h1>
-          <p class="small">Inspect SMILE cohort by interacting with the first DSS prototype. Data are synthetic.</p>
           
           <nav class="row">
             <button type="button" class="danger demo-off" disabled title="Not available in the demo">Logout</button>
@@ -716,64 +746,54 @@
 <div class="card is-demo" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.75rem; margin-bottom:1rem;">
   <div>
     <span class="small">Currently analysing</span><br>
-    <strong style="font-size:1.15rem;">Lena Demo</strong> <span class="rb rb--demo" title="Demo participant: adequate data and kept out of model training, so every dashboard is available and the ML results are out-of-sample"><span class="rb__demo"><svg class="rb-spark" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 .5 7.3 4.7 11.5 6 7.3 7.3 6 11.5 4.7 7.3.5 6 4.7 4.7Z"/></svg>Demo</span><span class="rb__data"><svg class="rb-meter" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="7" width="2.4" height="4" rx=".6" class="on"/><rect x="4.8" y="4.5" width="2.4" height="6.5" rx=".6" class="on"/><rect x="8.6" y="2" width="2.4" height="9" rx=".6" class="on"/></svg>Adequate data</span></span>
-    <span class="small">— Germany</span>
-    <div class="small" style="margin-top:.2rem;">Demo participant: adequate data and kept out of model training, so every dashboard is available and the ML results are out-of-sample.</div>
+    <strong style="font-size:1.15rem;">Lena Demo</strong> <span class="rb rb--demo" title="Demo participant: adequate data and not used to build the models, so every dashboard is available and their results show how the models do on someone new"><span class="rb__demo"><svg class="rb-spark" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 .5 7.3 4.7 11.5 6 7.3 7.3 6 11.5 4.7 7.3.5 6 4.7 4.7Z"/></svg>Demo</span><span class="rb__data"><svg class="rb-meter" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="7" width="2.4" height="4" rx=".6" class="on"/><rect x="4.8" y="4.5" width="2.4" height="6.5" rx=".6" class="on"/><rect x="8.6" y="2" width="2.4" height="9" rx=".6" class="on"/></svg>Adequate data</span></span>
+    <span class="small">(Germany) · UserID 6edaa47b-9eae-8b36-6199-9437deb38676 · Sequence 3</span>
+    <div class="small" style="margin-top:.2rem;">Demo participant: adequate data and not used to build the models, so every dashboard is available and their results show how the models do on someone new.</div>
   </div>
-  <a class="button" href="../index.html">Change participant</a>
+  <div class="nav-row">
+    <a class="button button--nav" href="../index.html">← Back to participants</a>
+    <a class="button button--nav-secondary" href="../index.html">← Back to country selection</a>
+  </div>
 </div>
 
 <h2 style="margin:.25rem 0 .25rem;">Analytics</h2>
 <p class="small" style="margin:0 0 1rem;">
-  <span class="method-badge method-badge--ml">ML</span> machine-learning models trained offline on the cohort ·
-  <span class="method-badge method-badge--stats">Statistical model</span> mixed models ·
-  no badge: descriptive. Mood numbers follow one rule: + = positive valence (better), − = negative valence (worse).
+  <span class="method-badge method-badge--clinical">Clinical rules</span> (designed by clinicians) ·
+  <span class="method-badge method-badge--stats">Statistics</span> (estimated, traceable) ·
+  <span class="method-badge method-badge--ml">ML</span> (learned from the cohort)
 </p>
 
 <section class="grid-2">
 
   <div class="card">
-    <h2 class="h2-inline">Cohort Overview </h2>
-    <div class="info-center">
-    <button class="info" aria-label="info" aria-expanded="false" tabindex="0">info
-  <span class="tip" role="tooltip">GOAL:
-
-See who is in the study cohort and compare countries and demographic subgroups (country, age group, gender) on a selected ESM variable, next to how the cohort is doing in the game. This also helps identify imbalances or potential sources of bias in the sample.
-
-
-PLOTS DISPLAYED:
-
-  THE COHORT
-
-  A. Summary tiles:
-  Number of participants and countries, gender and age split, cohort average of the variable.
-
-  B. Across Europe:
-  Map of the participating countries, colored by their average of the variable.
-
-  C. Demographics tree map:
-  Participants by country, gender and age group, colored by their average of the variable.
-
-  D. Distribution by country:
-  Every participant&#39;s average of the variable, per country, with the selected participant highlighted.
-
-  THE GAME
-
-  E. Points and completion by module:
-  Of the participants who started the game: who reached and who completed each module (the sublevels the DSS analyses in it), and points % (mean ± SD) in total, Thoughts and Behaviours, with a table of the numbers.
-
-
-PARAMETERS TO SELECT:
-
-  None to launch. The variable is picked inside the dashboard (mood valence by default). Moods are on the -3 (negative valence) to +3 (positive valence) scale, negative moods reversed.
-</span>
-</button>
+    <h2 class="h2-inline">Cohort Overview <span class="method-badges"><span class="method-badge method-badge--clinical" title="Clinical rules: designed by clinicians">Clinical rules</span></span></h2>
+    <div class="slider" data-slider id="slider-overview-card"
+     role="group" aria-roledescription="slider" aria-label="About this dashboard">
+  <div class="slider__viewport">
+    <div class="slider__slide" role="group" aria-roledescription="slide"
+         aria-label="1 of 4"><div class="slider__title">The question</div><div class="slider__text">How is the SMILE cohort doing?</div>
     </div>
+    <div class="slider__slide" role="group" aria-roledescription="slide"
+         aria-label="2 of 4" hidden><div class="slider__title">What it uses</div><div class="slider__text">Every participant's mood from the app, their country, gender and age, and how far they got in the game.</div>
+    </div>
+    <div class="slider__slide" role="group" aria-roledescription="slide"
+         aria-label="3 of 4" hidden><div class="slider__title">How it answers</div><div class="slider__text">First who is in the cohort, then how mood differs between countries and groups, then how far participants get in the game.</div>
+    </div>
+    <div class="slider__slide" role="group" aria-roledescription="slide"
+         aria-label="4 of 4" hidden><div class="slider__title">How to read it</div><div class="slider__text">Simple averages. Mood goes from −3 (negative, orange) to +3 (positive, blue). The selected participant is highlighted.</div>
+    </div>
+  </div>
+  <div class="slider__nav">
+    <button type="button" data-slider-prev aria-label="Previous slide">‹</button><span class="slider__dot" role="button" tabindex="0" aria-label="Slide 1"></span><span class="slider__dot" role="button" tabindex="0" aria-label="Slide 2"></span><span class="slider__dot" role="button" tabindex="0" aria-label="Slide 3"></span><span class="slider__dot" role="button" tabindex="0" aria-label="Slide 4"></span>
+    <button type="button" data-slider-next aria-label="Next slide">›</button>
+  </div>
+</div>
+
     
     
-    <form action="overview-mood_valence.html" data-demo-action="/func/exploration/overview" method="get">
+    <form action="overview-overall_mood.html" data-demo-action="/func/exploration/overview" method="get">
       <div class="small" style="margin-bottom:.75rem;">
-        The variable is picked inside the dashboard (mood valence by default); the selected participant is highlighted.
+        The mood is picked inside the dashboard (overall mood by default); the selected participant is highlighted.
       </div>
       <div class="button-center">
         <button type="submit">Open Cohort Overview</button>
@@ -786,61 +806,35 @@ PARAMETERS TO SELECT:
 
 
   <div class="card">
-    <h2 class="h2-inline">Game Performance </h2>
-    <div class="info-center">
-    <button class="info" aria-label="info" aria-expanded="false" tabindex="0">info
-  <span class="tip" role="tooltip">GOAL:
-
-  Follow how the currently selected participant scores in the game sublevels chosen by the clinicians, in alignment with their ESM mood: points awarded, speed of decision, attempts and the composite healthy thinking score, next to the mood valence (happy and sad), anxiety and stress reported before and after playing.
-
-
-PLOTS DISPLAYED:
-
-  WHOLE GAME (every module)
-
-  Game progress and completion:
-  How far into the game the participant has advanced over time, and the share of the game played.
-
-  A. Summary tiles:
-  Sublevels played, and the share of points awarded overall, in Thoughts and in Behaviours.
-
-  B. Progression across modules:
-  The modules compared metric by metric (points % total, Thoughts and Behaviours; ESM before, after and change), each bar showing the cohort average for that module, next to a scorecard reading the same results as better or worse, and a short written summary.
-
-  C. Results by subgroup:
-  One donut per subgroup of Thoughts and Behaviours (e.g. critical analysis, cognitive flexibility, social confidence): share of points awarded across the whole game.
-  Under Behaviours, the communication style (logical, emotional, pragmatic) chosen in the three dialogs with the bookkeeper, shown as one tile per dialog.
-
-  D. ESM timeline with game events:
-  Mood valence, anxiety and stress over time, with every played sublevel of every module marked.
-
-  ONE MODULE (picked inside the dashboard, module 1 by default)
-
-  E. Module tiles and sublevel scores:
-  One row per sublevel of the module, with the same columns as the clinicians&#39; analysis sheet (including the closest ESM before and after each sublevel) and the rule used to compute its points.
-
-  F. Points and healthy thinking score:
-  Share of the points possible awarded per sublevel, with the healthy thinking score as a column.
-
-  OTHER METRICS
-
-  G. NPCs met and NPC interaction summary:
-  How many of the game&#39;s characters the participant has met, and how they approached and interacted with them.
-
-
-PARAMETERS TO SELECT:
-
-  None to launch. The module is picked inside the dashboard. The CSV download contains every module.
-</span>
-</button>
+    <h2 class="h2-inline">Game Performance <span class="method-badges"><span class="method-badge method-badge--clinical" title="Clinical rules: designed by clinicians">Clinical rules</span></span></h2>
+    <div class="slider" data-slider id="slider-game_scores-card"
+     role="group" aria-roledescription="slider" aria-label="About this dashboard">
+  <div class="slider__viewport">
+    <div class="slider__slide" role="group" aria-roledescription="slide"
+         aria-label="1 of 4"><div class="slider__title">The question</div><div class="slider__text">How is this participant doing in the SMILE game?</div>
     </div>
+    <div class="slider__slide" role="group" aria-roledescription="slide"
+         aria-label="2 of 4" hidden><div class="slider__title">What it uses</div><div class="slider__text">What they played, the points of the minigames chosen by clinical experts, and their mood just before and after playing.</div>
+    </div>
+    <div class="slider__slide" role="group" aria-roledescription="slide"
+         aria-label="3 of 4" hidden><div class="slider__title">How it answers</div><div class="slider__text">From the big picture to the detail: how far they got, how each module went, their results by skill, then every minigame.</div>
+    </div>
+    <div class="slider__slide" role="group" aria-roledescription="slide"
+         aria-label="4 of 4" hidden><div class="slider__title">How to read it</div><div class="slider__text">Points = share of the points possible. Mood before vs after shows what goes together with playing, not what it causes.</div>
+    </div>
+  </div>
+  <div class="slider__nav">
+    <button type="button" data-slider-prev aria-label="Previous slide">‹</button><span class="slider__dot" role="button" tabindex="0" aria-label="Slide 1"></span><span class="slider__dot" role="button" tabindex="0" aria-label="Slide 2"></span><span class="slider__dot" role="button" tabindex="0" aria-label="Slide 3"></span><span class="slider__dot" role="button" tabindex="0" aria-label="Slide 4"></span>
+    <button type="button" data-slider-next aria-label="Next slide">›</button>
+  </div>
+</div>
+
     
 
     <form action="game_performance-1.html" data-demo-action="/func/exploration/analytics_game_scores" method="get">
       <div class="small" style="margin-bottom:.75rem;">
-        Runs on the currently selected participant: game progress and completion, the whole game, one module
-        at a time (module 1 by default, changeable inside the dashboard), and NPC interactions. The score
-        table can be downloaded as CSV.
+        Runs on the currently selected participant, in five tabs: game progress, progression across modules,
+        results by subgroup, minigame scores (every module) and other metrics.
       </div>
       <div class="button-center">
         <button type="submit">Open Game Performance</button>
@@ -852,39 +846,32 @@ PARAMETERS TO SELECT:
 
 
   <div class="card">
-    <h2 class="h2-inline">Mood &amp; PROMs </h2>
-    <div class="info-center">
-    <button class="info" aria-label="info" aria-expanded="false" tabindex="0">info
-  <span class="tip" role="tooltip">GOAL:
-
-  Follow the selected participant&#39;s moods over the study and their patient-reported outcome measures (PROMs), on one page.
-
-
-PLOTS DISPLAYED:
-
-  MOOD
-
-  A. Average mood over the whole period:
-  One tile per mood (average and spread on the -3 negative to +3 positive valence scale; negative moods reversed), then sleep quality: average, nights with negative sleep, and how many times sleep was negative for more than 3 consecutive nights.
-
-  B. Mood tracking:
-  The selected mood day by day, with the weekly average and its standard error, against the cohort average.
-
-  PROMs
-
-  C. Questionnaire sessions:
-  One box per session, newest first, with the mood around it; a message when the participant has none.
-
-
-PARAMETERS TO SELECT:
-
-  None to launch. The mood and the cohort reference group (country, gender, age group) are picked inside the dashboard.
-</span>
-</button>
+    <h2 class="h2-inline">Mood Monitoring <span class="method-badges"><span class="method-badge method-badge--clinical" title="Clinical rules: designed by clinicians">Clinical rules</span></span></h2>
+    <div class="slider" data-slider id="slider-mood_monitoring-card"
+     role="group" aria-roledescription="slider" aria-label="About this dashboard">
+  <div class="slider__viewport">
+    <div class="slider__slide" role="group" aria-roledescription="slide"
+         aria-label="1 of 4"><div class="slider__title">The question</div><div class="slider__text">How is this participant's mood in daily life?</div>
     </div>
+    <div class="slider__slide" role="group" aria-roledescription="slide"
+         aria-label="2 of 4" hidden><div class="slider__title">What it uses</div><div class="slider__text">The short mood questionnaires of the companion app, answered several times a day, and the questionnaires filled in at study visits.</div>
+    </div>
+    <div class="slider__slide" role="group" aria-roledescription="slide"
+         aria-label="3 of 4" hidden><div class="slider__title">How it answers</div><div class="slider__text">First how reliable the data are, then mood and sleep, then how mood changes over time and next to the questionnaires.</div>
+    </div>
+    <div class="slider__slide" role="group" aria-roledescription="slide"
+         aria-label="4 of 4" hidden><div class="slider__title">How to read it</div><div class="slider__text">Averages, and a smoothed line for the trend, compared with similar participants. Mood goes from −3 (negative) to +3 (positive).</div>
+    </div>
+  </div>
+  <div class="slider__nav">
+    <button type="button" data-slider-prev aria-label="Previous slide">‹</button><span class="slider__dot" role="button" tabindex="0" aria-label="Slide 1"></span><span class="slider__dot" role="button" tabindex="0" aria-label="Slide 2"></span><span class="slider__dot" role="button" tabindex="0" aria-label="Slide 3"></span><span class="slider__dot" role="button" tabindex="0" aria-label="Slide 4"></span>
+    <button type="button" data-slider-next aria-label="Next slide">›</button>
+  </div>
+</div>
+
     
 
-    <form action="mood_proms-valence.html" data-demo-action="/func/exploration/mood_proms" method="get">
+    <form action="mood_monitoring-overall_mood.html" data-demo-action="/func/exploration/mood_monitoring" method="get">
       
       <input type="hidden" name="group_by" value="country"/>
       <input type="hidden" name="group_by" value="gender"/>
@@ -892,7 +879,7 @@ PARAMETERS TO SELECT:
         Runs on the currently selected participant. The mood and the cohort reference are picked inside the dashboard.
       </div>
       <div class="button-center">
-        <button type="submit">Open Mood &amp; PROMs</button>
+        <button type="submit">Open Mood Monitoring</button>
       </div>
     </form>
   </div>
@@ -905,15 +892,32 @@ PARAMETERS TO SELECT:
   </figure>
 
   <div class="card">
-    <h2 class="h2-inline">Game Analytics <span class="method-badge method-badge--ml" title="Machine learning: models trained offline on the cohort and checked on participants they were not trained on.">ML</span></h2>
-    <div class="info-center">
-    <button class="info" aria-label="info" aria-expanded="false" tabindex="0">info
-  <span class="tip" role="tooltip">Between two beeps of the same day, what goes with a better change of mood than usual: playing (which module, how well -- Game Performance scoring rules), a stressful event, negative thinking, coping? And which modules could be worth playing again? The participant&#39;s own data combined with the cohort in small statistical models, with checks of how much it can be trusted.</span>
-</button>
+    <h2 class="h2-inline">Game Analytics <span class="method-badges"><span class="method-badge method-badge--stats" title="Statistics: estimated, traceable">Statistics</span><span class="method-badge method-badge--ml" title="ML: learned from the cohort">ML</span></span></h2>
+    <div class="slider" data-slider id="slider-mood_change-card"
+     role="group" aria-roledescription="slider" aria-label="About this dashboard">
+  <div class="slider__viewport">
+    <div class="slider__slide" role="group" aria-roledescription="slide"
+         aria-label="1 of 4">
     </div>
+    <div class="slider__slide" role="group" aria-roledescription="slide"
+         aria-label="2 of 4" hidden>
+    </div>
+    <div class="slider__slide" role="group" aria-roledescription="slide"
+         aria-label="3 of 4" hidden>
+    </div>
+    <div class="slider__slide" role="group" aria-roledescription="slide"
+         aria-label="4 of 4" hidden>
+    </div>
+  </div>
+  <div class="slider__nav">
+    <button type="button" data-slider-prev aria-label="Previous slide">‹</button><span class="slider__dot" role="button" tabindex="0" aria-label="Slide 1"></span><span class="slider__dot" role="button" tabindex="0" aria-label="Slide 2"></span><span class="slider__dot" role="button" tabindex="0" aria-label="Slide 3"></span><span class="slider__dot" role="button" tabindex="0" aria-label="Slide 4"></span>
+    <button type="button" data-slider-next aria-label="Next slide">›</button>
+  </div>
+</div>
+
     
 
-    <form action="game_analytics-valence.html" data-demo-action="/func/prediction/mood_change" method="get">
+    <form action="game_analytics-overall_mood.html" data-demo-action="/func/prediction/mood_change" method="get">
       <div class="small" style="margin-bottom:.75rem;">
         Runs on the currently selected participant. The mood is picked inside the dashboard.
       </div>
@@ -924,24 +928,29 @@ PARAMETERS TO SELECT:
   </div>
 
   <div class="card">
-    <h2 class="h2-inline">ESM Analytics <span class="method-badge method-badge--stats" title="Statistical models (linear mixed models): estimates with uncertainty, no machine learning.">Statistical model</span></h2>
-    <div class="info-center">
-    <button class="info" aria-label="info" aria-expanded="false" tabindex="0">info
-  <span class="tip" role="tooltip">GOAL:
-
-  Explore how the selected participant&#39;s emotions relate to where they are, what they do and who they are with at the moment of the beep, compared with their own usual level and with most participants. Three small statistical models (linear mixed models); associations, not causal effects. What happened since the previous beep is in Mood Change Analytics.
-
-
-PLOTS DISPLAYED:
-
-  A. How the numbers are made: the model in three steps, with a worked example from the participant&#39;s own data.
-
-  B. Right now: heatmap of the Where, Doing and With models x emotions, and a graph of the strongest links (dashed = differs from most participants).
-
-  C. How much can you trust this: checks with thresholds and warnings, and how often findings held in later days of participants never seen in training.
-</span>
-</button>
+    <h2 class="h2-inline">ESM Analytics <span class="method-badges"><span class="method-badge method-badge--stats" title="Statistics: estimated, traceable">Statistics</span></span></h2>
+    <div class="slider" data-slider id="slider-context-card"
+     role="group" aria-roledescription="slider" aria-label="About this dashboard">
+  <div class="slider__viewport">
+    <div class="slider__slide" role="group" aria-roledescription="slide"
+         aria-label="1 of 4">
     </div>
+    <div class="slider__slide" role="group" aria-roledescription="slide"
+         aria-label="2 of 4" hidden>
+    </div>
+    <div class="slider__slide" role="group" aria-roledescription="slide"
+         aria-label="3 of 4" hidden>
+    </div>
+    <div class="slider__slide" role="group" aria-roledescription="slide"
+         aria-label="4 of 4" hidden>
+    </div>
+  </div>
+  <div class="slider__nav">
+    <button type="button" data-slider-prev aria-label="Previous slide">‹</button><span class="slider__dot" role="button" tabindex="0" aria-label="Slide 1"></span><span class="slider__dot" role="button" tabindex="0" aria-label="Slide 2"></span><span class="slider__dot" role="button" tabindex="0" aria-label="Slide 3"></span><span class="slider__dot" role="button" tabindex="0" aria-label="Slide 4"></span>
+    <button type="button" data-slider-next aria-label="Next slide">›</button>
+  </div>
+</div>
+
     
 
     <form action="esm_analytics.html" data-demo-action="/func/prediction/context_fingerprint" method="get">
@@ -955,28 +964,29 @@ PLOTS DISPLAYED:
   </div>
 
   <div class="card">
-    <h2 class="h2-inline">Mood Change Analytics <span class="method-badge method-badge--ml" title="Machine learning: models trained offline on the cohort and checked on participants they were not trained on.">ML</span></h2>
-    <div class="info-center">
-    <button class="info" aria-label="info" aria-expanded="false" tabindex="0">info
-  <span class="tip" role="tooltip">GOAL:
-
-  Explore what goes with feeling better or worse than usual for the selected participant: what happened since the previous beep (events, negative thinking, each coping strategy; linear mixed models), how emotions carry over from one beep to the next (emotion network, a multilevel VAR), and which recent factors -- last beep, past week&#39;s mood, engagement, sleep, timing -- go with the next mood (an Explainable Boosting Machine, a cohort model). Associations, not causal effects; not an early-warning tool.
-
-
-PLOTS DISPLAYED:
-
-  A. How the numbers are made: the models in plain words.
-
-  B. Since the last beep: forest plot for mood valence, or heatmap for all emotions, with a worked example, checks and how often findings held later.
-
-  C. Emotion network: arrows between up to seven emotions (this participant or the cohort), or the table of all arrows, with a worked example.
-
-  D. Predictor landscape: accuracy of the model vs two simple rules (cross-validation and this participant), importance of each input (cohort vs this participant), the model&#39;s curves, and this participant&#39;s beeps over time.
-
-  E. How much can you trust this: checks with thresholds, and how often network findings held later.
-</span>
-</button>
+    <h2 class="h2-inline">Mood Change Analytics <span class="method-badges"><span class="method-badge method-badge--stats" title="Statistics: estimated, traceable">Statistics</span><span class="method-badge method-badge--ml" title="ML: learned from the cohort">ML</span></span></h2>
+    <div class="slider" data-slider id="slider-precursors-card"
+     role="group" aria-roledescription="slider" aria-label="About this dashboard">
+  <div class="slider__viewport">
+    <div class="slider__slide" role="group" aria-roledescription="slide"
+         aria-label="1 of 4">
     </div>
+    <div class="slider__slide" role="group" aria-roledescription="slide"
+         aria-label="2 of 4" hidden>
+    </div>
+    <div class="slider__slide" role="group" aria-roledescription="slide"
+         aria-label="3 of 4" hidden>
+    </div>
+    <div class="slider__slide" role="group" aria-roledescription="slide"
+         aria-label="4 of 4" hidden>
+    </div>
+  </div>
+  <div class="slider__nav">
+    <button type="button" data-slider-prev aria-label="Previous slide">‹</button><span class="slider__dot" role="button" tabindex="0" aria-label="Slide 1"></span><span class="slider__dot" role="button" tabindex="0" aria-label="Slide 2"></span><span class="slider__dot" role="button" tabindex="0" aria-label="Slide 3"></span><span class="slider__dot" role="button" tabindex="0" aria-label="Slide 4"></span>
+    <button type="button" data-slider-next aria-label="Next slide">›</button>
+  </div>
+</div>
+
     
 
     <form action="mood_change_analytics.html" data-demo-action="/func/prediction/precursors" method="get">
@@ -990,6 +1000,38 @@ PLOTS DISPLAYED:
   </div>
 
 
+
+  
+  
+  <div class="card jargon" id="jargon">
+    <h2 class="h2-inline">Jargon</h2>
+    <div class="jargon__grid">
+      
+      <div>
+        <h3>Data</h3>
+        <dl>
+          <dt>Observation</dt><dd>One short questionnaire answered on the phone. Several per day: Morning (sleep), three during the day, Evening.</dd><dt>ESM</dt><dd>Experience sampling: the method of asking about mood and context in daily life, through observations.</dd><dt>Overall mood</dt><dd>One number that sums up how good the mood is: the average of happy and sad (reversed) of the same observation, on −3 to +3. Example: happy answered 6 (→ +2) and sad answered 3 (→ +1, reversed) → overall mood +1.5.</dd><dt>Reversed</dt><dd>A negative mood flipped so that + means better (see Moods): &#34;anxious (reversed) +2&#34; = answered 2 on 1–7, i.e. little anxiety. Changes and differences are flipped too: &#34;+0.6 anxious (reversed)&#34; = 0.6 points less anxious.</dd><dt>Context</dt><dd>Where the participant is, what they are doing and who they are with at the observation.</dd><dt>Module / sublevel</dt><dd>The game is made of modules; each module of sublevels (e.g. minigames).</dd><dt>Points %</dt><dd>Share of the points possible that the participant won.</dd><dt>NPC</dt><dd>A character of the game (non-player character).</dd><dt>PROMs</dt><dd>Questionnaires filled in at study visits (patient-reported outcome measures).</dd>
+        </dl>
+      </div>
+      
+      <div>
+        <h3>Reading the results</h3>
+        <dl>
+          <dt>Usual level</dt><dd>The participant&#39;s own average. Results compare a moment with it, not with other people.</dd><dt>Usual change</dt><dd>How much the participant&#39;s mood normally changes between two observations.</dd><dt>Cohort / most participants</dt><dd>All the study participants used to build the models.</dd><dt>Own data · Cohort · Combined</dt><dd>Estimate from the participant&#39;s observations only · the cohort average · the two blended: the more own data, the more weight it gets.</dd><dt>Share of own data</dt><dd>How much of the combined estimate comes from the participant&#39;s own data.</dd><dt>Strong / Clear / Uncertain</dt><dd>How sure the estimate is (strong = very sure, clear = sure, uncertain = could be chance).</dd><dt>95% range</dt><dd>The values the estimate could plausibly take.</dd><dt>Differs from most participants (dashed)</dt><dd>This participant&#39;s estimate is clearly different from the cohort average.</dd><dt>Association, not cause</dt><dd>Two things go together; the data cannot say one causes the other.</dd><dt>Held later</dt><dd>Checked on the participant&#39;s later days: how often a finding pointed the same way again (50% = coin flip).</dd>
+        </dl>
+      </div>
+      
+      <div>
+        <h3>Participants</h3>
+        <dl>
+          <dt>Adequate data</dt><dd>Enough observations, days and game play for all dashboards.</dd><dt>Limited data</dt><dd>Below the adequate-data criteria: only the descriptive dashboards are available.</dd><dt>Demo participant</dt><dd>Not used to build the models: their results show how the models do on someone new.</dd><dt>Used to build the models</dt><dd>The participant&#39;s data are in the cohort averages; read with care.</dd>
+        </dl>
+      </div>
+      
+    </div>
+    <div class="jargon__code"><b>Visual code:</b> Blue = better, orange = worse · faded = uncertain · bold = strong · dashed = differs from most participants.</div>
+  </div>
+  
 
 </section>
 
@@ -1095,7 +1137,7 @@ PLOTS DISPLAYED:
       }
       function setFooter() {
         const footer = document.getElementById("printFooter");
-        if (footer) footer.textContent = "SMILE DSS — " + document.title + " — printed " + new Date().toLocaleString();
+        if (footer) footer.textContent = "SMILE DSS: " + document.title + ", printed " + new Date().toLocaleString();
       }
       document.addEventListener("click", (event) => {
         if (!event.target.closest("[data-print-page]")) return;
@@ -1208,12 +1250,76 @@ PLOTS DISPLAYED:
       if (themeBtn) themeBtn.addEventListener("click", () => show("Switching theme…"));
     })();
   </script>
+  <!-- Sliders (templates/slider.html): previous / next and the dots. -->
+  <script>
+    (function () {
+      document.querySelectorAll("[data-slider]").forEach((slider) => {
+        const slides = [...slider.querySelectorAll(".slider__slide")];
+        const dots = [...slider.querySelectorAll(".slider__dot")];
+        let i = 0;
+        function show(k) {
+          i = (k + slides.length) % slides.length;
+          slides.forEach((s, j) => { s.hidden = j !== i; });
+          dots.forEach((d, j) => d.setAttribute("aria-current", String(j === i)));
+        }
+        slider.querySelector("[data-slider-prev]")?.addEventListener("click", () => show(i - 1));
+        slider.querySelector("[data-slider-next]")?.addEventListener("click", () => show(i + 1));
+        dots.forEach((d, j) => d.addEventListener("click", () => show(j)));
+        show(0);
+      });
+    })();
+  </script>
+  <!-- Tabs: one panel at a time; the open tab is kept in the address (#tab-id), so a picker that
+       reloads the page comes back to the same tab. Charts are re-measured when their tab opens. -->
+  <script>
+    (function () {
+      document.querySelectorAll("[data-tabs]").forEach((bar) => {
+        const buttons = [...bar.querySelectorAll("[data-tab]")];
+        function open(id, push) {
+          buttons.forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === id)));
+          document.querySelectorAll("[data-tab-panel]").forEach((panel) => {
+            panel.hidden = panel.dataset.tabPanel !== id;
+            if (!panel.hidden && window.Plotly) panel.querySelectorAll(".js-plotly-plot").forEach((el) => Plotly.Plots.resize(el));
+          });
+          if (push) history.replaceState(null, "", "#" + id);
+        }
+        buttons.forEach((b) => b.addEventListener("click", () => open(b.dataset.tab, true)));
+        const fromHash = location.hash.slice(1);
+        open(buttons.some((b) => b.dataset.tab === fromHash) ? fromHash : buttons[0].dataset.tab, false);
+      });
+    })();
+  </script>
+  <!-- Hover = details (G13): a hint under every chart title, and a pointer cursor on hoverable marks. -->
+  <script>
+    (function () {
+      const HINT = "Hover for details";
+      function hasHover(el) {
+        return (el.data || []).some((t) => t.type !== "indicator" && t.hoverinfo !== "skip" && t.hoverinfo !== "none");
+      }
+      function setup() {
+        document.querySelectorAll(".js-plotly-plot").forEach((el) => {
+          if (el.dataset.hoverReady || !hasHover(el)) return;
+          el.dataset.hoverReady = "1";
+          el.on("plotly_hover", () => el.classList.add("is-hovering"));
+          el.on("plotly_unhover", () => el.classList.remove("is-hovering"));
+          const card = el.closest(".card, .donut, .tile");
+          if (!card || card.querySelector(":scope > .hover-hint, :scope .card-head + .hover-hint")) return;
+          const hint = document.createElement("p");
+          hint.className = "hover-hint";
+          hint.textContent = HINT;
+          const head = card.querySelector(":scope > .card-head, :scope > h2, :scope > .donut__title, :scope > .tile__title");
+          if (head) head.insertAdjacentElement("afterend", hint); else card.prepend(hint);
+        });
+      }
+      window.addEventListener("load", setup);
+    })();
+  </script>
   
 
 <script id="demo-router">
 /* Static demo: forms and the theme switch go to pre-rendered pages instead of the server. */
 (function () {
-  var D = {"theme": "light", "slug": "lena-demo", "page": "home.html", "themes": ["light", "dark", "colorblind"], "routes": {"/ui": ["home", null, null], "/func/exploration/overview": ["overview", "target_var", "mood_valence"], "/func/exploration/analytics_game_scores": ["game_performance", "module", "1"], "/func/exploration/mood_proms": ["mood_proms", "mood", "valence"], "/func/prediction/mood_change": ["game_analytics", "mood", "valence"], "/func/prediction/context_fingerprint": ["esm_analytics", null, null], "/func/prediction/precursors": ["mood_change_analytics", null, null]}};
+  var D = {"theme": "light", "slug": "lena-demo", "page": "home.html", "themes": ["light", "dark", "colorblind"], "routes": {"/ui": ["home", null, null], "/func/exploration/overview": ["overview", "target_var", "overall_mood"], "/func/exploration/analytics_game_scores": ["game_performance", "module", "1"], "/func/exploration/mood_monitoring": ["mood_monitoring", "mood", "overall_mood"], "/func/prediction/mood_change": ["game_analytics", "mood", "overall_mood"], "/func/prediction/context_fingerprint": ["esm_analytics", null, null], "/func/prediction/precursors": ["mood_change_analytics", null, null]}};
   function tok(v) { return String(v).replace(/[^A-Za-z0-9_-]/g, "_"); }
   function target(form) {
     var url = new URL(form.getAttribute("data-demo-action") || form.action, location.href);

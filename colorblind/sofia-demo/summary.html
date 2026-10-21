@@ -29,6 +29,19 @@
       --magenta:#FF3ED2;
       --teal:   #0CC4BA;
 
+      /* DSS colour code (G8, functionalities/plots/palette.py): the same in every theme */
+      --better:   #0072B2;
+      --worse:    #D55E00;
+      --neutral:  #8C8C8C;
+      --check-ok:    #009E73;
+      --check-warn:  #E69F00;
+      --check-alert: #D55E00;
+      --check-info:  #8C8C8C;
+      /* Title bar of every dashboard (G12). TODO (open question, text log §4): the title bar colour
+         (SMILE brand colour?). Placeholder: a dark neutral, not blue / orange (better / worse). */
+      --titlebar-bg: #2F3A4A;
+      --titlebar-text: #FFFFFF;
+
       --gap: 1rem;
       --logo-h: 88px;
       --logo-smile-h: 40px;
@@ -391,20 +404,99 @@
     .is-demo { border-color: color-mix(in srgb, var(--ld-2, #0CC4BA) 70%, var(--border)) !important;
                box-shadow: 0 0 0 1px color-mix(in srgb, var(--ld-2, #0CC4BA) 35%, transparent),
                            0 6px 18px -10px color-mix(in srgb, var(--ld-1, #1C9FFF) 70%, transparent); }
-    /* ---------- Method badges of the Analytics cards: ML / Statistical model ---------- */
+    /* ---------- Method badges of the Analytics cards: Clinical rules / Statistics / ML (H2) ---------- */
     .method-badge { display: inline-flex; align-items: center; padding: .08rem .45rem; border-radius: .35rem;
                     font-size: .68rem; font-weight: 700; letter-spacing: .04em; line-height: 1.4; white-space: nowrap;
                     vertical-align: middle; cursor: help; }
-    .method-badge--ml { background: color-mix(in srgb, var(--ld-3, #A729FF) 18%, transparent);
-                        color: var(--ld-3, #A729FF); border: 1px solid color-mix(in srgb, var(--ld-3, #A729FF) 55%, transparent); }
-    .method-badge--stats { background: color-mix(in srgb, var(--ld-1, #1C9FFF) 15%, transparent);
-                           color: var(--ld-1, #1C9FFF); border: 1px solid color-mix(in srgb, var(--ld-1, #1C9FFF) 50%, transparent); }
-    .card.is-locked > :not(.ml-blocked):not(h2):not(.info-center) { opacity: .5; }
+    .method-badges { display: inline-flex; gap: .3rem; flex-wrap: wrap; vertical-align: middle; }
+    .method-badge--clinical { background: color-mix(in srgb, #009E73 15%, transparent); color: var(--text);
+                              border: 1px solid #009E73; }
+    .method-badge--stats { background: color-mix(in srgb, #56B4E9 15%, transparent); color: var(--text);
+                           border: 1px solid #56B4E9; }
+    .method-badge--ml { background: color-mix(in srgb, #CC79A7 15%, transparent); color: var(--text);
+                        border: 1px solid #CC79A7; }
+    .card.is-locked > :not(.ml-blocked):not(h2):not(.slider) { opacity: .5; }
     .role-legend { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; align-items: center; font-size: .85rem;
                    margin: .75rem 0 .25rem; }
     .ml-blocked { border: 1px dashed var(--border); border-radius: .5rem; padding: .55rem .75rem; font-size: .85rem;
                   color: var(--muted); margin-bottom: .75rem; }
     button[disabled] { opacity: .45; cursor: not-allowed; }
+
+    /* ---------- Title bar of every dashboard (G12; templates/title_bar.html) ----------
+       Left: the dashboard's slider; centre: the title; right: info and print. */
+    .title-bar { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(0, 2fr) minmax(220px, 1fr);
+                 align-items: center; gap: 1rem; padding: .9rem 1.1rem; border-radius: var(--radius);
+                 background: var(--titlebar-bg); color: var(--titlebar-text);
+                 box-shadow: 0 6px 18px rgba(0,0,0,.18); }
+    .title-bar__left { min-width: 0; }
+    .title-bar__centre { text-align: center; min-width: 0; }
+    .title-bar__title { margin: 0; font-size: 1.7rem; font-weight: 750; letter-spacing: .2px; color: var(--titlebar-text); }
+    .title-bar__subtitle { font-size: .92rem; opacity: .85; margin-top: .15rem; }
+    .title-bar__right { display: flex; justify-content: flex-end; }
+    .title-bar .slider { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.25); color: var(--titlebar-text); }
+    .title-bar .slider__dot { background: rgba(255,255,255,.35); }
+    .title-bar .slider__dot[aria-current="true"] { background: var(--titlebar-text); }
+    @media (max-width: 900px) { .title-bar { grid-template-columns: minmax(0, 1fr); }
+                                .title-bar__right { justify-content: center; } }
+    .page-toolbar { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; }
+
+    /* ---------- Slider: the 4 slides of a dashboard (G2; templates/slider.html) ---------- */
+    .slider { border: 1px solid var(--border); border-radius: .6rem; padding: .5rem .6rem; background: var(--surface-2); }
+    .slider__viewport { min-height: 4.5rem; }
+    .slider--compact .slider__viewport { min-height: 2.5rem; }
+    .slider__slide { font-size: .88rem; line-height: 1.4; }
+    .slider--compact .slider__slide { font-size: .8rem; }
+    .slider__slide[hidden] { display: none; }
+    .slider__title { font-weight: 700; margin-bottom: .2rem; }
+    .slider__nav { display: flex; align-items: center; justify-content: center; gap: .45rem; margin-top: .35rem; }
+    .slider__nav button { padding: .1rem .45rem; border-radius: .4rem; font-size: .8rem; color: inherit; border-color: currentColor; }
+    .slider__dot { width: .55rem; height: .55rem; border-radius: 50%; background: var(--border); display: inline-block; }
+    .slider__dot[aria-current="true"] { background: var(--text); }
+
+    /* ---------- Tabs (Cohort Overview) ---------- */
+    .tabs { display: flex; flex-wrap: wrap; gap: .4rem; border-bottom: 2px solid var(--border); }
+    .tabs button { border: 1px solid var(--border); border-bottom: 0; border-radius: .6rem .6rem 0 0; padding: .55rem 1rem;
+                   background: var(--surface-2); color: var(--text); font-weight: 600; margin-bottom: -2px; }
+    .tabs button[aria-selected="true"] { background: var(--surface); border-color: var(--primary); border-bottom: 2px solid var(--surface); }
+    [data-tab-panel][hidden] { display: none !important; }
+    @media print { [data-tab-panel][hidden] { display: grid !important; } .tabs { display: none; } }
+
+    /* ---------- Hover = details (G13) ----------
+       Every chart releases its details on hover: a short hint under the chart title
+       (added by the script at the end of the page) and a pointer cursor on hoverable marks. */
+    .hover-hint { font-size: .78rem; color: var(--muted); margin: .1rem 0 .35rem; }
+    .hover-hint::before { content: "☞ "; }
+    .js-plotly-plot.is-hovering, .js-plotly-plot.is-hovering * { cursor: pointer !important; }
+    @media print { .hover-hint { display: none; } }
+
+    /* ---------- Checks of the trust boxes (G8): icon + colour, never colour alone ---------- */
+    .check__dot { display: inline-grid !important; place-items: center; width: 1.15rem !important; height: 1.15rem !important;
+                  margin-top: .15rem !important; border-radius: 50%; color: #fff; font-size: .72rem; font-weight: 800; line-height: 1; }
+    .check--ok .check__dot { background: var(--check-ok) !important; }
+    .check--ok .check__dot::before { content: "✓"; }
+    .check--info .check__dot { background: var(--check-info) !important; }
+    .check--info .check__dot::before { content: "ℹ"; }
+    .check--warn .check__dot { background: var(--check-warn) !important; color: #111; }
+    .check--warn .check__dot::before { content: "⚠"; }
+    .check--alert .check__dot { background: var(--check-alert) !important; }
+    .check--alert .check__dot::before { content: "✕"; }
+    /* Swatches of the legends: better / worse / uncertain / differs */
+    .sw--better { background: var(--better) !important; }
+    .sw--worse { background: var(--worse) !important; }
+    .sw--faded { background: var(--better) !important; opacity: .4 !important; }
+
+    /* ---------- Participant list: limited data shown last and greyed out (still selectable) ---------- */
+    a.button.is-limited { opacity: .55; border-color: var(--border); }
+    a.button.is-limited:hover { opacity: .8; background: transparent; }
+
+    /* ---------- Jargon card (home page, G3) ---------- */
+    .jargon { grid-column: 1 / -1; }
+    .jargon__grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+    .jargon h3 { margin: .2rem 0 .4rem; font-size: 1rem; }
+    .jargon dl { margin: 0; font-size: .86rem; line-height: 1.45; }
+    .jargon dt { font-weight: 700; margin-top: .45rem; }
+    .jargon dd { margin: 0; color: var(--text); }
+    .jargon__code { margin-top: .8rem; font-size: .86rem; }
 
     /* ---------- Page loader ----------
        Shown while the server prepares the next page (from the click on a
@@ -452,6 +544,41 @@
   </style>
 
   
+<style>
+  .summary-head { display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; align-items: center; justify-content: space-between; }
+  .summary-head h2 { margin: 0; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+  .summary-head p { margin: .25rem 0 0; }
+  a.button.button--go { background: #009E73; border: 2px solid #009E73; color: #fff; font-weight: 800; font-size: 1.05rem;
+                        padding: .8rem 1.3rem; box-shadow: 0 2px 6px rgba(0,0,0,.2); }
+  a.button.button--go:hover { filter: brightness(1.08); background: #009E73; }
+  .totals { display: grid; gap: .75rem; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); margin-top: 1rem; }
+  .total { padding: .7rem .9rem; border-radius: .6rem; border: 1px solid var(--border); background: var(--surface-2);
+           border-left: 6px solid var(--lane); }
+  .total b { font-size: 1.5rem; display: block; }
+  .total span { color: var(--muted); font-size: .85rem; }
+
+  /* coverage strips: one lane per data source, one slot per calendar day */
+  .coverage { margin-top: .75rem; display: grid; gap: .6rem; }
+  .lane { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr) 8.5rem; gap: .75rem; align-items: end; }
+  .lane__name { font-weight: 700; font-size: .9rem; align-self: center; display: flex; align-items: center; gap: .4rem; }
+  .lane__name::before { content: ""; width: .75rem; height: .75rem; border-radius: 50%; background: var(--lane); }
+  .lane__stat { font-size: .8rem; color: var(--muted); align-self: center; }
+  .lane__stat b { color: var(--text); }
+  .strip { display: flex; align-items: flex-end; gap: 1px; height: 46px; padding: 2px 0;
+           border-bottom: 1px solid var(--border); }
+  .strip i { flex: 1 1 0; min-width: 1px; height: 100%; display: flex; align-items: flex-end; border-radius: 2px 2px 0 0; }
+  .strip i.we { background: color-mix(in srgb, var(--muted) 9%, transparent); }
+  .strip i b { display: block; width: 100%; background: var(--lane); border-radius: 2px 2px 0 0; min-height: 3px; }
+  .strip i.zero b { background: transparent; min-height: 0; }
+  .axis { position: relative; height: 1.2rem; margin-left: calc(9.5rem + .75rem); margin-right: calc(8.5rem + .75rem); }
+  .axis span { position: absolute; transform: translateX(-50%); font-size: .7rem; color: var(--muted); white-space: nowrap; }
+  .coverage-note { font-size: .8rem; color: var(--muted); margin-top: .3rem; }
+  @media screen and (max-width: 700px) {
+    .lane { grid-template-columns: minmax(0, 1fr); gap: .2rem; }
+    .axis { margin-left: 0; margin-right: 0; }
+  }
+</style>
+
 
 <style id="demo-style">
   .demo-banner { position: sticky; top: 0; z-index: 9999; display: flex; flex-wrap: wrap; gap: .4rem 1rem;
@@ -482,7 +609,6 @@
       <div class="header-actions">
         <div>
           <h1>DSS Prototype</h1>
-          <p class="small">Inspect SMILE cohort by interacting with the first DSS prototype. Data are synthetic.</p>
           
           <nav class="row">
             <button type="button" class="danger demo-off" disabled title="Not available in the demo">Logout</button>
@@ -504,330 +630,67 @@
 
     
 <div class="card">
-  <h2>Sofia Demo</h2>
-  <p class="small">Spain — Sequence 3 — 42 recorded day(s)</p>
-  <div class="row"><a class="button" href="../index.html">← Back to participants</a></div>
-
-  <div class="grid-2" style="margin-top:1rem;">
-    <div class="result"><strong style="font-size:1.4rem;">194</strong><br><span class="small">ESM entries</span></div>
-    <div class="result"><strong style="font-size:1.4rem;">376</strong><br><span class="small">Game entries</span></div>
-    <div class="result"><strong style="font-size:1.4rem;">270</strong><br><span class="small">Diary entries</span></div>
+  <div class="nav-row">
+    <a class="button button--nav" href="../index.html">← Back to participants</a>
+    <a class="button button--nav-secondary" href="../index.html">← Back to country selection</a>
   </div>
 
-  <h3 style="margin-top:1.5rem;">Daily coverage</h3>
-  <div class="result" style="overflow-x:auto;">
-    <table style="width:100%; border-collapse: collapse;">
-      <thead>
-        <tr>
-          <th style="text-align:left; padding:.4rem;">Date</th>
-          <th style="text-align:left; padding:.4rem;">ESM entries</th>
-          <th style="text-align:left; padding:.4rem;">Game entries</th>
-          <th style="text-align:left; padding:.4rem;">Diary entries</th>
-        </tr>
-      </thead>
-      <tbody>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-01-12</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">0</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-01-13</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">11</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-01-14</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-01-15</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">8</td>
-          <td style="padding:.4rem;">45</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-01-16</td>
-          <td style="padding:.4rem;">4</td>
-          <td style="padding:.4rem;">13</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-01-17</td>
-          <td style="padding:.4rem;">4</td>
-          <td style="padding:.4rem;">25</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-01-18</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">7</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-01-19</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">19</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-01-20</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">8</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-01-21</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">0</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-01-22</td>
-          <td style="padding:.4rem;">4</td>
-          <td style="padding:.4rem;">9</td>
-          <td style="padding:.4rem;">45</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-01-23</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">25</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-01-24</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">6</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-01-25</td>
-          <td style="padding:.4rem;">3</td>
-          <td style="padding:.4rem;">0</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-01-26</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">8</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-01-27</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">0</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-01-28</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">23</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-01-29</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">2</td>
-          <td style="padding:.4rem;">45</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-01-30</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">6</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-01-31</td>
-          <td style="padding:.4rem;">4</td>
-          <td style="padding:.4rem;">13</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-02-01</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">0</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-02-02</td>
-          <td style="padding:.4rem;">4</td>
-          <td style="padding:.4rem;">48</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-02-03</td>
-          <td style="padding:.4rem;">4</td>
-          <td style="padding:.4rem;">7</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-02-04</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">2</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-02-05</td>
-          <td style="padding:.4rem;">4</td>
-          <td style="padding:.4rem;">6</td>
-          <td style="padding:.4rem;">45</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-02-06</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">0</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-02-07</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-02-08</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">13</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-02-09</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">0</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-02-10</td>
-          <td style="padding:.4rem;">4</td>
-          <td style="padding:.4rem;">18</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-02-11</td>
-          <td style="padding:.4rem;">4</td>
-          <td style="padding:.4rem;">19</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-02-12</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">0</td>
-          <td style="padding:.4rem;">45</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-02-13</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">0</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-02-14</td>
-          <td style="padding:.4rem;">4</td>
-          <td style="padding:.4rem;">14</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-02-15</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-02-16</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">0</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-02-17</td>
-          <td style="padding:.4rem;">4</td>
-          <td style="padding:.4rem;">0</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-02-18</td>
-          <td style="padding:.4rem;">4</td>
-          <td style="padding:.4rem;">11</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-02-19</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">4</td>
-          <td style="padding:.4rem;">45</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-02-20</td>
-          <td style="padding:.4rem;">4</td>
-          <td style="padding:.4rem;">18</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-02-21</td>
-          <td style="padding:.4rem;">5</td>
-          <td style="padding:.4rem;">18</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:.4rem;">2026-02-22</td>
-          <td style="padding:.4rem;">4</td>
-          <td style="padding:.4rem;">0</td>
-          <td style="padding:.4rem;">0</td>
-        </tr>
-        
-      </tbody>
-    </table>
+  <div class="summary-head" style="margin-top: 1rem;">
+    <div>
+      <h2>Sofia Demo <span class="rb rb--demo" title="Demo participant: adequate data and not used to build the models, so every dashboard is available and their results show how the models do on someone new"><span class="rb__demo"><svg class="rb-spark" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 .5 7.3 4.7 11.5 6 7.3 7.3 6 11.5 4.7 7.3.5 6 4.7 4.7Z"/></svg>Demo</span><span class="rb__data"><svg class="rb-meter" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="7" width="2.4" height="4" rx=".6" class="on"/><rect x="4.8" y="4.5" width="2.4" height="6.5" rx=".6" class="on"/><rect x="8.6" y="2" width="2.4" height="9" rx=".6" class="on"/></svg>Adequate data</span></span></h2>
+      <p class="small">UserID 751dcd42-18ad-3624-4a4c-eb62f8fa329f · Spain, Sequence 3: 42 day(s) with data</p>
+    </div>
+    <a class="button button--go" href="home.html">Continue to full dashboard →</a>
   </div>
 
-  <div class="row" style="margin-top:1rem;">
-    <a class="button" href="home.html">Continue to full dashboard →</a>
+  
+  <div class="totals">
+    
+      <div class="total" style="--lane: #0072B2;"><b>194</b><span>ESM observations on 42 day(s)</span></div>
+    
+      <div class="total" style="--lane: #E69F00;"><b>376</b><span>Game entries on 30 day(s)</span></div>
+    
+      <div class="total" style="--lane: #009E73;"><b>270</b><span>Diary entries on 6 day(s)</span></div>
+    
   </div>
+
+  <h3 style="margin-top: 1.5rem; margin-bottom: .2rem;">Daily coverage</h3>
+  
+    <p class="small" style="margin: 0;">Mon 12 Jan 2026 to Sun 22 Feb 2026 (42 days). One slot per day: the
+      taller the bar, the more entries that day (relative to the busiest day of the same row); an empty slot = nothing
+      recorded. Weekends are shaded. Hover a day for the numbers.</p>
+    <div class="coverage">
+      
+      <div class="lane" style="--lane: #0072B2;">
+        <div class="lane__name">ESM observations</div>
+        <div class="strip" role="img" aria-label="ESM observations: 42 of 42 days">
+          <i class="" title="Mon 12 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Tue 13 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Wed 14 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Thu 15 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Fri 16 Jan 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="we" title="Sat 17 Jan 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="we" title="Sun 18 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Mon 19 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Tue 20 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Wed 21 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Thu 22 Jan 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Fri 23 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sat 24 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sun 25 Jan 2026: 3 esm observations"><b style="height: 60%;"></b></i><i class="" title="Mon 26 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Tue 27 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Wed 28 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Thu 29 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Fri 30 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sat 31 Jan 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="we" title="Sun 01 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Mon 02 Feb 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Tue 03 Feb 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Wed 04 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Thu 05 Feb 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Fri 06 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sat 07 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sun 08 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Mon 09 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Tue 10 Feb 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Wed 11 Feb 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Thu 12 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Fri 13 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sat 14 Feb 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="we" title="Sun 15 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Mon 16 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Tue 17 Feb 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Wed 18 Feb 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Thu 19 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Fri 20 Feb 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="we" title="Sat 21 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sun 22 Feb 2026: 4 esm observations"><b style="height: 80%;"></b></i>
+        </div>
+        <div class="lane__stat"><b>42</b> of 42 days</div>
+      </div>
+      
+      <div class="lane" style="--lane: #E69F00;">
+        <div class="lane__name">Game entries</div>
+        <div class="strip" role="img" aria-label="Game entries: 30 of 42 days">
+          <i class=" zero" title="Mon 12 Jan 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="" title="Tue 13 Jan 2026: 11 game entries"><b style="height: 23%;"></b></i><i class="" title="Wed 14 Jan 2026: 5 game entries"><b style="height: 10%;"></b></i><i class="" title="Thu 15 Jan 2026: 8 game entries"><b style="height: 17%;"></b></i><i class="" title="Fri 16 Jan 2026: 13 game entries"><b style="height: 27%;"></b></i><i class="we" title="Sat 17 Jan 2026: 25 game entries"><b style="height: 52%;"></b></i><i class="we" title="Sun 18 Jan 2026: 7 game entries"><b style="height: 15%;"></b></i><i class="" title="Mon 19 Jan 2026: 19 game entries"><b style="height: 40%;"></b></i><i class="" title="Tue 20 Jan 2026: 8 game entries"><b style="height: 17%;"></b></i><i class=" zero" title="Wed 21 Jan 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="" title="Thu 22 Jan 2026: 9 game entries"><b style="height: 19%;"></b></i><i class="" title="Fri 23 Jan 2026: 25 game entries"><b style="height: 52%;"></b></i><i class="we" title="Sat 24 Jan 2026: 6 game entries"><b style="height: 12%;"></b></i><i class="we zero" title="Sun 25 Jan 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="" title="Mon 26 Jan 2026: 8 game entries"><b style="height: 17%;"></b></i><i class=" zero" title="Tue 27 Jan 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="" title="Wed 28 Jan 2026: 23 game entries"><b style="height: 48%;"></b></i><i class="" title="Thu 29 Jan 2026: 2 game entries"><b style="height: 4%;"></b></i><i class="" title="Fri 30 Jan 2026: 6 game entries"><b style="height: 12%;"></b></i><i class="we" title="Sat 31 Jan 2026: 13 game entries"><b style="height: 27%;"></b></i><i class="we zero" title="Sun 01 Feb 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="" title="Mon 02 Feb 2026: 48 game entries"><b style="height: 100%;"></b></i><i class="" title="Tue 03 Feb 2026: 7 game entries"><b style="height: 15%;"></b></i><i class="" title="Wed 04 Feb 2026: 2 game entries"><b style="height: 4%;"></b></i><i class="" title="Thu 05 Feb 2026: 6 game entries"><b style="height: 12%;"></b></i><i class=" zero" title="Fri 06 Feb 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="we" title="Sat 07 Feb 2026: 5 game entries"><b style="height: 10%;"></b></i><i class="we" title="Sun 08 Feb 2026: 13 game entries"><b style="height: 27%;"></b></i><i class=" zero" title="Mon 09 Feb 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="" title="Tue 10 Feb 2026: 18 game entries"><b style="height: 38%;"></b></i><i class="" title="Wed 11 Feb 2026: 19 game entries"><b style="height: 40%;"></b></i><i class=" zero" title="Thu 12 Feb 2026: 0 game entries"><b style="height: 0%;"></b></i><i class=" zero" title="Fri 13 Feb 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="we" title="Sat 14 Feb 2026: 14 game entries"><b style="height: 29%;"></b></i><i class="we" title="Sun 15 Feb 2026: 5 game entries"><b style="height: 10%;"></b></i><i class=" zero" title="Mon 16 Feb 2026: 0 game entries"><b style="height: 0%;"></b></i><i class=" zero" title="Tue 17 Feb 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="" title="Wed 18 Feb 2026: 11 game entries"><b style="height: 23%;"></b></i><i class="" title="Thu 19 Feb 2026: 4 game entries"><b style="height: 8%;"></b></i><i class="" title="Fri 20 Feb 2026: 18 game entries"><b style="height: 38%;"></b></i><i class="we" title="Sat 21 Feb 2026: 18 game entries"><b style="height: 38%;"></b></i><i class="we zero" title="Sun 22 Feb 2026: 0 game entries"><b style="height: 0%;"></b></i>
+        </div>
+        <div class="lane__stat"><b>30</b> of 42 days</div>
+      </div>
+      
+      <div class="lane" style="--lane: #009E73;">
+        <div class="lane__name">Diary entries</div>
+        <div class="strip" role="img" aria-label="Diary entries: 6 of 42 days">
+          <i class=" zero" title="Mon 12 Jan 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class=" zero" title="Tue 13 Jan 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class=" zero" title="Wed 14 Jan 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class="" title="Thu 15 Jan 2026: 45 diary entries"><b style="height: 100%;"></b></i><i class=" zero" title="Fri 16 Jan 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class="we zero" title="Sat 17 Jan 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class="we zero" title="Sun 18 Jan 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class=" zero" title="Mon 19 Jan 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class=" zero" title="Tue 20 Jan 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class=" zero" title="Wed 21 Jan 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class="" title="Thu 22 Jan 2026: 45 diary entries"><b style="height: 100%;"></b></i><i class=" zero" title="Fri 23 Jan 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class="we zero" title="Sat 24 Jan 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class="we zero" title="Sun 25 Jan 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class=" zero" title="Mon 26 Jan 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class=" zero" title="Tue 27 Jan 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class=" zero" title="Wed 28 Jan 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class="" title="Thu 29 Jan 2026: 45 diary entries"><b style="height: 100%;"></b></i><i class=" zero" title="Fri 30 Jan 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class="we zero" title="Sat 31 Jan 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class="we zero" title="Sun 01 Feb 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class=" zero" title="Mon 02 Feb 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class=" zero" title="Tue 03 Feb 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class=" zero" title="Wed 04 Feb 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class="" title="Thu 05 Feb 2026: 45 diary entries"><b style="height: 100%;"></b></i><i class=" zero" title="Fri 06 Feb 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class="we zero" title="Sat 07 Feb 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class="we zero" title="Sun 08 Feb 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class=" zero" title="Mon 09 Feb 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class=" zero" title="Tue 10 Feb 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class=" zero" title="Wed 11 Feb 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class="" title="Thu 12 Feb 2026: 45 diary entries"><b style="height: 100%;"></b></i><i class=" zero" title="Fri 13 Feb 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class="we zero" title="Sat 14 Feb 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class="we zero" title="Sun 15 Feb 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class=" zero" title="Mon 16 Feb 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class=" zero" title="Tue 17 Feb 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class=" zero" title="Wed 18 Feb 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class="" title="Thu 19 Feb 2026: 45 diary entries"><b style="height: 100%;"></b></i><i class=" zero" title="Fri 20 Feb 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class="we zero" title="Sat 21 Feb 2026: 0 diary entries"><b style="height: 0%;"></b></i><i class="we zero" title="Sun 22 Feb 2026: 0 diary entries"><b style="height: 0%;"></b></i>
+        </div>
+        <div class="lane__stat"><b>6</b> of 42 days</div>
+      </div>
+      
+    </div>
+    <div class="axis">
+      <span style="left: 1.1904761904761905%;">12 Jan</span><span style="left: 17.857142857142858%;">19 Jan</span><span style="left: 34.523809523809526%;">26 Jan</span><span style="left: 51.19047619047619%;">02 Feb</span><span style="left: 67.85714285714286%;">09 Feb</span><span style="left: 84.52380952380952%;">16 Feb</span>
+    </div>
+    <div class="coverage-note">Ticks: Mondays.</div>
+  
 </div>
 
   </div>
@@ -932,7 +795,7 @@
       }
       function setFooter() {
         const footer = document.getElementById("printFooter");
-        if (footer) footer.textContent = "SMILE DSS — " + document.title + " — printed " + new Date().toLocaleString();
+        if (footer) footer.textContent = "SMILE DSS: " + document.title + ", printed " + new Date().toLocaleString();
       }
       document.addEventListener("click", (event) => {
         if (!event.target.closest("[data-print-page]")) return;
@@ -1045,12 +908,76 @@
       if (themeBtn) themeBtn.addEventListener("click", () => show("Switching theme…"));
     })();
   </script>
+  <!-- Sliders (templates/slider.html): previous / next and the dots. -->
+  <script>
+    (function () {
+      document.querySelectorAll("[data-slider]").forEach((slider) => {
+        const slides = [...slider.querySelectorAll(".slider__slide")];
+        const dots = [...slider.querySelectorAll(".slider__dot")];
+        let i = 0;
+        function show(k) {
+          i = (k + slides.length) % slides.length;
+          slides.forEach((s, j) => { s.hidden = j !== i; });
+          dots.forEach((d, j) => d.setAttribute("aria-current", String(j === i)));
+        }
+        slider.querySelector("[data-slider-prev]")?.addEventListener("click", () => show(i - 1));
+        slider.querySelector("[data-slider-next]")?.addEventListener("click", () => show(i + 1));
+        dots.forEach((d, j) => d.addEventListener("click", () => show(j)));
+        show(0);
+      });
+    })();
+  </script>
+  <!-- Tabs: one panel at a time; the open tab is kept in the address (#tab-id), so a picker that
+       reloads the page comes back to the same tab. Charts are re-measured when their tab opens. -->
+  <script>
+    (function () {
+      document.querySelectorAll("[data-tabs]").forEach((bar) => {
+        const buttons = [...bar.querySelectorAll("[data-tab]")];
+        function open(id, push) {
+          buttons.forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === id)));
+          document.querySelectorAll("[data-tab-panel]").forEach((panel) => {
+            panel.hidden = panel.dataset.tabPanel !== id;
+            if (!panel.hidden && window.Plotly) panel.querySelectorAll(".js-plotly-plot").forEach((el) => Plotly.Plots.resize(el));
+          });
+          if (push) history.replaceState(null, "", "#" + id);
+        }
+        buttons.forEach((b) => b.addEventListener("click", () => open(b.dataset.tab, true)));
+        const fromHash = location.hash.slice(1);
+        open(buttons.some((b) => b.dataset.tab === fromHash) ? fromHash : buttons[0].dataset.tab, false);
+      });
+    })();
+  </script>
+  <!-- Hover = details (G13): a hint under every chart title, and a pointer cursor on hoverable marks. -->
+  <script>
+    (function () {
+      const HINT = "Hover for details";
+      function hasHover(el) {
+        return (el.data || []).some((t) => t.type !== "indicator" && t.hoverinfo !== "skip" && t.hoverinfo !== "none");
+      }
+      function setup() {
+        document.querySelectorAll(".js-plotly-plot").forEach((el) => {
+          if (el.dataset.hoverReady || !hasHover(el)) return;
+          el.dataset.hoverReady = "1";
+          el.on("plotly_hover", () => el.classList.add("is-hovering"));
+          el.on("plotly_unhover", () => el.classList.remove("is-hovering"));
+          const card = el.closest(".card, .donut, .tile");
+          if (!card || card.querySelector(":scope > .hover-hint, :scope .card-head + .hover-hint")) return;
+          const hint = document.createElement("p");
+          hint.className = "hover-hint";
+          hint.textContent = HINT;
+          const head = card.querySelector(":scope > .card-head, :scope > h2, :scope > .donut__title, :scope > .tile__title");
+          if (head) head.insertAdjacentElement("afterend", hint); else card.prepend(hint);
+        });
+      }
+      window.addEventListener("load", setup);
+    })();
+  </script>
   
 
 <script id="demo-router">
 /* Static demo: forms and the theme switch go to pre-rendered pages instead of the server. */
 (function () {
-  var D = {"theme": "colorblind", "slug": "sofia-demo", "page": "summary.html", "themes": ["light", "dark", "colorblind"], "routes": {"/ui": ["home", null, null], "/func/exploration/overview": ["overview", "target_var", "mood_valence"], "/func/exploration/analytics_game_scores": ["game_performance", "module", "1"], "/func/exploration/mood_proms": ["mood_proms", "mood", "valence"], "/func/prediction/mood_change": ["game_analytics", "mood", "valence"], "/func/prediction/context_fingerprint": ["esm_analytics", null, null], "/func/prediction/precursors": ["mood_change_analytics", null, null]}};
+  var D = {"theme": "colorblind", "slug": "sofia-demo", "page": "summary.html", "themes": ["light", "dark", "colorblind"], "routes": {"/ui": ["home", null, null], "/func/exploration/overview": ["overview", "target_var", "overall_mood"], "/func/exploration/analytics_game_scores": ["game_performance", "module", "1"], "/func/exploration/mood_monitoring": ["mood_monitoring", "mood", "overall_mood"], "/func/prediction/mood_change": ["game_analytics", "mood", "overall_mood"], "/func/prediction/context_fingerprint": ["esm_analytics", null, null], "/func/prediction/precursors": ["mood_change_analytics", null, null]}};
   function tok(v) { return String(v).replace(/[^A-Za-z0-9_-]/g, "_"); }
   function target(form) {
     var url = new URL(form.getAttribute("data-demo-action") || form.action, location.href);

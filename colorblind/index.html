@@ -13,7 +13,7 @@
     })();
   </script>
   <meta charset="utf-8"/>
-  <title>Select Participant • Demo (Seq 3) • DSS</title>
+  <title>SMILE DSS demo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
   <link rel="icon" href="../static/favicon.ico" sizes="any">
@@ -28,6 +28,19 @@
       --blue:   #1C9FFF;
       --magenta:#FF3ED2;
       --teal:   #0CC4BA;
+
+      /* DSS colour code (G8, functionalities/plots/palette.py): the same in every theme */
+      --better:   #0072B2;
+      --worse:    #D55E00;
+      --neutral:  #8C8C8C;
+      --check-ok:    #009E73;
+      --check-warn:  #E69F00;
+      --check-alert: #D55E00;
+      --check-info:  #8C8C8C;
+      /* Title bar of every dashboard (G12). TODO (open question, text log §4): the title bar colour
+         (SMILE brand colour?). Placeholder: a dark neutral, not blue / orange (better / worse). */
+      --titlebar-bg: #2F3A4A;
+      --titlebar-text: #FFFFFF;
 
       --gap: 1rem;
       --logo-h: 88px;
@@ -391,20 +404,99 @@
     .is-demo { border-color: color-mix(in srgb, var(--ld-2, #0CC4BA) 70%, var(--border)) !important;
                box-shadow: 0 0 0 1px color-mix(in srgb, var(--ld-2, #0CC4BA) 35%, transparent),
                            0 6px 18px -10px color-mix(in srgb, var(--ld-1, #1C9FFF) 70%, transparent); }
-    /* ---------- Method badges of the Analytics cards: ML / Statistical model ---------- */
+    /* ---------- Method badges of the Analytics cards: Clinical rules / Statistics / ML (H2) ---------- */
     .method-badge { display: inline-flex; align-items: center; padding: .08rem .45rem; border-radius: .35rem;
                     font-size: .68rem; font-weight: 700; letter-spacing: .04em; line-height: 1.4; white-space: nowrap;
                     vertical-align: middle; cursor: help; }
-    .method-badge--ml { background: color-mix(in srgb, var(--ld-3, #A729FF) 18%, transparent);
-                        color: var(--ld-3, #A729FF); border: 1px solid color-mix(in srgb, var(--ld-3, #A729FF) 55%, transparent); }
-    .method-badge--stats { background: color-mix(in srgb, var(--ld-1, #1C9FFF) 15%, transparent);
-                           color: var(--ld-1, #1C9FFF); border: 1px solid color-mix(in srgb, var(--ld-1, #1C9FFF) 50%, transparent); }
-    .card.is-locked > :not(.ml-blocked):not(h2):not(.info-center) { opacity: .5; }
+    .method-badges { display: inline-flex; gap: .3rem; flex-wrap: wrap; vertical-align: middle; }
+    .method-badge--clinical { background: color-mix(in srgb, #009E73 15%, transparent); color: var(--text);
+                              border: 1px solid #009E73; }
+    .method-badge--stats { background: color-mix(in srgb, #56B4E9 15%, transparent); color: var(--text);
+                           border: 1px solid #56B4E9; }
+    .method-badge--ml { background: color-mix(in srgb, #CC79A7 15%, transparent); color: var(--text);
+                        border: 1px solid #CC79A7; }
+    .card.is-locked > :not(.ml-blocked):not(h2):not(.slider) { opacity: .5; }
     .role-legend { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; align-items: center; font-size: .85rem;
                    margin: .75rem 0 .25rem; }
     .ml-blocked { border: 1px dashed var(--border); border-radius: .5rem; padding: .55rem .75rem; font-size: .85rem;
                   color: var(--muted); margin-bottom: .75rem; }
     button[disabled] { opacity: .45; cursor: not-allowed; }
+
+    /* ---------- Title bar of every dashboard (G12; templates/title_bar.html) ----------
+       Left: the dashboard's slider; centre: the title; right: info and print. */
+    .title-bar { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(0, 2fr) minmax(220px, 1fr);
+                 align-items: center; gap: 1rem; padding: .9rem 1.1rem; border-radius: var(--radius);
+                 background: var(--titlebar-bg); color: var(--titlebar-text);
+                 box-shadow: 0 6px 18px rgba(0,0,0,.18); }
+    .title-bar__left { min-width: 0; }
+    .title-bar__centre { text-align: center; min-width: 0; }
+    .title-bar__title { margin: 0; font-size: 1.7rem; font-weight: 750; letter-spacing: .2px; color: var(--titlebar-text); }
+    .title-bar__subtitle { font-size: .92rem; opacity: .85; margin-top: .15rem; }
+    .title-bar__right { display: flex; justify-content: flex-end; }
+    .title-bar .slider { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.25); color: var(--titlebar-text); }
+    .title-bar .slider__dot { background: rgba(255,255,255,.35); }
+    .title-bar .slider__dot[aria-current="true"] { background: var(--titlebar-text); }
+    @media (max-width: 900px) { .title-bar { grid-template-columns: minmax(0, 1fr); }
+                                .title-bar__right { justify-content: center; } }
+    .page-toolbar { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; }
+
+    /* ---------- Slider: the 4 slides of a dashboard (G2; templates/slider.html) ---------- */
+    .slider { border: 1px solid var(--border); border-radius: .6rem; padding: .5rem .6rem; background: var(--surface-2); }
+    .slider__viewport { min-height: 4.5rem; }
+    .slider--compact .slider__viewport { min-height: 2.5rem; }
+    .slider__slide { font-size: .88rem; line-height: 1.4; }
+    .slider--compact .slider__slide { font-size: .8rem; }
+    .slider__slide[hidden] { display: none; }
+    .slider__title { font-weight: 700; margin-bottom: .2rem; }
+    .slider__nav { display: flex; align-items: center; justify-content: center; gap: .45rem; margin-top: .35rem; }
+    .slider__nav button { padding: .1rem .45rem; border-radius: .4rem; font-size: .8rem; color: inherit; border-color: currentColor; }
+    .slider__dot { width: .55rem; height: .55rem; border-radius: 50%; background: var(--border); display: inline-block; }
+    .slider__dot[aria-current="true"] { background: var(--text); }
+
+    /* ---------- Tabs (Cohort Overview) ---------- */
+    .tabs { display: flex; flex-wrap: wrap; gap: .4rem; border-bottom: 2px solid var(--border); }
+    .tabs button { border: 1px solid var(--border); border-bottom: 0; border-radius: .6rem .6rem 0 0; padding: .55rem 1rem;
+                   background: var(--surface-2); color: var(--text); font-weight: 600; margin-bottom: -2px; }
+    .tabs button[aria-selected="true"] { background: var(--surface); border-color: var(--primary); border-bottom: 2px solid var(--surface); }
+    [data-tab-panel][hidden] { display: none !important; }
+    @media print { [data-tab-panel][hidden] { display: grid !important; } .tabs { display: none; } }
+
+    /* ---------- Hover = details (G13) ----------
+       Every chart releases its details on hover: a short hint under the chart title
+       (added by the script at the end of the page) and a pointer cursor on hoverable marks. */
+    .hover-hint { font-size: .78rem; color: var(--muted); margin: .1rem 0 .35rem; }
+    .hover-hint::before { content: "☞ "; }
+    .js-plotly-plot.is-hovering, .js-plotly-plot.is-hovering * { cursor: pointer !important; }
+    @media print { .hover-hint { display: none; } }
+
+    /* ---------- Checks of the trust boxes (G8): icon + colour, never colour alone ---------- */
+    .check__dot { display: inline-grid !important; place-items: center; width: 1.15rem !important; height: 1.15rem !important;
+                  margin-top: .15rem !important; border-radius: 50%; color: #fff; font-size: .72rem; font-weight: 800; line-height: 1; }
+    .check--ok .check__dot { background: var(--check-ok) !important; }
+    .check--ok .check__dot::before { content: "✓"; }
+    .check--info .check__dot { background: var(--check-info) !important; }
+    .check--info .check__dot::before { content: "ℹ"; }
+    .check--warn .check__dot { background: var(--check-warn) !important; color: #111; }
+    .check--warn .check__dot::before { content: "⚠"; }
+    .check--alert .check__dot { background: var(--check-alert) !important; }
+    .check--alert .check__dot::before { content: "✕"; }
+    /* Swatches of the legends: better / worse / uncertain / differs */
+    .sw--better { background: var(--better) !important; }
+    .sw--worse { background: var(--worse) !important; }
+    .sw--faded { background: var(--better) !important; opacity: .4 !important; }
+
+    /* ---------- Participant list: limited data shown last and greyed out (still selectable) ---------- */
+    a.button.is-limited { opacity: .55; border-color: var(--border); }
+    a.button.is-limited:hover { opacity: .8; background: transparent; }
+
+    /* ---------- Jargon card (home page, G3) ---------- */
+    .jargon { grid-column: 1 / -1; }
+    .jargon__grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+    .jargon h3 { margin: .2rem 0 .4rem; font-size: 1rem; }
+    .jargon dl { margin: 0; font-size: .86rem; line-height: 1.45; }
+    .jargon dt { font-weight: 700; margin-top: .45rem; }
+    .jargon dd { margin: 0; color: var(--text); }
+    .jargon__code { margin-top: .8rem; font-size: .86rem; }
 
     /* ---------- Page loader ----------
        Shown while the server prepares the next page (from the click on a
@@ -452,6 +544,22 @@
   </style>
 
   
+<style>
+  .participant { display: flex; flex-direction: column; gap: .35rem; padding: .9rem 1rem; border: 1px solid var(--border);
+                 border-radius: .6rem; background: var(--surface); }
+  .participant__head { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+  .participant__id { font-size: .78rem; color: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .participant__aka { font-size: .78rem; color: var(--muted); }
+  .seq-badges { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .2rem; }
+  a.seq-badge { display: inline-flex; flex-direction: column; gap: .05rem; padding: .35rem .7rem; border-radius: .5rem;
+                border: 1px solid var(--primary); color: var(--text); text-decoration: none; font-size: .8rem; }
+  a.seq-badge:hover { background: color-mix(in srgb, var(--primary) 10%, transparent); }
+  a.seq-badge b { font-size: .85rem; }
+  a.seq-badge span { color: var(--muted); font-size: .72rem; }
+  .participant.is-limited { opacity: .55; }
+  .participant.is-limited:hover { opacity: .8; }
+</style>
+
 
 <style id="demo-style">
   .demo-banner { position: sticky; top: 0; z-index: 9999; display: flex; flex-wrap: wrap; gap: .4rem 1rem;
@@ -482,7 +590,6 @@
       <div class="header-actions">
         <div>
           <h1>DSS Prototype</h1>
-          <p class="small">Inspect SMILE cohort by interacting with the first DSS prototype. Data are synthetic.</p>
           
           <nav class="row">
             <button type="button" class="danger demo-off" disabled title="Not available in the demo">Logout</button>
@@ -504,7 +611,7 @@
 
     
 <div class="card">
-  <h2>SMILE DSS — interactive demo</h2>
+  <h2>SMILE DSS: interactive demo</h2>
   <p class="small">This is a static demo of the SMILE decision support system. Every page was produced by the real DSS code, run on <strong>synthetic data</strong>: the three participants below and the cohort they are compared with are invented. Pick a participant to see their data summary and all the dashboards. Login, country selection, downloads and anything that needs a server are not part of the demo.</p>
   
   
@@ -512,26 +619,56 @@
   
   <div class="grid-2" style="margin-top:1rem;">
     
-      <a class="button is-demo" style="flex-direction:column; align-items:flex-start; gap:.25rem; padding:.9rem 1rem;"
-         href="lena-demo/summary.html">
-        <span style="display:flex; gap:.5rem; align-items:center; flex-wrap:wrap;"><strong>Lena Demo</strong> <span class="rb rb--demo" title="Demo participant: adequate data and kept out of model training, so every dashboard is available and the ML results are out-of-sample"><span class="rb__demo"><svg class="rb-spark" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 .5 7.3 4.7 11.5 6 7.3 7.3 6 11.5 4.7 7.3.5 6 4.7 4.7Z"/></svg>Demo</span><span class="rb__data"><svg class="rb-meter" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="7" width="2.4" height="4" rx=".6" class="on"/><rect x="4.8" y="4.5" width="2.4" height="6.5" rx=".6" class="on"/><rect x="8.6" y="2" width="2.4" height="9" rx=".6" class="on"/></svg>Adequate data</span></span></span>
-        <span class="small">Germany · Mood improves over the six weeks; completed the whole game.<br>ESM days: 42 · Game entries: all 5 modules · Diary entries: 6
-        </span>
+      <div class="participant is-demo">
+        <div class="participant__head">
+          <strong>Lena Demo</strong> <span class="rb rb--demo" title="Demo participant: adequate data and not used to build the models, so every dashboard is available and their results show how the models do on someone new"><span class="rb__demo"><svg class="rb-spark" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 .5 7.3 4.7 11.5 6 7.3 7.3 6 11.5 4.7 7.3.5 6 4.7 4.7Z"/></svg>Demo</span><span class="rb__data"><svg class="rb-meter" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="7" width="2.4" height="4" rx=".6" class="on"/><rect x="4.8" y="4.5" width="2.4" height="6.5" rx=".6" class="on"/><rect x="8.6" y="2" width="2.4" height="9" rx=".6" class="on"/></svg>Adequate data</span></span>
+        </div>
+        <div class="participant__id">UserID 6edaa47b-9eae-8b36-6199-9437deb38676</div><div class="participant__aka">Germany · Mood improves over the six weeks; completed the whole game.</div>
+        
+        <div class="seq-badges">
+          
+            <a class="seq-badge" href="lena-demo/summary.html"
+               title="Open sequence 3">
+              <b>Sequence 3 →</b>
+              <span>ESM days 42 · game all 5 modules · diary 6</span>
       </a>
     
-      <a class="button is-demo" style="flex-direction:column; align-items:flex-start; gap:.25rem; padding:.9rem 1rem;"
-         href="marco-demo/summary.html">
-        <span style="display:flex; gap:.5rem; align-items:center; flex-wrap:wrap;"><strong>Marco Demo</strong> <span class="rb rb--demo" title="Demo participant: adequate data and kept out of model training, so every dashboard is available and the ML results are out-of-sample"><span class="rb__demo"><svg class="rb-spark" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 .5 7.3 4.7 11.5 6 7.3 7.3 6 11.5 4.7 7.3.5 6 4.7 4.7Z"/></svg>Demo</span><span class="rb__data"><svg class="rb-meter" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="7" width="2.4" height="4" rx=".6" class="on"/><rect x="4.8" y="4.5" width="2.4" height="6.5" rx=".6" class="on"/><rect x="8.6" y="2" width="2.4" height="9" rx=".6" class="on"/></svg>Adequate data</span></span></span>
-        <span class="small">Italy · Lower mood, strong reactions to stressful events; completed the whole game.<br>ESM days: 42 · Game entries: all 5 modules · Diary entries: 6
-        </span>
+  </div>
+      </div>
+    
+      <div class="participant is-demo">
+        <div class="participant__head">
+          <strong>Marco Demo</strong> <span class="rb rb--demo" title="Demo participant: adequate data and not used to build the models, so every dashboard is available and their results show how the models do on someone new"><span class="rb__demo"><svg class="rb-spark" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 .5 7.3 4.7 11.5 6 7.3 7.3 6 11.5 4.7 7.3.5 6 4.7 4.7Z"/></svg>Demo</span><span class="rb__data"><svg class="rb-meter" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="7" width="2.4" height="4" rx=".6" class="on"/><rect x="4.8" y="4.5" width="2.4" height="6.5" rx=".6" class="on"/><rect x="8.6" y="2" width="2.4" height="9" rx=".6" class="on"/></svg>Adequate data</span></span>
+        </div>
+        <div class="participant__id">UserID 5d45fc90-904f-a199-006f-73631c8a6c17</div><div class="participant__aka">Italy · Lower mood, strong reactions to stressful events; completed the whole game.</div>
+        
+        <div class="seq-badges">
+          
+            <a class="seq-badge" href="marco-demo/summary.html"
+               title="Open sequence 3">
+              <b>Sequence 3 →</b>
+              <span>ESM days 42 · game all 5 modules · diary 6</span>
       </a>
     
-      <a class="button is-demo" style="flex-direction:column; align-items:flex-start; gap:.25rem; padding:.9rem 1rem;"
-         href="sofia-demo/summary.html">
-        <span style="display:flex; gap:.5rem; align-items:center; flex-wrap:wrap;"><strong>Sofia Demo</strong> <span class="rb rb--demo" title="Demo participant: adequate data and kept out of model training, so every dashboard is available and the ML results are out-of-sample"><span class="rb__demo"><svg class="rb-spark" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 .5 7.3 4.7 11.5 6 7.3 7.3 6 11.5 4.7 7.3.5 6 4.7 4.7Z"/></svg>Demo</span><span class="rb__data"><svg class="rb-meter" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="7" width="2.4" height="4" rx=".6" class="on"/><rect x="4.8" y="4.5" width="2.4" height="6.5" rx=".6" class="on"/><rect x="8.6" y="2" width="2.4" height="9" rx=".6" class="on"/></svg>Adequate data</span></span></span>
-        <span class="small">Spain · Stable, positive mood; plays the game very well.<br>ESM days: 42 · Game entries: all 5 modules · Diary entries: 6
-        </span>
+  </div>
+      </div>
+    
+      <div class="participant is-demo">
+        <div class="participant__head">
+          <strong>Sofia Demo</strong> <span class="rb rb--demo" title="Demo participant: adequate data and not used to build the models, so every dashboard is available and their results show how the models do on someone new"><span class="rb__demo"><svg class="rb-spark" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 .5 7.3 4.7 11.5 6 7.3 7.3 6 11.5 4.7 7.3.5 6 4.7 4.7Z"/></svg>Demo</span><span class="rb__data"><svg class="rb-meter" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="7" width="2.4" height="4" rx=".6" class="on"/><rect x="4.8" y="4.5" width="2.4" height="6.5" rx=".6" class="on"/><rect x="8.6" y="2" width="2.4" height="9" rx=".6" class="on"/></svg>Adequate data</span></span>
+        </div>
+        <div class="participant__id">UserID 751dcd42-18ad-3624-4a4c-eb62f8fa329f</div><div class="participant__aka">Spain · Stable, positive mood; plays the game very well.</div>
+        
+        <div class="seq-badges">
+          
+            <a class="seq-badge" href="sofia-demo/summary.html"
+               title="Open sequence 3">
+              <b>Sequence 3 →</b>
+              <span>ESM days 42 · game all 5 modules · diary 6</span>
       </a>
+    
+  </div>
+      </div>
     
   </div>
   
@@ -639,7 +776,7 @@
       }
       function setFooter() {
         const footer = document.getElementById("printFooter");
-        if (footer) footer.textContent = "SMILE DSS — " + document.title + " — printed " + new Date().toLocaleString();
+        if (footer) footer.textContent = "SMILE DSS: " + document.title + ", printed " + new Date().toLocaleString();
       }
       document.addEventListener("click", (event) => {
         if (!event.target.closest("[data-print-page]")) return;
@@ -752,12 +889,76 @@
       if (themeBtn) themeBtn.addEventListener("click", () => show("Switching theme…"));
     })();
   </script>
+  <!-- Sliders (templates/slider.html): previous / next and the dots. -->
+  <script>
+    (function () {
+      document.querySelectorAll("[data-slider]").forEach((slider) => {
+        const slides = [...slider.querySelectorAll(".slider__slide")];
+        const dots = [...slider.querySelectorAll(".slider__dot")];
+        let i = 0;
+        function show(k) {
+          i = (k + slides.length) % slides.length;
+          slides.forEach((s, j) => { s.hidden = j !== i; });
+          dots.forEach((d, j) => d.setAttribute("aria-current", String(j === i)));
+        }
+        slider.querySelector("[data-slider-prev]")?.addEventListener("click", () => show(i - 1));
+        slider.querySelector("[data-slider-next]")?.addEventListener("click", () => show(i + 1));
+        dots.forEach((d, j) => d.addEventListener("click", () => show(j)));
+        show(0);
+      });
+    })();
+  </script>
+  <!-- Tabs: one panel at a time; the open tab is kept in the address (#tab-id), so a picker that
+       reloads the page comes back to the same tab. Charts are re-measured when their tab opens. -->
+  <script>
+    (function () {
+      document.querySelectorAll("[data-tabs]").forEach((bar) => {
+        const buttons = [...bar.querySelectorAll("[data-tab]")];
+        function open(id, push) {
+          buttons.forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === id)));
+          document.querySelectorAll("[data-tab-panel]").forEach((panel) => {
+            panel.hidden = panel.dataset.tabPanel !== id;
+            if (!panel.hidden && window.Plotly) panel.querySelectorAll(".js-plotly-plot").forEach((el) => Plotly.Plots.resize(el));
+          });
+          if (push) history.replaceState(null, "", "#" + id);
+        }
+        buttons.forEach((b) => b.addEventListener("click", () => open(b.dataset.tab, true)));
+        const fromHash = location.hash.slice(1);
+        open(buttons.some((b) => b.dataset.tab === fromHash) ? fromHash : buttons[0].dataset.tab, false);
+      });
+    })();
+  </script>
+  <!-- Hover = details (G13): a hint under every chart title, and a pointer cursor on hoverable marks. -->
+  <script>
+    (function () {
+      const HINT = "Hover for details";
+      function hasHover(el) {
+        return (el.data || []).some((t) => t.type !== "indicator" && t.hoverinfo !== "skip" && t.hoverinfo !== "none");
+      }
+      function setup() {
+        document.querySelectorAll(".js-plotly-plot").forEach((el) => {
+          if (el.dataset.hoverReady || !hasHover(el)) return;
+          el.dataset.hoverReady = "1";
+          el.on("plotly_hover", () => el.classList.add("is-hovering"));
+          el.on("plotly_unhover", () => el.classList.remove("is-hovering"));
+          const card = el.closest(".card, .donut, .tile");
+          if (!card || card.querySelector(":scope > .hover-hint, :scope .card-head + .hover-hint")) return;
+          const hint = document.createElement("p");
+          hint.className = "hover-hint";
+          hint.textContent = HINT;
+          const head = card.querySelector(":scope > .card-head, :scope > h2, :scope > .donut__title, :scope > .tile__title");
+          if (head) head.insertAdjacentElement("afterend", hint); else card.prepend(hint);
+        });
+      }
+      window.addEventListener("load", setup);
+    })();
+  </script>
   
 
 <script id="demo-router">
 /* Static demo: forms and the theme switch go to pre-rendered pages instead of the server. */
 (function () {
-  var D = {"theme": "colorblind", "slug": "", "page": "index.html", "themes": ["light", "dark", "colorblind"], "routes": {"/ui": ["home", null, null], "/func/exploration/overview": ["overview", "target_var", "mood_valence"], "/func/exploration/analytics_game_scores": ["game_performance", "module", "1"], "/func/exploration/mood_proms": ["mood_proms", "mood", "valence"], "/func/prediction/mood_change": ["game_analytics", "mood", "valence"], "/func/prediction/context_fingerprint": ["esm_analytics", null, null], "/func/prediction/precursors": ["mood_change_analytics", null, null]}};
+  var D = {"theme": "colorblind", "slug": "", "page": "index.html", "themes": ["light", "dark", "colorblind"], "routes": {"/ui": ["home", null, null], "/func/exploration/overview": ["overview", "target_var", "overall_mood"], "/func/exploration/analytics_game_scores": ["game_performance", "module", "1"], "/func/exploration/mood_monitoring": ["mood_monitoring", "mood", "overall_mood"], "/func/prediction/mood_change": ["game_analytics", "mood", "overall_mood"], "/func/prediction/context_fingerprint": ["esm_analytics", null, null], "/func/prediction/precursors": ["mood_change_analytics", null, null]}};
   function tok(v) { return String(v).replace(/[^A-Za-z0-9_-]/g, "_"); }
   function target(form) {
     var url = new URL(form.getAttribute("data-demo-action") || form.action, location.href);
