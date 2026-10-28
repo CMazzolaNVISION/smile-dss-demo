@@ -7,7 +7,7 @@
     (function () {
       try {
         var t = localStorage.getItem("dss-theme");
-        if (t === "dark" || t === "light" || t === "colorblind") document.documentElement.setAttribute("data-theme", t);
+        if (t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t);
       } catch (e) {}
       document.documentElement.classList.add("is-loading");
     })();
@@ -77,19 +77,6 @@
       --focus:      #0CC4BA;
     }
 
-    :root[data-theme="colorblind"] {
-      --bg:         #FFFFFF;
-      --surface:    #FFFFFF;
-      --surface-2:  #F4F6F8;
-      --border:     #94A3B8;  /* slate-300-ish for clear delineation */
-      --muted:      #475569;  /* slate-600-ish: readable but not dominant */
-      --text:       #0F172A;  /* very dark slate for max contrast */
-
-      /* Okabe–Ito accents (safe for most CVD types) */
-      --primary:     #0072B2; /* blue */
-      --primary-600: #005A8E; /* darker blue for hover/active */
-      --focus:       #009E73; /* green/teal focus ring */
-    }
         
 
     /* Base */
@@ -139,6 +126,12 @@
       transition: background .15s ease, border-color .15s ease, box-shadow .15s ease;
     }
     a.button:hover, button:hover { background: rgba(28,159,255,.08); border-color: var(--primary-600); }
+    /* Navigation buttons (back to participants / country selection / dashboard): filled, bold, easy to spot. */
+    a.button.button--nav { background: var(--primary); border: 2px solid var(--primary); color: #fff; font-weight: 700;
+                           padding: .6rem 1rem; box-shadow: 0 1px 3px rgba(0,0,0,.18); }
+    a.button.button--nav:hover { background: var(--primary-600); border-color: var(--primary-600); }
+    a.button.button--nav-secondary { border-width: 2px; font-weight: 700; padding: .6rem 1rem; }
+    .nav-row { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
     a.button:focus-visible, button:focus-visible {
       outline: none;
       box-shadow: 0 0 0 3px rgba(12,196,186,.35);
@@ -504,7 +497,6 @@
        when the page has finished loading. Colors follow the theme. */
     :root[data-theme="dark"]       { --ld-1: #1C9FFF; --ld-2: #0CC4BA; --ld-3: #FF3ED2; --ld-veil: rgba(11, 15, 20, .82); }
     :root[data-theme="light"]      { --ld-1: #1C9FFF; --ld-2: #0CC4BA; --ld-3: #A729FF; --ld-veil: rgba(244, 245, 247, .85); }
-    :root[data-theme="colorblind"] { --ld-1: #0072B2; --ld-2: #009E73; --ld-3: #E69F00; --ld-veil: rgba(255, 255, 255, .88); }
     .page-loader {
       position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center;
       background: var(--ld-veil); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
@@ -565,7 +557,6 @@
   .demo-banner { position: sticky; top: 0; z-index: 9999; display: flex; flex-wrap: wrap; gap: .4rem 1rem;
     align-items: center; justify-content: center; padding: .45rem 1rem; font: 600 .9rem/1.3 system-ui, sans-serif;
     background: #b45309; color: #fff; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
-  :root[data-theme="colorblind"] .demo-banner { background: #E69F00; color: #111; }
   .demo-banner a { color: inherit; text-decoration: underline; font-weight: 500; }
   .demo-off, .demo-off:hover { opacity: .55; cursor: not-allowed !important; filter: grayscale(.4); }
 </style>
@@ -680,7 +671,7 @@
   <script>
 
     (function () {
-      const THEMES = ["dark", "light", "colorblind"];
+      const THEMES = ["dark", "light"];
 
       // Read saved theme; fall back to "light" (the default) if unknown
       const saved = localStorage.getItem("dss-theme");
@@ -691,21 +682,16 @@
     const btn = document.getElementById("themeToggle");
 
     function nextTheme(current) {
-      if (current === "dark") return "light";
-      if (current === "light") return "colorblind";
-      return "dark"; // colorblind -> dark
+      return current === "dark" ? "light" : "dark";
     }
 
     function nextLabel(theme) {
       // Button shows the TARGET theme (the next one)
-      if (theme === "dark") return "☀️ Use Light Theme";
-      if (theme === "light") return "👁️ Use Colorblind Theme";
-      return "🌙 Use Dark Theme"; // from colorblind
+      return theme === "dark" ? "☀️ Use Light Theme" : "🌙 Use Dark Theme";
     }
 
     function isLightBackground(theme) {
-      // colorblind is a light canvas
-      return theme === "light" || theme === "colorblind";
+      return theme !== "dark";
     }
 
     function syncButtonToTheme() {
@@ -719,7 +705,7 @@
       // style: for-light = page is lightish (use dark button), for-dark = page is dark (use light button)
       btn.classList.remove("for-light", "for-dark");
       if (isLightBackground(current)) {
-        btn.classList.add("for-light");   // page light/colorblind → dark-styled button
+        btn.classList.add("for-light");   // page light → dark-styled button
       } else {
         btn.classList.add("for-dark");    // page dark → light-styled button
       }
@@ -958,7 +944,7 @@
 <script id="demo-router">
 /* Static demo: forms and the theme switch go to pre-rendered pages instead of the server. */
 (function () {
-  var D = {"theme": "light", "slug": "", "page": "index.html", "themes": ["light", "dark", "colorblind"], "routes": {"/ui": ["home", null, null], "/func/exploration/overview": ["overview", "target_var", "overall_mood"], "/func/exploration/analytics_game_scores": ["game_performance", "module", "1"], "/func/exploration/mood_monitoring": ["mood_monitoring", "mood", "overall_mood"], "/func/prediction/mood_change": ["game_analytics", "mood", "overall_mood"], "/func/prediction/context_fingerprint": ["esm_analytics", null, null], "/func/prediction/precursors": ["mood_change_analytics", null, null]}};
+  var D = {"theme": "light", "slug": "", "page": "index.html", "themes": ["light", "dark"], "routes": {"/ui": ["home", null, null], "/func/exploration/overview": ["overview", "target_var", "overall_mood"], "/func/exploration/analytics_game_scores": ["game_performance", null, null], "/func/exploration/mood_monitoring": ["mood_monitoring", "mood", "overall_mood"], "/func/prediction/mood_change": ["game_analytics", null, null], "/func/prediction/context_fingerprint": ["esm_analytics", null, null]}};
   function tok(v) { return String(v).replace(/[^A-Za-z0-9_-]/g, "_"); }
   function target(form) {
     var url = new URL(form.getAttribute("data-demo-action") || form.action, location.href);
@@ -978,7 +964,7 @@
     var b = e.target.closest && e.target.closest("#themeToggle");
     if (!b) return;
     e.preventDefault(); e.stopImmediatePropagation();
-    var next = D.theme === "dark" ? "light" : D.theme === "light" ? "colorblind" : "dark";   // as in base_ui.html
+    var next = D.theme === "dark" ? "light" : "dark";   // as in base_ui.html
     try { localStorage.setItem("dss-theme", next); } catch (err) {}
     var base = D.slug ? "../../" + next + "/" + D.slug + "/" : "../" + next + "/";
     location.href = base + D.page + location.hash;

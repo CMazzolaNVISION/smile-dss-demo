@@ -7,7 +7,7 @@
     (function () {
       try {
         var t = localStorage.getItem("dss-theme");
-        if (t === "dark" || t === "light" || t === "colorblind") document.documentElement.setAttribute("data-theme", t);
+        if (t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t);
       } catch (e) {}
       document.documentElement.classList.add("is-loading");
     })();
@@ -77,19 +77,6 @@
       --focus:      #0CC4BA;
     }
 
-    :root[data-theme="colorblind"] {
-      --bg:         #FFFFFF;
-      --surface:    #FFFFFF;
-      --surface-2:  #F4F6F8;
-      --border:     #94A3B8;  /* slate-300-ish for clear delineation */
-      --muted:      #475569;  /* slate-600-ish: readable but not dominant */
-      --text:       #0F172A;  /* very dark slate for max contrast */
-
-      /* Okabe–Ito accents (safe for most CVD types) */
-      --primary:     #0072B2; /* blue */
-      --primary-600: #005A8E; /* darker blue for hover/active */
-      --focus:       #009E73; /* green/teal focus ring */
-    }
         
 
     /* Base */
@@ -139,6 +126,12 @@
       transition: background .15s ease, border-color .15s ease, box-shadow .15s ease;
     }
     a.button:hover, button:hover { background: rgba(28,159,255,.08); border-color: var(--primary-600); }
+    /* Navigation buttons (back to participants / country selection / dashboard): filled, bold, easy to spot. */
+    a.button.button--nav { background: var(--primary); border: 2px solid var(--primary); color: #fff; font-weight: 700;
+                           padding: .6rem 1rem; box-shadow: 0 1px 3px rgba(0,0,0,.18); }
+    a.button.button--nav:hover { background: var(--primary-600); border-color: var(--primary-600); }
+    a.button.button--nav-secondary { border-width: 2px; font-weight: 700; padding: .6rem 1rem; }
+    .nav-row { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
     a.button:focus-visible, button:focus-visible {
       outline: none;
       box-shadow: 0 0 0 3px rgba(12,196,186,.35);
@@ -504,7 +497,6 @@
        when the page has finished loading. Colors follow the theme. */
     :root[data-theme="dark"]       { --ld-1: #1C9FFF; --ld-2: #0CC4BA; --ld-3: #FF3ED2; --ld-veil: rgba(11, 15, 20, .82); }
     :root[data-theme="light"]      { --ld-1: #1C9FFF; --ld-2: #0CC4BA; --ld-3: #A729FF; --ld-veil: rgba(244, 245, 247, .85); }
-    :root[data-theme="colorblind"] { --ld-1: #0072B2; --ld-2: #009E73; --ld-3: #E69F00; --ld-veil: rgba(255, 255, 255, .88); }
     .page-loader {
       position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center;
       background: var(--ld-veil); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
@@ -548,9 +540,18 @@
   .summary-head { display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; align-items: center; justify-content: space-between; }
   .summary-head h2 { margin: 0; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
   .summary-head p { margin: .25rem 0 0; }
-  a.button.button--go { background: #009E73; border: 2px solid #009E73; color: #fff; font-weight: 800; font-size: 1.05rem;
-                        padding: .8rem 1.3rem; box-shadow: 0 2px 6px rgba(0,0,0,.2); }
-  a.button.button--go:hover { filter: brightness(1.08); background: #009E73; }
+  /* The next step: a band across the card with one large, high-contrast button (own class, not .button) */
+  .go-band { display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; align-items: center; justify-content: space-between;
+             margin-top: 1rem; padding: .9rem 1.1rem; border-radius: .8rem;
+             background: color-mix(in srgb, #00704F 12%, var(--surface)); border: 2px solid #00704F; }
+  .go-band__text b { display: block; font-size: 1.1rem; }
+  .go-band__text span { color: var(--muted); font-size: .9rem; }
+  a.go-btn { display: inline-flex; align-items: center; gap: .6rem; padding: 1rem 1.8rem; border-radius: .7rem;
+             background: #00704F; color: #FFFFFF !important; font-weight: 800; font-size: 1.2rem; text-decoration: none;
+             letter-spacing: .01em; box-shadow: 0 4px 14px rgba(0, 112, 79, .45); transition: transform .12s, box-shadow .12s; }
+  a.go-btn:hover { background: #005C41; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0, 112, 79, .55); }
+  a.go-btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+  a.go-btn .go-btn__arrow { font-size: 1.4rem; line-height: 1; }
   .totals { display: grid; gap: .75rem; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); margin-top: 1rem; }
   .total { padding: .7rem .9rem; border-radius: .6rem; border: 1px solid var(--border); background: var(--surface-2);
            border-left: 6px solid var(--lane); }
@@ -584,7 +585,6 @@
   .demo-banner { position: sticky; top: 0; z-index: 9999; display: flex; flex-wrap: wrap; gap: .4rem 1rem;
     align-items: center; justify-content: center; padding: .45rem 1rem; font: 600 .9rem/1.3 system-ui, sans-serif;
     background: #b45309; color: #fff; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
-  :root[data-theme="colorblind"] .demo-banner { background: #E69F00; color: #111; }
   .demo-banner a { color: inherit; text-decoration: underline; font-weight: 500; }
   .demo-off, .demo-off:hover { opacity: .55; cursor: not-allowed !important; filter: grayscale(.4); }
 </style>
@@ -640,15 +640,20 @@
       <h2>Sofia Demo <span class="rb rb--demo" title="Demo participant: adequate data and not used to build the models, so every dashboard is available and their results show how the models do on someone new"><span class="rb__demo"><svg class="rb-spark" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 .5 7.3 4.7 11.5 6 7.3 7.3 6 11.5 4.7 7.3.5 6 4.7 4.7Z"/></svg>Demo</span><span class="rb__data"><svg class="rb-meter" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="7" width="2.4" height="4" rx=".6" class="on"/><rect x="4.8" y="4.5" width="2.4" height="6.5" rx=".6" class="on"/><rect x="8.6" y="2" width="2.4" height="9" rx=".6" class="on"/></svg>Adequate data</span></span></h2>
       <p class="small">UserID 751dcd42-18ad-3624-4a4c-eb62f8fa329f · Spain, Sequence 3: 42 day(s) with data</p>
     </div>
-    <a class="button button--go" href="home.html">Continue to full dashboard →</a>
+  </div>
+
+  <div class="go-band">
+    <div class="go-band__text"><b>Ready to open Sofia Demo's dashboards?</b>
+      <span>Cohort overview, game performance, mood monitoring, ESM and game analytics.</span></div>
+    <a class="go-btn" href="home.html">Continue to the full dashboard <span class="go-btn__arrow" aria-hidden="true">→</span></a>
   </div>
 
   
   <div class="totals">
     
-      <div class="total" style="--lane: #0072B2;"><b>194</b><span>ESM observations on 42 day(s)</span></div>
+      <div class="total" style="--lane: #0072B2;"><b>196</b><span>ESM observations on 42 day(s)</span></div>
     
-      <div class="total" style="--lane: #E69F00;"><b>376</b><span>Game entries on 30 day(s)</span></div>
+      <div class="total" style="--lane: #E69F00;"><b>403</b><span>Game entries on 30 day(s)</span></div>
     
       <div class="total" style="--lane: #009E73;"><b>270</b><span>Diary entries on 6 day(s)</span></div>
     
@@ -664,7 +669,7 @@
       <div class="lane" style="--lane: #0072B2;">
         <div class="lane__name">ESM observations</div>
         <div class="strip" role="img" aria-label="ESM observations: 42 of 42 days">
-          <i class="" title="Mon 12 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Tue 13 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Wed 14 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Thu 15 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Fri 16 Jan 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="we" title="Sat 17 Jan 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="we" title="Sun 18 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Mon 19 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Tue 20 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Wed 21 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Thu 22 Jan 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Fri 23 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sat 24 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sun 25 Jan 2026: 3 esm observations"><b style="height: 60%;"></b></i><i class="" title="Mon 26 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Tue 27 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Wed 28 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Thu 29 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Fri 30 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sat 31 Jan 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="we" title="Sun 01 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Mon 02 Feb 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Tue 03 Feb 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Wed 04 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Thu 05 Feb 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Fri 06 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sat 07 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sun 08 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Mon 09 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Tue 10 Feb 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Wed 11 Feb 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Thu 12 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Fri 13 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sat 14 Feb 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="we" title="Sun 15 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Mon 16 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Tue 17 Feb 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Wed 18 Feb 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Thu 19 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Fri 20 Feb 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="we" title="Sat 21 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sun 22 Feb 2026: 4 esm observations"><b style="height: 80%;"></b></i>
+          <i class="" title="Mon 12 Jan 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Tue 13 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Wed 14 Jan 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Thu 15 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Fri 16 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sat 17 Jan 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="we" title="Sun 18 Jan 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Mon 19 Jan 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Tue 20 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Wed 21 Jan 2026: 3 esm observations"><b style="height: 60%;"></b></i><i class="" title="Thu 22 Jan 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Fri 23 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sat 24 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sun 25 Jan 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Mon 26 Jan 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Tue 27 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Wed 28 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Thu 29 Jan 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Fri 30 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sat 31 Jan 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sun 01 Feb 2026: 3 esm observations"><b style="height: 60%;"></b></i><i class="" title="Mon 02 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Tue 03 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Wed 04 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Thu 05 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Fri 06 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sat 07 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sun 08 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Mon 09 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Tue 10 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Wed 11 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Thu 12 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Fri 13 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sat 14 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sun 15 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Mon 16 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Tue 17 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Wed 18 Feb 2026: 4 esm observations"><b style="height: 80%;"></b></i><i class="" title="Thu 19 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="" title="Fri 20 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sat 21 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i><i class="we" title="Sun 22 Feb 2026: 5 esm observations"><b style="height: 100%;"></b></i>
         </div>
         <div class="lane__stat"><b>42</b> of 42 days</div>
       </div>
@@ -672,7 +677,7 @@
       <div class="lane" style="--lane: #E69F00;">
         <div class="lane__name">Game entries</div>
         <div class="strip" role="img" aria-label="Game entries: 30 of 42 days">
-          <i class=" zero" title="Mon 12 Jan 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="" title="Tue 13 Jan 2026: 11 game entries"><b style="height: 23%;"></b></i><i class="" title="Wed 14 Jan 2026: 5 game entries"><b style="height: 10%;"></b></i><i class="" title="Thu 15 Jan 2026: 8 game entries"><b style="height: 17%;"></b></i><i class="" title="Fri 16 Jan 2026: 13 game entries"><b style="height: 27%;"></b></i><i class="we" title="Sat 17 Jan 2026: 25 game entries"><b style="height: 52%;"></b></i><i class="we" title="Sun 18 Jan 2026: 7 game entries"><b style="height: 15%;"></b></i><i class="" title="Mon 19 Jan 2026: 19 game entries"><b style="height: 40%;"></b></i><i class="" title="Tue 20 Jan 2026: 8 game entries"><b style="height: 17%;"></b></i><i class=" zero" title="Wed 21 Jan 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="" title="Thu 22 Jan 2026: 9 game entries"><b style="height: 19%;"></b></i><i class="" title="Fri 23 Jan 2026: 25 game entries"><b style="height: 52%;"></b></i><i class="we" title="Sat 24 Jan 2026: 6 game entries"><b style="height: 12%;"></b></i><i class="we zero" title="Sun 25 Jan 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="" title="Mon 26 Jan 2026: 8 game entries"><b style="height: 17%;"></b></i><i class=" zero" title="Tue 27 Jan 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="" title="Wed 28 Jan 2026: 23 game entries"><b style="height: 48%;"></b></i><i class="" title="Thu 29 Jan 2026: 2 game entries"><b style="height: 4%;"></b></i><i class="" title="Fri 30 Jan 2026: 6 game entries"><b style="height: 12%;"></b></i><i class="we" title="Sat 31 Jan 2026: 13 game entries"><b style="height: 27%;"></b></i><i class="we zero" title="Sun 01 Feb 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="" title="Mon 02 Feb 2026: 48 game entries"><b style="height: 100%;"></b></i><i class="" title="Tue 03 Feb 2026: 7 game entries"><b style="height: 15%;"></b></i><i class="" title="Wed 04 Feb 2026: 2 game entries"><b style="height: 4%;"></b></i><i class="" title="Thu 05 Feb 2026: 6 game entries"><b style="height: 12%;"></b></i><i class=" zero" title="Fri 06 Feb 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="we" title="Sat 07 Feb 2026: 5 game entries"><b style="height: 10%;"></b></i><i class="we" title="Sun 08 Feb 2026: 13 game entries"><b style="height: 27%;"></b></i><i class=" zero" title="Mon 09 Feb 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="" title="Tue 10 Feb 2026: 18 game entries"><b style="height: 38%;"></b></i><i class="" title="Wed 11 Feb 2026: 19 game entries"><b style="height: 40%;"></b></i><i class=" zero" title="Thu 12 Feb 2026: 0 game entries"><b style="height: 0%;"></b></i><i class=" zero" title="Fri 13 Feb 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="we" title="Sat 14 Feb 2026: 14 game entries"><b style="height: 29%;"></b></i><i class="we" title="Sun 15 Feb 2026: 5 game entries"><b style="height: 10%;"></b></i><i class=" zero" title="Mon 16 Feb 2026: 0 game entries"><b style="height: 0%;"></b></i><i class=" zero" title="Tue 17 Feb 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="" title="Wed 18 Feb 2026: 11 game entries"><b style="height: 23%;"></b></i><i class="" title="Thu 19 Feb 2026: 4 game entries"><b style="height: 8%;"></b></i><i class="" title="Fri 20 Feb 2026: 18 game entries"><b style="height: 38%;"></b></i><i class="we" title="Sat 21 Feb 2026: 18 game entries"><b style="height: 38%;"></b></i><i class="we zero" title="Sun 22 Feb 2026: 0 game entries"><b style="height: 0%;"></b></i>
+          <i class=" zero" title="Mon 12 Jan 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="" title="Tue 13 Jan 2026: 11 game entries"><b style="height: 23%;"></b></i><i class="" title="Wed 14 Jan 2026: 5 game entries"><b style="height: 10%;"></b></i><i class="" title="Thu 15 Jan 2026: 8 game entries"><b style="height: 17%;"></b></i><i class=" zero" title="Fri 16 Jan 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="we" title="Sat 17 Jan 2026: 13 game entries"><b style="height: 27%;"></b></i><i class="we zero" title="Sun 18 Jan 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="" title="Mon 19 Jan 2026: 45 game entries"><b style="height: 94%;"></b></i><i class="" title="Tue 20 Jan 2026: 10 game entries"><b style="height: 21%;"></b></i><i class="" title="Wed 21 Jan 2026: 18 game entries"><b style="height: 38%;"></b></i><i class="" title="Thu 22 Jan 2026: 8 game entries"><b style="height: 17%;"></b></i><i class=" zero" title="Fri 23 Jan 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="we" title="Sat 24 Jan 2026: 6 game entries"><b style="height: 12%;"></b></i><i class="we zero" title="Sun 25 Jan 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="" title="Mon 26 Jan 2026: 25 game entries"><b style="height: 52%;"></b></i><i class="" title="Tue 27 Jan 2026: 6 game entries"><b style="height: 12%;"></b></i><i class="" title="Wed 28 Jan 2026: 8 game entries"><b style="height: 17%;"></b></i><i class="" title="Thu 29 Jan 2026: 13 game entries"><b style="height: 27%;"></b></i><i class="" title="Fri 30 Jan 2026: 3 game entries"><b style="height: 6%;"></b></i><i class="we" title="Sat 31 Jan 2026: 6 game entries"><b style="height: 12%;"></b></i><i class="we" title="Sun 01 Feb 2026: 20 game entries"><b style="height: 42%;"></b></i><i class="" title="Mon 02 Feb 2026: 48 game entries"><b style="height: 100%;"></b></i><i class="" title="Tue 03 Feb 2026: 5 game entries"><b style="height: 10%;"></b></i><i class=" zero" title="Wed 04 Feb 2026: 0 game entries"><b style="height: 0%;"></b></i><i class=" zero" title="Thu 05 Feb 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="" title="Fri 06 Feb 2026: 2 game entries"><b style="height: 4%;"></b></i><i class="we" title="Sat 07 Feb 2026: 8 game entries"><b style="height: 17%;"></b></i><i class="we" title="Sun 08 Feb 2026: 4 game entries"><b style="height: 8%;"></b></i><i class="" title="Mon 09 Feb 2026: 15 game entries"><b style="height: 31%;"></b></i><i class="" title="Tue 10 Feb 2026: 18 game entries"><b style="height: 38%;"></b></i><i class="" title="Wed 11 Feb 2026: 19 game entries"><b style="height: 40%;"></b></i><i class="" title="Thu 12 Feb 2026: 14 game entries"><b style="height: 29%;"></b></i><i class="" title="Fri 13 Feb 2026: 5 game entries"><b style="height: 10%;"></b></i><i class="we" title="Sat 14 Feb 2026: 11 game entries"><b style="height: 23%;"></b></i><i class="we" title="Sun 15 Feb 2026: 4 game entries"><b style="height: 8%;"></b></i><i class=" zero" title="Mon 16 Feb 2026: 0 game entries"><b style="height: 0%;"></b></i><i class=" zero" title="Tue 17 Feb 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="" title="Wed 18 Feb 2026: 27 game entries"><b style="height: 56%;"></b></i><i class="" title="Thu 19 Feb 2026: 18 game entries"><b style="height: 38%;"></b></i><i class=" zero" title="Fri 20 Feb 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="we zero" title="Sat 21 Feb 2026: 0 game entries"><b style="height: 0%;"></b></i><i class="we zero" title="Sun 22 Feb 2026: 0 game entries"><b style="height: 0%;"></b></i>
         </div>
         <div class="lane__stat"><b>30</b> of 42 days</div>
       </div>
@@ -699,7 +704,7 @@
   <script>
 
     (function () {
-      const THEMES = ["dark", "light", "colorblind"];
+      const THEMES = ["dark", "light"];
 
       // Read saved theme; fall back to "light" (the default) if unknown
       const saved = localStorage.getItem("dss-theme");
@@ -710,21 +715,16 @@
     const btn = document.getElementById("themeToggle");
 
     function nextTheme(current) {
-      if (current === "dark") return "light";
-      if (current === "light") return "colorblind";
-      return "dark"; // colorblind -> dark
+      return current === "dark" ? "light" : "dark";
     }
 
     function nextLabel(theme) {
       // Button shows the TARGET theme (the next one)
-      if (theme === "dark") return "☀️ Use Light Theme";
-      if (theme === "light") return "👁️ Use Colorblind Theme";
-      return "🌙 Use Dark Theme"; // from colorblind
+      return theme === "dark" ? "☀️ Use Light Theme" : "🌙 Use Dark Theme";
     }
 
     function isLightBackground(theme) {
-      // colorblind is a light canvas
-      return theme === "light" || theme === "colorblind";
+      return theme !== "dark";
     }
 
     function syncButtonToTheme() {
@@ -738,7 +738,7 @@
       // style: for-light = page is lightish (use dark button), for-dark = page is dark (use light button)
       btn.classList.remove("for-light", "for-dark");
       if (isLightBackground(current)) {
-        btn.classList.add("for-light");   // page light/colorblind → dark-styled button
+        btn.classList.add("for-light");   // page light → dark-styled button
       } else {
         btn.classList.add("for-dark");    // page dark → light-styled button
       }
@@ -977,7 +977,7 @@
 <script id="demo-router">
 /* Static demo: forms and the theme switch go to pre-rendered pages instead of the server. */
 (function () {
-  var D = {"theme": "light", "slug": "sofia-demo", "page": "summary.html", "themes": ["light", "dark", "colorblind"], "routes": {"/ui": ["home", null, null], "/func/exploration/overview": ["overview", "target_var", "overall_mood"], "/func/exploration/analytics_game_scores": ["game_performance", "module", "1"], "/func/exploration/mood_monitoring": ["mood_monitoring", "mood", "overall_mood"], "/func/prediction/mood_change": ["game_analytics", "mood", "overall_mood"], "/func/prediction/context_fingerprint": ["esm_analytics", null, null], "/func/prediction/precursors": ["mood_change_analytics", null, null]}};
+  var D = {"theme": "light", "slug": "sofia-demo", "page": "summary.html", "themes": ["light", "dark"], "routes": {"/ui": ["home", null, null], "/func/exploration/overview": ["overview", "target_var", "overall_mood"], "/func/exploration/analytics_game_scores": ["game_performance", null, null], "/func/exploration/mood_monitoring": ["mood_monitoring", "mood", "overall_mood"], "/func/prediction/mood_change": ["game_analytics", null, null], "/func/prediction/context_fingerprint": ["esm_analytics", null, null]}};
   function tok(v) { return String(v).replace(/[^A-Za-z0-9_-]/g, "_"); }
   function target(form) {
     var url = new URL(form.getAttribute("data-demo-action") || form.action, location.href);
@@ -997,7 +997,7 @@
     var b = e.target.closest && e.target.closest("#themeToggle");
     if (!b) return;
     e.preventDefault(); e.stopImmediatePropagation();
-    var next = D.theme === "dark" ? "light" : D.theme === "light" ? "colorblind" : "dark";   // as in base_ui.html
+    var next = D.theme === "dark" ? "light" : "dark";   // as in base_ui.html
     try { localStorage.setItem("dss-theme", next); } catch (err) {}
     var base = D.slug ? "../../" + next + "/" + D.slug + "/" : "../" + next + "/";
     location.href = base + D.page + location.hash;

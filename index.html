@@ -4,7 +4,7 @@
 <meta http-equiv="refresh" content="1; url=light/index.html">
 <script>
   var t = "light";
-  try { var s = localStorage.getItem("dss-theme"); if (["light", "dark", "colorblind"].indexOf(s) >= 0) t = s; } catch (e) {}
+  try { var s = localStorage.getItem("dss-theme"); if (["light", "dark"].indexOf(s) >= 0) t = s; } catch (e) {}
   location.replace(t + "/index.html");
 </script></head>
 <body style="font-family: system-ui, sans-serif; padding: 2rem;">
